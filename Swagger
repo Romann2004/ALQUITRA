@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  title: API Sistema de Gestión de Alquiler de Trajes
+  description: API para la gestión de reservas, entregas y devoluciones de trajes.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor de desarrollo local
+
+paths:
+  /reservas:
+    post:
+      summary: Registrar una nueva reserva (RF-01)
+      [cite_start]description: Permite al empleado cargar una reserva validando disponibilidad de stock[cite: 305, 1166].
+      responses:
+        '201':
+          description: Reserva creada con éxito.
+        '400':
+          description: Error en la solicitud o falta de stock.
+
+  /alquileres/{id}/devolucion:
+    put:
+      summary: Registrar devolución de traje (RF-03)
+      [cite_start]description: Calcula automáticamente recargos por mora o daños y libera el stock[cite: 308, 1172].
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Devolucion'
+      responses:
+        '200':
+          description: Devolución procesada exitosamente.
+
+components:
+  schemas:
+    Reserva:
+      type: object
+      properties:
+        clienteId:
+          type: integer
+        trajeId:
+          type: integer
+        fechaPactadaRetiro:
+          type: string
+          format: date-time
+        fechaPactadaDevolucion:
+          type: string
+          format: date-time
+          
+    Devolucion:
+      type: object
+      properties:
+        estadoFisico:
+          type: string
+          enum: [Óptimo, Daño Menor, Daño Crítico]
+        observaciones:
+          type: string

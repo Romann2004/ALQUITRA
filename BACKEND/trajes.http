@@ -1,0 +1,17 @@
+### Variable para la URL base
+@baseUrl = http://localhost:3000/api/trajes
+
+### Prueba 1: Crear un nuevo Traje
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codigoEtiqueta": "SMOK-001",
+  "talle": "50",
+  "color": "Azul Marino",
+  "categoria": "Smoking",
+  "precioAlquilerBase": 25000.00
+}
+
+### Prueba 2: Obtener todos los trajes
+GET {{baseUrl}}

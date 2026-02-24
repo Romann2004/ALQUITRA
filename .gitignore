@@ -1,3 +1,7 @@
+#Base de datos
+mongo_data
+postgres_data
+
 # Logs
 logs
 *.log

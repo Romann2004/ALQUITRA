@@ -13,10 +13,15 @@ services:
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
 
+
   mongo-db:
-    image: mongo:latest
-    container_name: mongo-alquiler
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./mongo_data:/data/db
+      image: mongo:latest
+      container_name: mongo-alquiler
+      restart: always
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: admin
+        MONGO_INITDB_ROOT_PASSWORD: admin123
+      ports:
+        - "27017:27017"
+      volumes:
+        - ./mongo_db_nueva:/data/db

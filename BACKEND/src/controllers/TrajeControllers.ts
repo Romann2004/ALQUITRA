@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Traje } from '../models/Traje';
+import { Log } from '../models/Log';
 
 export const crearTraje = async (req: Request, res: Response) => {
     try {
@@ -16,9 +17,15 @@ export const crearTraje = async (req: Request, res: Response) => {
             estado: 'Disponible' // Por defecto nace disponible
         });
 
+        await Log.create({
+            accion: 'CREAR_TRAJE',
+            descripcion: `Se registró un nuevo traje: ${codigoEtiqueta}`,
+            metadata: {trajeId: nuevoTraje.id},
+        })
+
         res.status(201).json({
             ok: true,
-            msg: 'Traje registrado con éxito',
+            msg: 'Traje y Log registrados con éxito',
             traje: nuevoTraje
         });
     } catch (error: any) {

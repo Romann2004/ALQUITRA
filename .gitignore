@@ -1,6 +1,8 @@
 #Base de datos
-mongo_data
-postgres_data
+postgres_data/
+mongo_db_new/
+mongo_db_final/
+mongo_db_nueva/
 
 # Logs
 logs

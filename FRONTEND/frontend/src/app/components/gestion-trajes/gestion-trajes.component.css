@@ -1,0 +1,13 @@
+/* Estilos para Gestión de Trajes */
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.disponible {
+  background-color: #c8e6c9;
+  color: #2e7d32;
+}

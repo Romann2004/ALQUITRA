@@ -24,7 +24,7 @@ async function bootstrap() {
     try {
         // Conectar a PostgreSQL
         await sequelize.authenticate();
-        console.log('PostgreSQL conectado exitosamente.');
+        console.log('PostgreSQL conectado.');
 
         // Conectar a MongoDB
         await connectMongo();

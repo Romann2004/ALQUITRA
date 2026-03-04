@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Traje } from '../models/Traje';
 import { Log } from '../models/Log';
+import { EstadoTraje } from '../models/Enums';
 
 export const crearTraje = async (req: Request, res: Response) => {
     try {
@@ -14,7 +15,7 @@ export const crearTraje = async (req: Request, res: Response) => {
             color,
             categoria,
             precioAlquilerBase,
-            estado: 'Disponible' // Por defecto nace disponible
+            estado: EstadoTraje.DISPONIBLE // Por defecto nace disponible
         });
 
         await Log.create({

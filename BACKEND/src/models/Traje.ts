@@ -1,5 +1,6 @@
 import { Model, DataTypes, Optional } from 'sequelize';
 import { sequelize } from '../config/db';
+import { EstadoTraje } from './Enums';
 
 //Se define lo que tiene un traje en una interfaz tipada
 interface TrajeAttributes {
@@ -9,7 +10,7 @@ interface TrajeAttributes {
     color: string;
     categoria: string;
     precioAlquilerBase: number;
-    estado: 'Disponible' | 'Reservado' | 'Alquilado' | 'En mantenimiento' | 'Baja';
+    estado: EstadoTraje;
 }
 
 //Se define el ID como atributo opcional, ya que es auto incremental la bd
@@ -23,7 +24,7 @@ export class Traje extends Model<TrajeAttributes, TrajeCreationAttributes> imple
     public color!: string;
     public categoria!: string;
     public precioAlquilerBase!: number;
-    public estado!: 'Disponible' | 'Reservado' | 'Alquilado' | 'En mantenimiento' | 'Baja';
+    public estado!: EstadoTraje;
 
     //Timestamps automaticos de sequelize
     public readonly createdAt!: Date;
@@ -58,8 +59,9 @@ Traje.init(
       allowNull: false,
     },
     estado: {
-      type: DataTypes.ENUM('Disponible', 'Reservado', 'Alquilado', 'En Mantenimiento', 'Baja'),
-      defaultValue: 'Disponible',
+      type: DataTypes.ENUM(...Object.values(EstadoTraje)),
+      allowNull: false,
+      defaultValue: EstadoTraje.DISPONIBLE,
     },
   },
   {

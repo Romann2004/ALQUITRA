@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { Traje } from '../../models/traje.model';
 import { TrajeService } from '../../services/traje.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 
 @Component({
@@ -28,9 +29,9 @@ export class GestionTrajesComponent implements OnInit {
   trajes: Traje[] = [];
   trajeForm: FormGroup;
   dataSource = new MatTableDataSource<any>();
-  columnasVisibles: string[] = ['codigo', 'categoria', 'talle', 'color', 'precio', 'estado'];
+  columnasVisibles: string[] = ['codigo', 'categoria', 'talle', 'color', 'precio', 'estado', 'acciones'];
 
-  constructor(private fb: FormBuilder, private trajeService: TrajeService) {
+  constructor(private fb: FormBuilder, private trajeService: TrajeService, private cdr: ChangeDetectorRef) {
     this.trajeForm = this.fb.group({
       codigoEtiqueta: ['', Validators.required],
       categoria: ['', Validators.required],
@@ -51,22 +52,63 @@ export class GestionTrajesComponent implements OnInit {
     next: (res: any) => {
       // Como tu API devuelve { ok: true, trajes: [...] }, 
       // debemos asignar res.trajes a nuestra variable local.
-      this.trajes = res.trajes; 
+      this.trajes = [...res.trajes];
+      this.cdr.detectChanges(); // Forzamos la detección de cambios para actualizar la tabla
     },
     error: (err) => console.error('Error al cargar', err)
   });
 }
 
+ trajeIdEnEdicion: number | null = null;
+
+  prepararEdicion(traje: Traje) {
+    this.trajeIdEnEdicion = traje.id!; //Guardamos el id que estamos editando
+    //Seteamos los valores en el formulario para que el usuario pueda editarlos
+    this.trajeForm.patchValue(traje); // Rellena el formulario con los datos de la fila
+  }
+
   guardarTraje() {
-    if (this.trajeForm.valid) {
-      this.trajeService.crearTraje(this.trajeForm.value).subscribe({
-        next: () => {
-          this.cargarTrajes();
-          this.trajeForm.reset({ estado: 'Disponible' });
-        },
-        error: (err) => alert('Error: ' + err.message) 
+    if (this.trajeForm.invalid) return;
+    
+    const datosTraje = this.trajeForm.value;
+
+    if (this.trajeIdEnEdicion) {
+      //Si hay un Id, estamos editando un traje
+      this.trajeService.actualizarTraje(this.trajeIdEnEdicion, datosTraje).subscribe({
+        next: () => this.finalizarOperacion('Traje actualizado'),
+        error: (err) => console.error(err) 
+      });
+    } else {
+      //Si no hay Id, estamos creando un nuevo traje
+      this.trajeService.crearTraje(datosTraje).subscribe({
+        next: () => this.finalizarOperacion('Traje creado'),
+        error: (err) => console.error(err)
       });
     }
-    
   }
+    
+
+  eliminarTraje(id: number) {
+    if (confirm('¿Estás seguro de que quieres eliminar este traje?')) {
+      this.trajeService.eliminarTraje(id).subscribe({
+        next: () => {
+          this.cargarTrajes(); // Acá refrescamos la tablas
+          // Msje de éxito opcional 
+        },
+        error: (err) => alert('Eror al eliminar: ' + err.message)
+      });
+    }
+  }
+
+ 
+
+  finalizarOperacion(mensaje: string) {
+    alert(mensaje);
+    this.cargarTrajes();
+    this.trajeForm.reset();
+    this.trajeIdEnEdicion = null; // Limpia el modo edición
+  }
+
 }
+
+

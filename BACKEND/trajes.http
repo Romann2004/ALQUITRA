@@ -1,6 +1,9 @@
 ### Variable para la URL base
 @baseUrl = http://localhost:3000/api/trajes
 
+### Prueba 0: Prueba del servidor funcionando
+GET http://localhost:3000/api/status
+
 ### Prueba 1: Crear un nuevo Traje
 POST {{baseUrl}}
 Content-Type: application/json
@@ -15,3 +18,29 @@ Content-Type: application/json
 
 ### Prueba 2: Obtener todos los trajes
 GET {{baseUrl}}
+
+### Prueba 3: Actualizar un traje completo (ID:1)
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "codigoEtiqueta": "SMOK-025",
+  "talle": "35",
+  "color": "Rojo",
+  "categoria": "Smoking",
+  "precioAlquilerBase": 26000.00
+}
+
+### Prueba 4: Actualizar un campo de un traje (ID:1)
+PATCH {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "color": "Azul"
+}
+
+### Prueba 5: Eliminar un traje (ID:8)
+DELETE {{baseUrl}}/8
+
+
+

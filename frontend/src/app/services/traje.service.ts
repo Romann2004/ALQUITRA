@@ -19,4 +19,15 @@ export class TrajeService {
         return this.http.post<Traje>(this.apiUrl, nuevoTraje)
     }
 
+    actualizarTraje(id: number, traje: any): Observable<any> {
+        return this.http.put(`${this.apiUrl}/${id}`, traje);
+    }
+
+    patchTraje(id:number, cambios: any): Observable<any> {
+        return this.http.patch(`${this.apiUrl}/${id}`, cambios);
+    }
+
+    eliminarTraje(id: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${id}`);
+    }
 }

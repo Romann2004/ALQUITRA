@@ -41,7 +41,8 @@ export const crearTraje = async (req: Request, res: Response) => {
 
 export const obtenerTrajes = async (_req: Request, res: Response) => {
     try {
-        const trajes = await Traje.findAll();
+        // Agregamos el ordenamiento por ID ascendente
+        const trajes = await Traje.findAll({ order: [['id', 'ASC']] }); 
         res.json({ ok: true, trajes });
     } catch (error) {
         res.status(500).json({ ok: false, msg: 'Error al obtener trajes' });

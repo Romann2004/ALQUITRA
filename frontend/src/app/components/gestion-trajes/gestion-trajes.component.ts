@@ -49,11 +49,11 @@ export class GestionTrajesComponent implements OnInit {
 
   cargarTrajes() {
   this.trajeService.getTrajes().subscribe({
-    next: (res: any) => {
-      // Como tu API devuelve { ok: true, trajes: [...] }, 
-      // debemos asignar res.trajes a nuestra variable local.
-      this.trajes = [...res.trajes];
-      this.cdr.detectChanges(); // Forzamos la detección de cambios para actualizar la tabla
+    next: (res) => {
+      // 'res' es el objeto completo { ok: true, trajes: [...] }
+      this.trajes = res.trajes; // Extraemos solo el array
+      this.dataSource.data = this.trajes; // Actualizamos la tabla de Material
+      this.cdr.detectChanges(); 
     },
     error: (err) => console.error('Error al cargar', err)
   });
@@ -66,28 +66,28 @@ export class GestionTrajesComponent implements OnInit {
     //Seteamos los valores en el formulario para que el usuario pueda editarlos
     this.trajeForm.patchValue(traje); // Rellena el formulario con los datos de la fila
   }
-
-  guardarTraje() {
-    if (this.trajeForm.invalid) return;
-    
-    const datosTraje = this.trajeForm.value;
-
-    if (this.trajeIdEnEdicion) {
-      //Si hay un Id, estamos editando un traje
-      this.trajeService.actualizarTraje(this.trajeIdEnEdicion, datosTraje).subscribe({
-        next: () => this.finalizarOperacion('Traje actualizado'),
-        error: (err) => console.error(err) 
-      });
-    } else {
-      //Si no hay Id, estamos creando un nuevo traje
-      this.trajeService.crearTraje(datosTraje).subscribe({
-        next: () => this.finalizarOperacion('Traje creado'),
-        error: (err) => console.error(err)
-      });
-    }
+    guardarTraje() {
+  if (this.trajeForm.invalid) return;
+  const datosTraje = this.trajeForm.value;
+  if (this.trajeIdEnEdicion) {
+    this.trajeService.actualizarTraje(this.trajeIdEnEdicion, datosTraje).subscribe({
+      next: () => {
+        alert('Cambios guardados correctamente en el servidor. Por favor, recargue la página para visualizar los cambios en la tabla.');
+        this.trajeIdEnEdicion = null;
+        this.trajeForm.reset();
+      },
+      error: (err) => {
+        console.error('Error al actualizar', err);
+        alert('Hubo un error al guardar los cambios.');
+      }
+    });
+  } else {
+    this.trajeService.crearTraje(datosTraje).subscribe({
+      next: () => this.finalizarOperacion('Traje creado con éxito'),
+      error: (err) => console.error(err)
+    });
   }
-    
-
+}
   eliminarTraje(id: number) {
     if (confirm('¿Estás seguro de que quieres eliminar este traje?')) {
       this.trajeService.eliminarTraje(id).subscribe({
@@ -99,9 +99,6 @@ export class GestionTrajesComponent implements OnInit {
       });
     }
   }
-
- 
-
   finalizarOperacion(mensaje: string) {
     alert(mensaje);
     this.cargarTrajes();

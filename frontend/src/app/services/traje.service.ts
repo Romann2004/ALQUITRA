@@ -3,6 +3,18 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { Traje } from "../models/traje.model";
 
+// CAPA TÉCNICA: Definimos la forma de la respuesta del Backend
+interface RespuestaApiTrajes {
+    ok: boolean;
+    trajes: Traje[]; // Aquí está la lista real
+}
+
+interface RespuestaApiIndividual {
+    ok: boolean;
+    msg?: string;
+    traje: Traje;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -11,22 +23,21 @@ export class TrajeService {
 
     constructor(private http: HttpClient) { }
 
-    getTrajes(): Observable<Traje[]> {
-        return this.http.get<Traje[]>(this.apiUrl);
+    // CAMBIO 1: El GET ahora espera el objeto con la propiedad 'trajes'
+    getTrajes(): Observable<RespuestaApiTrajes> {
+        return this.http.get<RespuestaApiTrajes>(this.apiUrl);
     }
 
-    crearTraje(nuevoTraje: Traje): Observable<Traje> {
-        return this.http.post<Traje>(this.apiUrl, nuevoTraje)
+    // CAMBIO 2: El POST también devuelve un objeto envuelto { ok, msg, traje }
+    crearTraje(nuevoTraje: Traje): Observable<RespuestaApiIndividual> {
+        return this.http.post<RespuestaApiIndividual>(this.apiUrl, nuevoTraje);
     }
 
-    actualizarTraje(id: number, traje: any): Observable<any> {
-        return this.http.put(`${this.apiUrl}/${id}`, traje);
+    actualizarTraje(id: number, traje: any): Observable<RespuestaApiIndividual> {
+        return this.http.put<RespuestaApiIndividual>(`${this.apiUrl}/${id}`, traje);
     }
 
-    patchTraje(id:number, cambios: any): Observable<any> {
-        return this.http.patch(`${this.apiUrl}/${id}`, cambios);
-    }
-
+    // ... los demás métodos pueden quedarse con <any> si no necesitas el retorno exacto
     eliminarTraje(id: number): Observable<any> {
         return this.http.delete(`${this.apiUrl}/${id}`);
     }

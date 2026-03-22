@@ -1,0 +1,40 @@
+### PRUEBAS DE AUTENTICACIÓN
+
+### Variable para la URL base
+@baseUrl = http://localhost:3000/api/auth
+
+### Registro de Usuario (Ejecutar una sola vez p/usuario de prueba)
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+    "username": "Leonel",
+    "password": "46995121"
+}
+
+### Login Exitoso
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "username": "Roman",
+    "password": "45654005"
+}
+
+### Login Fallido (Contraseña incorrecta)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "username": "Roman",
+    "password": "Error"
+}
+
+### Login Fallido (Usuario no existe)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "username": "Error",
+    "password": "45654005"
+}

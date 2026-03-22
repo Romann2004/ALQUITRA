@@ -16,6 +16,7 @@ import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Home } from './components/home/home';
 import { GestionTrajesComponent } from './components/gestion-trajes/gestion-trajes.component';
+import { Login } from './components/login/login';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { GestionTrajesComponent } from './components/gestion-trajes/gestion-traj
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
-    GestionTrajesComponent
+    GestionTrajesComponent,
+    Login
   ],
   providers: [provideAnimations(), provideBrowserGlobalErrorListeners() ],
   bootstrap: [App]

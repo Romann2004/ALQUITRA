@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { sequelize,connectMongo } from './config/db';
 import TrajeRoutes from './routes/TrajeRoutes';
+import authRoutes from './routes/AuthRoutes';
 
 // Configuración inicial
 const app = express();
@@ -11,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 app.use('/api/trajes', TrajeRoutes);
+app.use('/api/auth', authRoutes);
 
 // Ruta de prueba
 app.get('/api/status', (req, res) => {

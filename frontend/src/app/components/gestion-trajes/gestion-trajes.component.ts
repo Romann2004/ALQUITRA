@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCard, MatCardModule, MatCardHeader, MatCardTitle, MatCardContent } from "@angular/material/card";
-import { MatFormField, MatFormFieldModule, MatLabel } from "@angular/material/form-field";
+import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatSelect, MatOption } from "@angular/material/select";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from '@angular/material/input';
@@ -28,6 +28,7 @@ import { ChangeDetectorRef } from '@angular/core';
 export class GestionTrajesComponent implements OnInit {
   trajes: Traje[] = [];
   trajeForm: FormGroup;
+  filtroForm: FormGroup;
   dataSource = new MatTableDataSource<any>();
   columnasVisibles: string[] = ['codigo', 'categoria', 'talle', 'color', 'precio', 'estado', 'acciones'];
 
@@ -40,6 +41,13 @@ export class GestionTrajesComponent implements OnInit {
       precioAlquilerBase: ['', [Validators.required, Validators.min(1)]],
       estado: ['Disponible']
     });
+    this.filtroForm = this.fb.group({
+    codigo: [''],
+    talle: [''],
+    color: [''],
+    categoria: [''],
+    estado: ['']
+    });
   }
 
   ngOnInit(): void {
@@ -48,15 +56,23 @@ export class GestionTrajesComponent implements OnInit {
   }
 
   cargarTrajes() {
-  this.trajeService.getTrajes().subscribe({
+  // Extraemos los valores del formulario de búsqueda
+  const filtros = this.filtroForm ? this.filtroForm.value : null;
+
+  this.trajeService.getTrajes(filtros).subscribe({
     next: (res) => {
-      // 'res' es el objeto completo { ok: true, trajes: [...] }
-      this.trajes = res.trajes; // Extraemos solo el array
-      this.dataSource.data = this.trajes; // Actualizamos la tabla de Material
+      this.trajes = res.trajes;
+      this.dataSource.data = this.trajes;
       this.cdr.detectChanges(); 
     },
     error: (err) => console.error('Error al cargar', err)
   });
+}
+
+// Agregá esta función nueva al final para poder limpiar la búsqueda
+limpiarFiltros() {
+  this.filtroForm.reset();
+  this.cargarTrajes();
 }
 
  trajeIdEnEdicion: number | null = null;

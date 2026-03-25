@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Traje } from '../models/Traje';
 import { Log } from '../models/Log';
 import { EstadoTraje } from '../models/Enums';
+import { Op } from 'sequelize';
 
 export const crearTraje = async (req: Request, res: Response) => {
     try {
@@ -39,13 +40,54 @@ export const crearTraje = async (req: Request, res: Response) => {
     }
 };
 
-export const obtenerTrajes = async (_req: Request, res: Response) => {
+export const obtenerTrajes = async (req: Request, res: Response) => {
     try {
-        // Agregamos el ordenamiento por ID ascendente
-        const trajes = await Traje.findAll({ order: [['id', 'ASC']] }); 
+        // 1. Extraemos los posibles filtros de la query de la URL
+        const { codigo, talle, color, categoria, estado } = req.query;
+
+        // 2. Construimos el objeto de condiciones dinámicamente
+        // Si el filtro no viene en la URL, Sequelize simplemente lo ignora
+        const whereConditions: any = {};
+
+        if (codigo) {
+            whereConditions.codigoEtiqueta = { [Op.iLike]: `%${codigo}%` };
+        }
+        if (talle) {
+            whereConditions.talle = talle; // Filtro exacto para talle
+        }
+        if (color) {
+            whereConditions.color = { [Op.iLike]: `%${color}%` };
+        }
+        if (categoria) {
+            whereConditions.categoria = { [Op.iLike]: `%${categoria}%` };
+        }
+        if (estado) {
+            whereConditions.estado = estado; // Filtro exacto por ser Enum
+        }
+
+        // 3. Ejecutamos la búsqueda con el objeto 'where' dinámico
+        const trajes = await Traje.findAll({ 
+            where: whereConditions,
+            order: [['id', 'ASC']] 
+        }); 
+
+        // MSJ DE TOMI: Log opcional en MongoDB para trackear qué está buscando la gente, es decir, para futuros análisis de "más buscados"
+        /* if (Object.keys(req.query).length > 0) {
+            await Log.create({
+                accion: 'FILTRAR_TRAJES',
+                descripcion: `Búsqueda con filtros: ${JSON.stringify(req.query)}`,
+                metadata: { filtros: req.query, resultadosEncontrados: trajes.length }
+            });
+        } */
+
         res.json({ ok: true, trajes });
-    } catch (error) {
-        res.status(500).json({ ok: false, msg: 'Error al obtener trajes' });
+    } catch (error: any) {
+        console.error(error);
+        res.status(500).json({ 
+            ok: false, 
+            msg: 'Error al obtener trajes con filtros',
+            error: error.message 
+        });
     }
 };
 

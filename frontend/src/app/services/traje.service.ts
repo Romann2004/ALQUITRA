@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { Traje } from "../models/traje.model";
 
@@ -24,8 +24,18 @@ export class TrajeService {
     constructor(private http: HttpClient) { }
 
     // CAMBIO 1: El GET ahora espera el objeto con la propiedad 'trajes'
-    getTrajes(): Observable<RespuestaApiTrajes> {
-        return this.http.get<RespuestaApiTrajes>(this.apiUrl);
+    getTrajes(filtros?: any): Observable<RespuestaApiTrajes> {
+        let params = new HttpParams();
+
+        if (filtros) {
+            Object.keys(filtros).forEach(key => {
+                if (filtros[key]) {
+                    params = params.append(key, filtros[key]);
+                }
+            });
+        }
+
+        return this.http.get<RespuestaApiTrajes>(this.apiUrl, { params });
     }
 
     // CAMBIO 2: El POST también devuelve un objeto envuelto { ok, msg, traje }

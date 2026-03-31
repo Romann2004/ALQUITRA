@@ -3,9 +3,11 @@ import { RouterModule, Routes } from '@angular/router';
 import { Login } from './components/login/login';
 import { GestionTrajesComponent } from './components/gestion-trajes/gestion-trajes.component';
 import { authGuard } from './guards/auth-guard';
+import { Dashboard } from './components/dashboard/dashboard';
 
 const routes: Routes = [
   { path: 'login', component: Login },
+  { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
   { 
     path: 'gestion-trajes',
     component: GestionTrajesComponent,

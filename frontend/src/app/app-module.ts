@@ -17,11 +17,13 @@ import { App } from './app';
 import { Home } from './components/home/home';
 import { GestionTrajesComponent } from './components/gestion-trajes/gestion-trajes.component';
 import { Login } from './components/login/login';
+import { Dashboard } from './components/dashboard/dashboard';
 
 @NgModule({
   declarations: [
     App,
-    Home
+    Home,
+    Dashboard
   ],
   imports: [
     BrowserModule,

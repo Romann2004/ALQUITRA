@@ -1,0 +1,32 @@
+<div class="dashboard-container">
+  <h1>Resumen del Negocio</h1>
+
+  <div class="stats-grid">
+    
+    <mat-card class="stat-card total">
+      <mat-card-content>
+        <mat-icon>inventory_2</mat-icon>
+        <div class="stat-value">{{ stats.totalTrajes || 0 }}</div>
+        <div class="stat-label">Total Trajes</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card disponible">
+      <mat-card-content>
+        <mat-icon>check_circle</mat-icon>
+        <div class="stat-value">{{ stats.disponibles || 0 }}</div>
+        <div class="stat-label">Disponibles</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card alquilado">
+      <mat-card-content>
+        <mat-icon>sell</mat-icon>
+        <div class="stat-value">{{ stats.alquilados || 0 }}</div>
+        <div class="stat-label">En Alquiler</div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>
+

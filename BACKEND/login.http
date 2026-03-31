@@ -40,3 +40,6 @@ Content-Type: application/json
     "username": "Error",
     "password": "45654005"
 }
+
+### Obtener Estadísticas del Dashboard
+GET http://localhost:3000/api/dashboard/stats

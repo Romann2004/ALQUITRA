@@ -1,5 +1,16 @@
 <div class="container p-4">
+
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+  <h2>Gestión de Inventario</h2>
   
+  <button mat-raised-button color="warn" (click)="cerrarSesion()">
+    <mat-icon>logout</mat-icon>
+    Cerrar Sesión
+  </button>
+  </div>
+
+  <hr>
+    
   <mat-card class="mb-4 shadow">
     <mat-card-header>
       <mat-card-title>Registrar Nuevo Traje</mat-card-title>

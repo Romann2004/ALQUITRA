@@ -33,9 +33,10 @@ export class Login {
 
     this.authService.login(this.LoginForm.value).subscribe({
       next: (res) => {
+        console.log('Respuesta del servidor:', res);
         if (res.ok) {
           alert('¡Bienvenido!');
-          this.router.navigate(['/gestion-trajes']); //Navega al CRUD de trajes
+          this.router.navigate(['/dashboard']); //Navega al panel inicial
         }
       },
       error: (err) => {

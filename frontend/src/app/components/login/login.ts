@@ -9,8 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  standalone: false,
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -36,6 +35,7 @@ export class Login {
         console.log('Respuesta del servidor:', res);
         if (res.ok) {
           alert('¡Bienvenido!');
+          localStorage.setItem('token', res.token); // Guarda el token en localStorage
           this.router.navigate(['/dashboard']); //Navega al panel inicial
         }
       },

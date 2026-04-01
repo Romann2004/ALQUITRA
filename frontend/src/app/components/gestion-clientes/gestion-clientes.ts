@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 export class GestionClientes implements OnInit{
   listClientes: any[] = [];
-  displayedColumns: string[] = ['nombre', 'dni', 'telefono', 'email', 'acciones'];
+  displayedColumns: string[] = ['id', 'nombre', 'dni', 'telefono', 'email'];
 
   constructor(
     private _cliente: Cliente,

@@ -1,13 +1,13 @@
 ### Crear Cliente
 POST http://localhost:3000/api/clientes
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTA1MDgwOCwiZXhwIjoxNzc1MDY1MjA4fQ.P1WNuJKNeICzzAOw4EnQ2LsYU7GUJg9mxsB_CgJyVfw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTA4NTIxNCwiZXhwIjoxNzc1MDk5NjE0fQ.Vx8nE1Z87sOWgw7fh8pzgqhFFUImtsIiwgpjCZkdh_0
 
 {
-    "nombre": "Juan Perez",
-    "dni": "12345678",
-    "telefono": "2477123456",
-    "email": "juan@correo.com"
+    "nombre": "Pablo Perez",
+    "dni": "20548975",
+    "telefono": "28895123456",
+    "email": "pablo@correo.com"
 }
 
 ### Obtener Clientes

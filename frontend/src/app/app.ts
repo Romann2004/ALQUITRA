@@ -18,12 +18,13 @@ export class App {
 
   // 1. Creamos el puente para el HTML
   isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
+    return !!localStorage.getItem('token');
   }
 
   // 2. Creamos la función para cerrar sesión
   logout(): void {
     this.authService.logout();
+    localStorage.removeItem('token');
     this.router.navigate(['/login']);
   }
 }

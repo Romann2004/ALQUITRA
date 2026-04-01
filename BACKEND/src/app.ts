@@ -4,6 +4,7 @@ import { sequelize,connectMongo } from './config/db';
 import TrajeRoutes from './routes/TrajeRoutes';
 import authRoutes from './routes/AuthRoutes';
 import dashboardRoutes from './routes/DashboardRoutes';
+import routerClientes from './routes/ClienteRoutes';
 
 // Configuración inicial
 const app = express();
@@ -15,6 +16,7 @@ app.use(cors());
 app.use('/api/trajes', TrajeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/clientes', routerClientes);
 
 // Ruta de prueba
 app.get('/api/status', (req, res) => {

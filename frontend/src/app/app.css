@@ -1,0 +1,17 @@
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 250px;
+  background-color: #f8f9fa;
+}
+
+.content {
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+mat-icon {
+  margin-right: 10px;
+}

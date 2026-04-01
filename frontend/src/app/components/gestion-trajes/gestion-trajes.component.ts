@@ -23,28 +23,11 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-gestion-trajes',
-  standalone: true,
+  standalone: false,
   templateUrl: './gestion-trajes.component.html',
-  styleUrls: ['./gestion-trajes.component.css'],
-  imports: [
-    MatCard,
-    MatCardModule,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
-    MatFormFieldModule,
-    MatLabel,
-    MatSelect,
-    MatOption,
-    MatIconModule,
-    CommonModule,
-    ReactiveFormsModule,
-    MatTableModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule
-  ],
+  styleUrls: ['./gestion-trajes.component.css']
 })
+
 export class GestionTrajesComponent implements OnInit {
   trajes: Traje[] = [];
   trajeForm: FormGroup;

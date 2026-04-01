@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="header">
+    <h1>Gestión de Clientes</h1>
+    <button mat-raised-button color="primary">
+      <mat-icon>person_add</mat-icon> Nuevo Cliente
+    </button>
+  </div>
+
+  <table mat-table [dataSource]="listClientes" class="mat-elevation-z8">
+    
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *mat-header-cell> Nombre </th>
+      <td mat-cell *mat-cell="let element"> {{element.nombre}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dni">
+      <th mat-header-cell *mat-header-cell> DNI </th>
+      <td mat-cell *mat-cell="let element"> {{element.dni}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="telefono">
+      <th mat-header-cell *mat-header-cell> Teléfono </th>
+      <td mat-cell *mat-cell="let element"> {{element.telefono}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *mat-header-cell> Email </th>
+      <td mat-cell *mat-cell="let element"> {{element.email}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *mat-header-cell> Acciones </th>
+      <td mat-cell *mat-cell="let element">
+        <mat-icon color="accent" style="cursor: pointer;">edit</mat-icon>
+        <mat-icon color="warn" style="cursor: pointer;">delete</mat-icon>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *mat-header-rowDef="displayedColumns"></tr>
+    <tr mat-row *mat-rowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

@@ -1,0 +1,15 @@
+### Crear Cliente
+POST http://localhost:3000/api/clientes
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTA1MDgwOCwiZXhwIjoxNzc1MDY1MjA4fQ.P1WNuJKNeICzzAOw4EnQ2LsYU7GUJg9mxsB_CgJyVfw
+
+{
+    "nombre": "Juan Perez",
+    "dni": "12345678",
+    "telefono": "2477123456",
+    "email": "juan@correo.com"
+}
+
+### Obtener Clientes
+GET http://localhost:3000/api/clientes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTA1MTM1MCwiZXhwIjoxNzc1MDY1NzUwfQ.fZkNOHgHsFvLbrcwMrbkJM4XNMsVkI7dLLOGNH1KIG4

@@ -1,17 +1,31 @@
-.sidenav-container {
+.wrapper-sistema {
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+mat-sidenav-container {
+  flex: 1;
+  height: 100%; 
+  width: 100%;
+}
+
+mat-sidenav-content {
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .sidenav {
   width: 250px;
   background-color: #f8f9fa;
+  border-right: 1px solid #ddd;
 }
 
-.content {
-  padding: 20px;
+.main-content {
+  padding: 24px;
+  flex-grow: 1;
   background-color: #ffffff;
-}
-
-mat-icon {
-  margin-right: 10px;
 }

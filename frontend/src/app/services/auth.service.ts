@@ -1,35 +1,40 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, tap } from "rxjs";
+import { Router } from "@angular/router";
+import { Observable, tap, BehaviorSubject } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
+    // El BehaviorSubject guarda el estado inicial (¿hay token?)
+    private loggedIn = new BehaviorSubject<boolean>(!!sessionStorage.getItem('token'));
+
+    // Esto es lo que los componentes van a "escuchar"
+    isLoggedIn$ = this.loggedIn.asObservable();
+
     private apiUrl = 'http://localhost:3000/api/auth';
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private router: Router) { }
 
-    login(credentials: any): Observable<any> {
-        return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
+    login(user: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}/login`, user).pipe(
             tap((res: any) => {
                 if (res.ok && res.token) {
-                    // Guardamos el token en el almacenamiento local del navegador
-                    localStorage.setItem('token', res.token);
-                    localStorage.setItem('username', res.username); // Opcional, para mostrarlo en el menú
+                    // Guardamos el token en el almacenamiento de la sesión del navegador
+                    sessionStorage.setItem('token', res.token);
+                    sessionStorage.setItem('username', res.username); // Opcional, para mostrarlo en el menú
+                    this.loggedIn.next(true); // Actualizamos el estado a "logueado"
                 }
             })
         );
     }
-
-    // Método p/ saber si el usuario está logueado
-    isLoggedIn(): boolean {
-        return !!localStorage.getItem('token');
-    }
     
     // Método p/ cerrar sesión
     logout() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('username');
+        this.loggedIn.next(false); // Actualizamos el estado a "no logueado"
+        this.router.navigate(['/login']);
     }
 }

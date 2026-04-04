@@ -35,7 +35,7 @@ export class Login {
         console.log('Respuesta del servidor:', res);
         if (res.ok) {
           alert('¡Bienvenido!');
-          localStorage.setItem('token', res.token); // Guarda el token en localStorage
+          sessionStorage.setItem('token', res.token); // Guarda el token en SessionStorage
           this.router.navigate(['/dashboard']); //Navega al panel inicial
         }
       },

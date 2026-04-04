@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
 
@@ -8,7 +8,8 @@ import { Router } from '@angular/router';
   standalone: false,
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit {
+  mostrarMenu: boolean = false;
   protected readonly title = signal('frontend');
   
   constructor(
@@ -16,15 +17,21 @@ export class App {
     private router: Router
   ) {}
 
-  // 1. Creamos el puente para el HTML
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+  ngOnInit() {
+    // Nos suscribimos una sola vez. La variable mostrarMenu se encarga de todo.
+    this.authService.isLoggedIn$.subscribe(res => {
+      this.mostrarMenu = res;
+
+      if (!res) {
+        this.router.navigate(['/login']);
+      } else if (this.router.url === '/login' || this.router.url === '/') {
+        this.router.navigate(['/dashboard']);
+      }
+    });
   }
 
   // 2. Creamos la función para cerrar sesión
-  logout(): void {
+  logout() {
     this.authService.logout();
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
   }
 }

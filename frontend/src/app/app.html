@@ -1,29 +1,31 @@
-<mat-sidenav-container class="sidenav-container" *ngIf="isLoggedIn()">
-  
-  <mat-sidenav mode="side" opened class="sidenav">
-    <mat-toolbar color="primary">Menu</mat-toolbar>
-    <mat-nav-list>
-      <a mat-list-item routerLink="/dashboard">
-        <mat-icon>dashboard</mat-icon> Dashboard
-      </a>
-      <a mat-list-item routerLink="/gestion-trajes">
-        <mat-icon>inventory_2</mat-icon> Trajes
-      </a>
-      <a mat-list-item routerLink="/gestion-clientes">
-        <mat-icon>groups</mat-icon> Clientes
-      </a>
-      <mat-divider></mat-divider>
-      <button mat-list-item (click)="logout()">
-        <mat-icon>logout</mat-icon> Cerrar Sesión
-      </button>
-    </mat-nav-list>
-  </mat-sidenav>
+<div *ngIf="mostrarMenu; else vistaPublica" class="wrapper-sistema">
+  <mat-sidenav-container>
+    <mat-sidenav mode="side" opened class="sidenav">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/dashboard">
+          <mat-icon>dashboard</mat-icon> Dashboard
+        </a>
+        <a mat-list-item routerLink="/gestion-clientes">
+          <mat-icon>groups</mat-icon> Clientes
+        </a>
+        <a mat-list-item routerLink="/gestion-trajes">
+          <mat-icon>inventory_2</mat-icon> Trajes
+        </a>
+        <mat-divider></mat-divider>
+        <button mat-list-item (click)="logout()">
+          <mat-icon>logout</mat-icon> Cerrar Sesión
+        </button>
+      </mat-nav-list>
+    </mat-sidenav>
 
-  <mat-sidenav-content class="content">
-    <router-outlet></router-outlet>
-  </mat-sidenav-content>
-</mat-sidenav-container>
-
-<div class="login-wrapper" *ngIf="!isLoggedIn()">
-  <router-outlet></router-outlet>
+    <mat-sidenav-content class="main-content">
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
+
+<ng-template #vistaPublica>
+  <div class="login-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+</ng-template>

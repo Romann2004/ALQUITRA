@@ -1,4 +1,13 @@
 /* Estilos para Gestión de Trajes */
+.table-wrapper {
+  max-height: 75vh; 
+  overflow: auto;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+}
 
 .status-badge {
   padding: 4px 12px;

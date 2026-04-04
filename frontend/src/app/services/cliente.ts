@@ -12,7 +12,7 @@ export class Cliente {
 
   // Función para obtener los headers con el token
   private getHeaders() {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
 

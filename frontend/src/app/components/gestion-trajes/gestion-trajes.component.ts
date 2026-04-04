@@ -141,7 +141,7 @@ export class GestionTrajesComponent implements OnInit {
     this.trajeIdEnEdicion = null; // Limpia el modo edición
   }
   cerrarSesion() {
-    this.authService.logout(); // Esto borra el token del LocalStorage
+    this.authService.logout(); // Esto borra el token del SessionStorage
     this.router.navigate(['/login']); //Redirige al login
   }
 }

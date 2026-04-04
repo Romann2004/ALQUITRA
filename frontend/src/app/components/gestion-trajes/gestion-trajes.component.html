@@ -110,7 +110,11 @@
       <mat-card-title>Inventario en Tiempo Real</mat-card-title>
     </mat-card-header>
     
-    <table mat-table [dataSource]="trajes" class="w-100"> *ngIf="trajes && trajes.length > 0">
+    <div class="main-content">
+      <h2>Inventario en Tiempo Real</h2>
+  
+      <div class="table-wrapper mat-elevation-z8">
+        <table mat-table [dataSource]="trajes" class="w-100"> *ngIf="trajes && trajes.length > 0">
       
       <ng-container matColumnDef="codigo">
         <th mat-header-cell *matHeaderCellDef> Código </th>
@@ -166,7 +170,10 @@
           No hay datos disponibles que coincidan con la búsqueda.
         </td>
       </tr>
-    </table>
+        </table>
+      </div>
+    </div>
+    
   </mat-card>
 
 </div>

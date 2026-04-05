@@ -10,7 +10,6 @@ export class Cliente {
 
   constructor(private http: HttpClient) { }
 
-  // Función para obtener los headers con el token
   private getHeaders() {
     const token = sessionStorage.getItem('token');
     return new HttpHeaders().set('Authorization', `Bearer ${token}`);
@@ -20,7 +19,19 @@ export class Cliente {
     return this.http.get(this.apiUrl, { headers: this.getHeaders() });
   }
   
+  getCliente(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  }
+
   postCliente(cliente: any): Observable<any> {
     return this.http.post(this.apiUrl, cliente, { headers: this.getHeaders() });
+  }
+
+  putCliente(id: number, cliente: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, cliente, { headers: this.getHeaders() });
+  }
+
+  deleteCliente(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 }

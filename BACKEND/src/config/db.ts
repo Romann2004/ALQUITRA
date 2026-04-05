@@ -23,11 +23,12 @@ export const sequelize = new Sequelize(
 // Función para conectar a MongoDB 
 export const connectMongo = async (): Promise<void> => {
     try {
-        const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/alquiler_logs';
+        const mongoUri = process.env.MONGO_URI || 'mongodb://admin:admin123@127.0.0.1:27017/alquiler_logs?authSource=admin';
+        
         await mongoose.connect(mongoUri);
-        console.log('MongoDB Conectado');
+        console.log('MongoDB Conectado y Autenticado correctamente');
     } catch (error) {
         console.error('Error al conectar MongoDB:', error);
-        process.exit(1); // Detiene la app si no hay conexión a la DB
+        process.exit(1); 
     }
 };

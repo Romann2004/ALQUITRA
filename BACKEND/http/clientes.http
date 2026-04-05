@@ -1,7 +1,7 @@
 ### Crear Cliente
 POST http://localhost:3000/api/clientes
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTA4NTIxNCwiZXhwIjoxNzc1MDk5NjE0fQ.Vx8nE1Z87sOWgw7fh8pzgqhFFUImtsIiwgpjCZkdh_0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJMZW9uZWwiLCJpYXQiOjE3NzUzMzU4ODcsImV4cCI6MTc3NTM1MDI4N30.vC6L-s5PqIKEjn7DMY-u_zozS-J2DgAuU8MNmUTvKpo
 
 {
     "nombre": "Pablo Perez",

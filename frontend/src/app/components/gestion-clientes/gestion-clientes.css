@@ -1,20 +1,45 @@
-table {
-  width: 100%;
-  display: table !important; /* Forzamos el display */
+/* --- NUEVA CLASE PARA EL FORMULARIO --- */
+.cliente-form {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-start; /* Mantiene los inputs alineados arriba */
+  margin-top: 15px;
 }
 
-.mat-mdc-row {
-  height: 50px;
+/* Modificamos los inputs para que no crezcan de más y mantengan el bloque limpio */
+.cliente-form mat-form-field {
+  flex: 1 1 auto; /* Permite que se adapten al espacio disponible */
+  min-width: 180px; /* Evita que se aplasten en pantallas pequeñas */
 }
 
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
+/* --- ESTILOS DE BOTONES CORREGIDOS --- */
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* Centra el botón exactamente con el alto del recuadro del input (56px) */
+  height: 56px; 
+  /* Le quitamos el width: 100% que tenías antes para que no baje a la siguiente línea */
 }
 
-.status-badge.disponible {
-  background-color: #c8e6c9;
-  color: #2e7d32;
+.btn-accion {
+  padding: 4px 20px;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  height: 40px; /* Alto definido para igualar proporciones */
+}
+
+.btn-accion mat-icon {
+  margin-right: 6px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.btn-cancelar {
+  border-radius: 6px;
+  padding: 4px 16px;
+  height: 40px;
 }

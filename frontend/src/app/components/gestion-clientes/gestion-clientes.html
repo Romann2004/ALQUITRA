@@ -1,9 +1,60 @@
 <div class="container">
-  <h1>Gestión de Clientes</h1>
+  
+  <div class="page-header">
+    <div class="header-icon">
+      <mat-icon>groups</mat-icon>
+    </div>
+    <mat-card-header>
+      <mat-card-title>Gestión de Clientes</mat-card-title>
+    </mat-card-header>
+  </div>
 
-  <div *ngIf="listClientes && listClientes.length >= 0; else cargando">
+  <mat-card class="form-card" style="margin-bottom: 20px; padding: 20px;">
+    <mat-card-header>
+      <mat-card-title>{{ modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente' }}</mat-card-title>
+    </mat-card-header>
     
-    <table mat-table [dataSource]="listClientes" class="mat-elevation-z8">
+    <mat-card-content>
+      <form [formGroup]="clienteForm" (ngSubmit)="guardarCliente()" class="cliente-form">
+        
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="nombre" placeholder="Ej. Juan Pérez">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>DNI</mat-label>
+          <input matInput formControlName="dni" type="number">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="telefono">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email">
+        </mat-form-field>
+        
+        <br>
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="clienteForm.invalid" class="btn-accion">
+            <mat-icon>{{ modoEdicion ? 'sync' : 'save' }}</mat-icon>
+            {{ modoEdicion ? 'Actualizar' : 'Guardar Cliente' }}
+          </button>
+          
+          <button mat-stroked-button type="button" *ngIf="modoEdicion" (click)="cancelarEdicion()" color="warn" class="btn-cancelar">
+            <mat-icon>close</mat-icon>
+            Cancelar
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+  <div *ngIf="listClientes && listClientes.length >= 0; else cargando">
+    <table mat-table [dataSource]="listClientes" class="mat-elevation-z8" style="width: 100%;">
       
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef> ID </th>
@@ -30,14 +81,23 @@
         <td mat-cell *matCellDef="let element"> {{element.email}} </td>
       </ng-container>
 
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="blue" (click)="editarCliente(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminarCliente(element.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
-
   </div>
-
   <ng-template #cargando>
-    <p>Conectando con el servidor...</p>
+    <p>Conectando con el servidor o no hay clientes registrados...</p>
   </ng-template>
 </div>

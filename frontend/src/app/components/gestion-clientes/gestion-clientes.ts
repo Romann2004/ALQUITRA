@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Cliente } from '../../services/cliente';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-gestion-clientes',
@@ -20,7 +21,8 @@ export class GestionClientes implements OnInit {
   constructor(
     private _cliente: Cliente,
     private cdr: ChangeDetectorRef,
-    private fb: FormBuilder 
+    private fb: FormBuilder ,
+    private _snackBar: MatSnackBar
   ) { 
     // Inicializamos el formulario con validaciones
     this.clienteForm = this.fb.group({
@@ -58,12 +60,20 @@ export class GestionClientes implements OnInit {
 
       this._cliente.patchCliente(cliente.id, body).subscribe({
         next: () => {
-          console.log('Actualizado con éxito');
-          //alert(`${campo} actualizado con éxito`);
+          this._snackBar.open('¡Cambio Guardado!', 'Cerrar', {
+            duration: 3000,
+            panelClass: ['snack-exito'],
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+          });
         },
         error: () => {
-          console.log('Error al actualizar');
-          //alert('Error al actualizar');
+          this._snackBar.open('Error al guardar el cambio. Intenta nuevamente,', 'Cerrar', {
+            duration: 3000,
+            panelClass: ['snack-error'],
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+          });
           this.obtenerClientes(); // Si falla, volvemos al valor anterior
         }
       });

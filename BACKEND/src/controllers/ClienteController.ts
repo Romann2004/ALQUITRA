@@ -54,6 +54,32 @@ export const putCliente = async (req: Request<{ id: string }>, res: Response) =>
   }
 };
 
+export const patchCliente = async (req: Request<{id: string}>, res: Response) => {
+    const { id } = req.params;
+    const camposCambiados = req.body; // Ejemplo {telefono: '3462 554477'}
+
+    try {
+        const cliente: any = await Cliente.findByPk(id);
+        if (!cliente) {
+            return res.status(404).json({ msg: 'Cliente no encontrado' });
+        }
+        
+        // Actualizamos solo lo que viene en el body
+        await cliente.update(camposCambiados);
+
+        await Log.create({
+            accion: 'ACTUALIZAR_PARCIAL_CLIENTE',
+            descripcion: `Se actualizó parcialmente el cliente ${cliente.nombre}`,
+            metadata: { clienteId: cliente.id },
+        });
+
+        return res.json({ msg: 'Cliente actualizado parcialmente con éxito', cliente });
+
+    } catch (error) {
+        return res.status(500).json({ msg: 'Error al actualizar parcialmenteel cliente', error });
+    }
+}
+
 export const deleteCliente = async (req: Request<{ id: string }>, res: Response) => {
     const { id } = req.params;
 

@@ -31,6 +31,10 @@ export class Cliente {
     return this.http.put(`${this.apiUrl}/${id}`, cliente, { headers: this.getHeaders() });
   }
 
+  patchCliente(id: number, cambios: any): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}`, cambios, { headers: this.getHeaders() });
+  }
+
   deleteCliente(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }

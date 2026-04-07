@@ -15,6 +15,7 @@ export class GestionClientes implements OnInit {
   clienteForm: FormGroup;
   modoEdicion: boolean = false;
   clienteIdActual: number | null = null;
+  cargando: boolean = false;
 
   constructor(
     private _cliente: Cliente,
@@ -43,6 +44,34 @@ export class GestionClientes implements OnInit {
       error: (e) => console.error('Error al cargar clientes', e)
     });
   }
+
+  guardarCambio(cliente: any, campo: string) {
+    // 1. Identificamos el nombre de la variable que controla el input (ej: editNombre)
+    const fieldName = 'edit' + campo.charAt(0).toUpperCase() + campo.slice(1);
+
+    // 2. Si por alguna razón el campo ya está en false, salimos para evitar el doble disparo
+    if (cliente[fieldName] === true) {
+          
+      cliente[fieldName] = false;
+
+      const body = { [campo]: cliente[campo] };
+
+      this._cliente.patchCliente(cliente.id, body).subscribe({
+        next: () => {
+          console.log('Actualizado con éxito');
+          //alert(`${campo} actualizado con éxito`);
+        },
+        error: () => {
+          console.log('Error al actualizar');
+          //alert('Error al actualizar');
+          this.obtenerClientes(); // Si falla, volvemos al valor anterior
+        }
+      });
+    }
+  }
+
+
+
 
   // --- FUNCIONES DEL FORMULARIO ---
 

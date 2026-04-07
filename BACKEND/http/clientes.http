@@ -1,15 +1,44 @@
 ### Crear Cliente
 POST http://localhost:3000/api/clientes
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJMZW9uZWwiLCJpYXQiOjE3NzUzMzU4ODcsImV4cCI6MTc3NTM1MDI4N30.vC6L-s5PqIKEjn7DMY-u_zozS-J2DgAuU8MNmUTvKpo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTQ5NzQ3NywiZXhwIjoxNzc1NTExODc3fQ.J5BCRcu7TIqzm1-iQm9ngKk37fsZ6Ftog0freGolVgQ
 
 {
-    "nombre": "Pablo Perez",
-    "dni": "20548975",
-    "telefono": "28895123456",
-    "email": "pablo@correo.com"
+    "nombre": "German Salomón",
+    "dni": "85574469",
+    "telefono": "3462578996",
+    "email": "Gersal@gmail.com"
 }
 
 ### Obtener Clientes
 GET http://localhost:3000/api/clientes
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTA1MTM1MCwiZXhwIjoxNzc1MDY1NzUwfQ.fZkNOHgHsFvLbrcwMrbkJM4XNMsVkI7dLLOGNH1KIG4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTQ5NzQ3NywiZXhwIjoxNzc1NTExODc3fQ.J5BCRcu7TIqzm1-iQm9ngKk37fsZ6Ftog0freGolVgQ
+
+### Obtener cliente por id
+GET http://localhost:3000/api/clientes/3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTQ5NzQ3NywiZXhwIjoxNzc1NTExODc3fQ.J5BCRcu7TIqzm1-iQm9ngKk37fsZ6Ftog0freGolVgQ
+
+### Actualizar cliente
+PUT http://localhost:3000/api/clientes/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTQ5NzQ3NywiZXhwIjoxNzc1NTExODc3fQ.J5BCRcu7TIqzm1-iQm9ngKk37fsZ6Ftog0freGolVgQ
+
+{
+    "nombre": "Juan Pereyra",
+    "dni": "44240469",
+    "telefono": "3462578996",
+    "email": "JuanPe@gmail.com"
+}
+
+### Actualizar cliente parcialmente
+PATCH http://localhost:3000/api/clientes/3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTQ5NzQ3NywiZXhwIjoxNzc1NTExODc3fQ.J5BCRcu7TIqzm1-iQm9ngKk37fsZ6Ftog0freGolVgQ
+
+{
+    "telefono": "3462 606009"
+}
+
+### Eliminar cliente
+DELETE http://localhost:3000/api/clientes/4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTQ5NzQ3NywiZXhwIjoxNzc1NTExODc3fQ.J5BCRcu7TIqzm1-iQm9ngKk37fsZ6Ftog0freGolVgQ

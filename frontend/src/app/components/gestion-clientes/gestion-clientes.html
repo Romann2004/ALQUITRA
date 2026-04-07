@@ -63,22 +63,58 @@
 
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef> Nombre </th>
-        <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+        <td mat-cell *matCellDef="let element">
+          <span (dblclick)="element.editNombre = true" *ngIf="!element.editNombre">
+            {{element.nombre}}
+          </span>
+          <input *ngIf="element.editNombre"
+                 [(ngModel)]="element.nombre"
+                 (keyup.enter)="guardarCambio(element, 'nombre')"
+                 (blur)="guardarCambio(element, 'nombre')"
+                 class="edit-input">
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="dni">
         <th mat-header-cell *matHeaderCellDef> DNI </th>
-        <td mat-cell *matCellDef="let element"> {{element.dni}} </td>
+        <td mat-cell *matCellDef="let element">
+          <span (dblclick)="element.editDni = true" *ngIf="!element.editDni">
+            {{element.dni}}
+          </span>
+          <input *ngIf="element.editDni"
+                 [(ngModel)]="element.dni"
+                 (keyup.enter)="guardarCambio(element, 'dni')"
+                 (blur)="guardarCambio(element, 'dni')"
+                 class="edit-input">
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="telefono">
         <th mat-header-cell *matHeaderCellDef> Teléfono </th>
-        <td mat-cell *matCellDef="let element"> {{element.telefono}} </td>
+        <td mat-cell *matCellDef="let element">
+          <span (dblclick)="element.editTelefono = true" *ngIf="!element.editTelefono">
+            {{element.telefono}}
+          </span>
+          <input *ngIf="element.editTelefono"
+                 [(ngModel)]="element.telefono"
+                 (keyup.enter)="guardarCambio(element, 'telefono')"
+                 (blur)="guardarCambio(element, 'telefono')"
+                 class="edit-input">
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="email">
         <th mat-header-cell *matHeaderCellDef> Email </th>
-        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+        <td mat-cell *matCellDef="let element">
+          <span (dblclick)="element.editEmail = true" *ngIf="!element.editEmail">
+            {{element.email}}
+          </span>
+          <input *ngIf="element.editEmail"
+                 [(ngModel)]="element.email"
+                 (keyup.enter)="guardarCambio(element, 'email')"
+                 (blur)="guardarCambio(element, 'email')"
+                 class="edit-input">
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="acciones">

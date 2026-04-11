@@ -5,6 +5,7 @@ import TrajeRoutes from './routes/TrajeRoutes';
 import authRoutes from './routes/AuthRoutes';
 import dashboardRoutes from './routes/DashboardRoutes';
 import routerClientes from './routes/ClienteRoutes';
+import ReservaRoutes from './routes/ReservaRoutes';
 
 // Configuración inicial
 const app = express();
@@ -17,6 +18,7 @@ app.use('/api/trajes', TrajeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/clientes', routerClientes);
+app.use('/api/reservas', ReservaRoutes );
 
 // Ruta de prueba
 app.get('/api/status', (req, res) => {
@@ -38,6 +40,7 @@ async function bootstrap() {
 
         //Sincronizar tablas
         await sequelize.sync({ force: false });
+        console.log("Tablas sincronizadas con la DB.");
         console.log('Modelos sincronizados con la DB')
 
         //Abrir el puerto

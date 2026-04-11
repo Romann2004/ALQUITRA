@@ -8,13 +8,24 @@ mat-form-field {
   z-index: 9999 !important;
 }
 
-/* styles.css */
 .snack-exito {
-  background-color: #2e7d32 !important; /* Verde */
-  color: white !important;
+  /* Estas variables sobreescriben el color interno del componente */
+  --mdc-snackbar-container-color: #2e7d32 !important;
+  --mdc-snackbar-label-text-color: white !important;
+  --mat-snack-bar-button-color: white !important;
+}
+
+/* Por si acaso las variables no bastan, atacamos la clase interna */
+.snack-exito .mdc-snackbar__surface {
+  background-color: #2e7d32 !important;
 }
 
 .snack-error {
-  background-color: #d32f2f !important; /* Rojo */
-  color: white !important;
+  --mdc-snackbar-container-color: #d32f2f !important;
+  --mdc-snackbar-label-text-color: white !important;
+  --mat-snack-bar-button-color: white !important;
+}
+
+.snack-error .mdc-snackbar__surface {
+  background-color: #d32f2f !important;
 }

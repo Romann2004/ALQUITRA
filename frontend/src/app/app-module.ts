@@ -14,6 +14,7 @@ import { MatListModule } from '@angular/material/list';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { App } from './app';
 import { Home } from './components/home/home';
@@ -21,6 +22,8 @@ import { GestionTrajesComponent } from './components/gestion-trajes/gestion-traj
 import { Login } from './components/login/login';
 import { Dashboard } from './components/dashboard/dashboard';
 import { GestionClientes } from './components/gestion-clientes/gestion-clientes';
+import { ListadoReservas } from './components/listado-reservas/listado-reservas';
+import { authInterceptor } from './helpers/auth-interceptor';
 
 
 @NgModule({
@@ -30,7 +33,8 @@ import { GestionClientes } from './components/gestion-clientes/gestion-clientes'
     Dashboard,
     Login,
     GestionClientes,
-    GestionTrajesComponent
+    GestionTrajesComponent,
+    ListadoReservas
   ],
   imports: [
     BrowserModule,
@@ -51,7 +55,7 @@ import { GestionClientes } from './components/gestion-clientes/gestion-clientes'
     MatListModule,
     MatSnackBarModule
   ],
-  providers: [provideAnimations(), provideBrowserGlobalErrorListeners() ],
+  providers: [provideAnimations(), provideBrowserGlobalErrorListeners(), { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true } ],
   bootstrap: [App]
 })
 export class AppModule { }

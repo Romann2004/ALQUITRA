@@ -9,11 +9,11 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "codigoEtiqueta": "SMOK-003",
-  "talle": "26",
-  "color": "Verde Agua",
+  "codigoEtiqueta": "SMOK-006",
+  "talle": "38",
+  "color": "Blanco",
   "categoria": "Smoking",
-  "precioAlquilerBase": 36000.00
+  "precioAlquilerBase": 25700.00
 }
 
 ### Prueba 2: Obtener todos los trajes

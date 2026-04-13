@@ -59,11 +59,12 @@ export const postReserva = async (req: Request, res: Response) => {
 
 export const getReservas = async (req: Request, res: Response) => {
     try {
+
         const reservas = await Reserva.findAll({
-            /*include: [
-                { model: Cliente, attributes: ['nombre', 'apellido', 'dni'] },
-                { model: Traje, attributes: ['nombre', 'talle', 'color'] }
-            ]*/
+            include: [
+                { model: Cliente, attributes: ['nombre', 'dni'] },
+                { model: Traje, attributes: ['categoria', 'talle', 'color'] }
+            ]
         });
         res.json(reservas);
     } catch (error) {

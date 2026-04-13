@@ -5,6 +5,7 @@ import { GestionTrajesComponent } from './components/gestion-trajes/gestion-traj
 import { authGuard } from './guards/auth-guard';
 import { Dashboard } from './components/dashboard/dashboard';
 import { GestionClientes } from './components/gestion-clientes/gestion-clientes';
+import { ListadoReservas } from './components/listado-reservas/listado-reservas';
 
 const routes: Routes = [
   { path: 'login', component: Login },
@@ -15,6 +16,7 @@ const routes: Routes = [
     canActivate: [authGuard]  
   },
   { path: 'gestion-clientes', component: GestionClientes, canActivate: [authGuard] },
+  { path: 'reservas', component: ListadoReservas },
   
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }

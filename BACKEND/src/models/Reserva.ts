@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db";
 import Cliente from "./Cliente";
 import { Traje } from "./Traje";
+import { EstadoReserva } from "./Enums";
 
 const Reserva = sequelize.define('reserva', {
     id: {
@@ -23,8 +24,9 @@ const Reserva = sequelize.define('reserva', {
         allowNull: false
     },
     estado: {
-        type: DataTypes.ENUM('PENDIENTE', 'RETIRADO', 'COMPLETADO', 'CANCELADO'),
-        defaultValue: 'PENDIENTE'
+        type: DataTypes.ENUM(...Object.values(EstadoReserva)),
+        defaultValue: EstadoReserva.PENDIENTE,
+        allowNull: false
     },
     senia: {
         type: DataTypes.DECIMAL(10, 2),

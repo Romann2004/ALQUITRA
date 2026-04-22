@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>{{ data ? 'Editar Reserva' : 'Nueva Reserva' }}</h2>
+
+<mat-dialog-content [formGroup]="form">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Cliente</mat-label>
+    <mat-select formControlName="clienteId">
+      <mat-option *ngFor="let c of listClientes" [value]="c.id">{{c.nombre}} {{c.apellido}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Traje</mat-label>
+    <mat-select formControlName="trajeId">
+      <mat-option *ngFor="let t of listTrajes" [value]="t.id">{{t.categoria}} - Talle {{t.talle}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Fecha de Retiro</mat-label>
+    <input matInput type="date" formControlName="fechaRetiro">
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+</mat-dialog-actions>

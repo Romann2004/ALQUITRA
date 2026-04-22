@@ -22,5 +22,13 @@ export class ReservaService {
 
   addReserva(reserva: Reserva): Observable<any> {
     return this.http.post<Reserva>(`${this.myAppUrl}${this.myApiUrl}`, reserva);
-  }  
+  }
+
+  updateReserva(id: number, reserva: any): Observable<any> {
+    return this.http.put<any>(`${this.myAppUrl}${this.myApiUrl}/${id}`, reserva);
+  }
+  
+  deleteReserva(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.myAppUrl}${this.myApiUrl}/${id}`);
+  }
 }

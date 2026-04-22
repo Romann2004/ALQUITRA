@@ -11,6 +11,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatListModule } from '@angular/material/list';
+import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -24,6 +25,7 @@ import { Dashboard } from './components/dashboard/dashboard';
 import { GestionClientes } from './components/gestion-clientes/gestion-clientes';
 import { ListadoReservas } from './components/listado-reservas/listado-reservas';
 import { authInterceptor } from './helpers/auth-interceptor';
+import { FormReserva } from './components/form-reserva/form-reserva';
 
 
 @NgModule({
@@ -34,7 +36,8 @@ import { authInterceptor } from './helpers/auth-interceptor';
     Login,
     GestionClientes,
     GestionTrajesComponent,
-    ListadoReservas
+    ListadoReservas,
+    FormReserva
   ],
   imports: [
     BrowserModule,
@@ -53,7 +56,8 @@ import { authInterceptor } from './helpers/auth-interceptor';
     MatSidenavModule,
     MatToolbarModule,
     MatListModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDialogModule
   ],
   providers: [provideAnimations(), provideBrowserGlobalErrorListeners(), { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true } ],
   bootstrap: [App]

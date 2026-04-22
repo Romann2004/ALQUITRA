@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import Reserva from "../models/Reserva";
 import { Traje } from "../models/Traje";
 import { Op } from "sequelize";
 import { Log } from "../models/Log";
+import Reserva from "../models/Reserva";
 import Cliente from "../models/Cliente";
 
 export const postReserva = async (req: Request, res: Response) => {
@@ -69,5 +69,57 @@ export const getReservas = async (req: Request, res: Response) => {
         res.json(reservas);
     } catch (error) {
         res.status(500).json({ msg: 'Error al obtener reservas', error });
+    }
+}
+
+export const updateReserva = async (req: Request, res: Response) => {
+    const id = req.params.id as string; 
+
+    try {
+        const reserva = await Reserva.findByPk(id) as any;
+        if (!reserva) {
+            return res.status(404).json({ msg: 'No existe esa reserva' });
+        }
+       
+        await reserva.update(req.body);
+        
+        res.json({ msg: 'Reserva actualizada', reserva });
+    } catch (error) {
+        console.error("Error técnico:", error);
+        res.status(500).json({ msg: 'Error al actualizar la reserva', error });
+    }
+};
+
+export const updateEstadoReserva = async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const { estado } = req.body;
+
+    const estadosValidos = ['PENDIENTE', 'RETIRADO', 'COMPLETADO', 'CANCELADO'];
+    if (!estadosValidos.includes(estado)) {
+        return res.status(400).json({ msg: 'Estado no válido' });
+    }
+
+    try {
+        const reserva = await Reserva.findByPk(id);
+        if (!reserva) return res.status(404).json({ msg: 'No existe esa reserva' });
+
+        await reserva.update({ estado });
+        res.json({ msg: 'Estado actualizado' });
+    } catch (error) {
+        res.status(500).json({ msg: 'Error al cambiar el estado de la reserva' });
+    }
+};
+
+export const deleteReserva = async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    try {
+        const reserva = await Reserva.findByPk(id);
+        if (!reserva) {
+            return res.status(404).json({ msg: 'No existe una reserva con ese id' });
+        }
+        await reserva.destroy();
+        res.json({ msg: 'Reserva eliminada con éxito' });
+    } catch (error) {
+        res.status(500).json({ msg: 'Error al eliminar la reserva', error });
     }
 }

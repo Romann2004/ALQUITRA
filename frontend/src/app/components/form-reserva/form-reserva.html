@@ -3,21 +3,45 @@
 <mat-dialog-content [formGroup]="form">
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Cliente</mat-label>
-    <mat-select formControlName="clienteId">
-      <mat-option *ngFor="let c of listClientes" [value]="c.id">{{c.nombre}} {{c.apellido}}</mat-option>
+    <mat-select formControlName="clienteId" [compareWith]="compararObjetos">
+      <mat-option *ngFor="let c of listClientes" [value]="c.id">
+        {{c.nombre}} {{c.apellido}}
+      </mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Traje</mat-label>
-    <mat-select formControlName="trajeId">
-      <mat-option *ngFor="let t of listTrajes" [value]="t.id">{{t.categoria}} - Talle {{t.talle}}</mat-option>
+    <mat-select formControlName="trajeId" [compareWith]="compararObjetos">
+      <mat-option *ngFor="let t of listTrajes" [value]="t.id">
+        {{t.categoria}} - Talle {{t.talle}}
+      </mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Fecha de Retiro</mat-label>
     <input matInput type="date" formControlName="fechaRetiro">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Fecha de Devolución</mat-label>
+    <input matInput type="date" formControlName="fechaDevolucion">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Seña</mat-label>
+    <input matInput type="number" formControlName="senia">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Estado</mat-label>
+    <mat-select formControlName="estado">
+      <mat-option value="PENDIENTE">PENDIENTE</mat-option>
+      <mat-option value="RETIRADO">RETIRADO</mat-option>
+      <mat-option value="COMPLETADO">COMPLETADO</mat-option>
+      <mat-option value="CANCELADO">CANCELADO</mat-option>
+    </mat-select>
   </mat-form-field>
 </mat-dialog-content>
 

@@ -12,7 +12,7 @@ import { FormReserva } from '../form-reserva/form-reserva';
   styleUrl: './listado-reservas.css',
 })
 export class ListadoReservas implements OnInit {
-  displayedColumns: string[] = ['id', 'cliente', 'traje', 'fechaRetiro', 'estado', 'acciones'];
+  displayedColumns: string[] = ['id', 'cliente', 'traje', 'fechaRetiro', 'estado', 'fechaDevolucion', 'senia', 'acciones'];
 
   dataSource!: MatTableDataSource<Reserva>;
 
@@ -37,11 +37,18 @@ export class ListadoReservas implements OnInit {
     })
   }
 
+  // agregarReserva() {
+  //   const dialogRef = this.dialog.open(FormReserva, { width: '500px' });
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (result) this.obtenerReservas(); // Si se creó, recargamos la tabla
+  //   });
+  // }
+
   agregarReserva() {
-    const dialogRef = this.dialog.open(FormReserva, { width: '500px' });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) this.obtenerReservas(); // Si se creó, recargamos la tabla
-    });
+    this.dialog.open(FormReserva, { 
+      width: '500px', 
+      data: null // Esto le dice al formulario que NO estamos editando
+    }).afterClosed().subscribe(() => this.obtenerReservas());
   }
 
   editarReserva(reserva: any) {

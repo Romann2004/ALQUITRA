@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'; 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReservaService } from '../../services/reserva.service';
@@ -38,29 +38,32 @@ export class FormReserva implements OnInit {
   }
 
   ngOnInit() {
-    // 1. Cargamos todo en paralelo
-    forkJoin([
-      this._clienteService.getClientes(),
-      this._trajeService.getTrajes()
-    ]).subscribe(([clientes, trajes]) => {
-      this.listClientes = Array.isArray(clientes) ? clientes : (clientes.clientes || []);
-      this.listTrajes = Array.isArray(trajes) ? trajes : (trajes.trajes || []);
 
-      // 2. UNA VEZ QUE TENEMOS LAS LISTAS, parcheamos
-      if (this.data) {
-        this.form.patchValue({
-          clienteId: this.data.Cliente?.id,
-          trajeId: this.data.Traje?.id,
-          fechaRetiro: this.data.fechaRetiro,
-          fechaDevolucion: this.data.fechaDevolucion,
-          senia: this.data.senia,
-          estado: this.data.estado
-        });
-      }
+    // 1. Cargamos las listas siempre
+    this._clienteService.getClientes().subscribe(res => {
+      this.listClientes = Array.isArray(res) ? res : (res.clientes || []);
+      // Si ya tenemos datos de edición, intentamos parchear tras cargar la lista
+      if (this.data) this.patchFormData();
+    });
+    
+    this._trajeService.getTrajes().subscribe(res => {
+      this.listTrajes = Array.isArray(res) ? res : (res.trajes || []);
+      // Si ya tenemos datos de edición, intentamos parchear tras cargar la lista
+      if (this.data) this.patchFormData();
     });
   }
 
-  ngAfterViewInit() {
+  // 3. Método auxiliar para evitar repetición
+  patchFormData() {
+    this.form.patchValue({
+      clienteId: this.data.Cliente?.id,
+      trajeId: this.data.Traje?.id,
+      fechaRetiro: this.data.fechaRetiro,
+      fechaDevolucion: this.data.fechaDevolucion,
+      senia: this.data.senia,
+      estado: this.data.estado
+    });
+
     this.cdr.detectChanges();
   }
 

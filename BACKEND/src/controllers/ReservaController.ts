@@ -82,6 +82,7 @@ export const updateReserva = async (req: Request, res: Response) => {
         }
        
         await reserva.update(req.body);
+        await registrarLog('ACTUALIZAR_RESERVA', Number(id), 'Se actualizó la reserva')
         
         res.json({ msg: 'Reserva actualizada', reserva });
     } catch (error) {
@@ -104,6 +105,7 @@ export const updateEstadoReserva = async (req: Request, res: Response) => {
         if (!reserva) return res.status(404).json({ msg: 'No existe esa reserva' });
 
         await reserva.update({ estado });
+        await registrarLog('ACTUALIZAR_ESTADO_RESERVA', Number(id), `Se actualizó el estado de la reserva a ${estado}`);
         res.json({ msg: 'Estado actualizado' });
     } catch (error) {
         res.status(500).json({ msg: 'Error al cambiar el estado de la reserva' });
@@ -118,8 +120,17 @@ export const deleteReserva = async (req: Request, res: Response) => {
             return res.status(404).json({ msg: 'No existe una reserva con ese id' });
         }
         await reserva.destroy();
+        await registrarLog('ELIMINAR_RESERVA', Number(id), 'Se eliminó la reserva');
         res.json({ msg: 'Reserva eliminada con éxito' });
     } catch (error) {
         res.status(500).json({ msg: 'Error al eliminar la reserva', error });
     }
+}
+
+const registrarLog = async (accion: string, id: number, detalle: string) => {
+    await Log.create({
+        accion,
+        descripcion: `Reserva #${id}: ${detalle}`,
+        metadata: { reservaId: id }
+    });
 }

@@ -37,13 +37,6 @@ export class ListadoReservas implements OnInit {
     })
   }
 
-  // agregarReserva() {
-  //   const dialogRef = this.dialog.open(FormReserva, { width: '500px' });
-  //   dialogRef.afterClosed().subscribe(result => {
-  //     if (result) this.obtenerReservas(); // Si se creó, recargamos la tabla
-  //   });
-  // }
-
   agregarReserva() {
     this.dialog.open(FormReserva, { 
       width: '500px', 

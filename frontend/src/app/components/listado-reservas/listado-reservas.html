@@ -44,7 +44,9 @@
 
     <ng-container matColumnDef="fechaDevolucion">
       <th mat-header-cell *matHeaderCellDef> Fecha Devolución </th>
-      <td mat-cell *matCellDef="let element"> {{element.fechaDevolucion | date:'shortDate'}} </td>
+      <td mat-cell *matCellDef="let element">
+        {{element.fechaDevolucion | date:'dd/MM/yyyy'}}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="senia">

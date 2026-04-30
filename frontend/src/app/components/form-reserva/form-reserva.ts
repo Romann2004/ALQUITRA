@@ -1,10 +1,9 @@
-import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'; 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReservaService } from '../../services/reserva.service';
 import { TrajeService } from '../../services/traje.service';
 import { Cliente } from '../../services/cliente';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-form-reserva',
@@ -23,7 +22,6 @@ export class FormReserva implements OnInit {
     private _reservaService: ReservaService,
     private _clienteService: Cliente,
     private _trajeService: TrajeService,
-    private cdr: ChangeDetectorRef,
     public dialogRef: MatDialogRef<FormReserva>,
     @Inject(MAT_DIALOG_DATA) public data: any // Aquí llega la reserva si es editar
   ) {
@@ -38,33 +36,29 @@ export class FormReserva implements OnInit {
   }
 
   ngOnInit() {
-
-    // 1. Cargamos las listas siempre
+    // Cargamos listas y al terminar intentamos parchear
     this._clienteService.getClientes().subscribe(res => {
       this.listClientes = Array.isArray(res) ? res : (res.clientes || []);
-      // Si ya tenemos datos de edición, intentamos parchear tras cargar la lista
-      if (this.data) this.patchFormData();
+      this.verificarParcheo();
     });
-    
+
     this._trajeService.getTrajes().subscribe(res => {
       this.listTrajes = Array.isArray(res) ? res : (res.trajes || []);
-      // Si ya tenemos datos de edición, intentamos parchear tras cargar la lista
-      if (this.data) this.patchFormData();
-    });
+      this.verificarParcheo();
+    });    
   }
 
-  // 3. Método auxiliar para evitar repetición
-  patchFormData() {
-    this.form.patchValue({
-      clienteId: this.data.Cliente?.id,
-      trajeId: this.data.Traje?.id,
-      fechaRetiro: this.data.fechaRetiro,
-      fechaDevolucion: this.data.fechaDevolucion,
-      senia: this.data.senia,
-      estado: this.data.estado
-    });
-
-    this.cdr.detectChanges();
+  verificarParcheo() {
+    if (this.data && this.listClientes.length > 0 && this.listTrajes.length > 0) {
+      this.form.patchValue({
+        clienteId: this.data.clienteId,
+        trajeId: this.data.trajeId,
+        fechaRetiro: this.data.fechaRetiro.split('T')[0],
+        fechaDevolucion: this.data.fechaDevolucion.split('T')[0],
+        senia: this.data.senia,
+        estado: this.data.estado
+      });
+    }  
   }
 
   guardar() {
@@ -89,8 +83,8 @@ export class FormReserva implements OnInit {
     }
   }
 
-  compararObjetos(o1: any, o2: any) {
+  compararObjetos(o1: any, o2: any): boolean {
     // Comparamos el valor del control con el ID de la opción
-    return o1 === o2;
+    return o1 == o2;
   }
 }

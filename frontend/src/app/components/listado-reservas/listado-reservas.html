@@ -5,7 +5,7 @@
     <button mat-raised-button color="accent" (click)="agregarReserva()">Nueva Reserva</button>
   </mat-toolbar>
 
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" #miTabla class="mat-elevation-z8">
 
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef> Nro. </th>

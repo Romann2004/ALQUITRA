@@ -16,6 +16,8 @@ export class FormReserva implements OnInit {
   form: FormGroup;
   listClientes: any[] = [];
   listTrajes: any[] = [];
+
+  fechaMinima = new Date(); // Esto hace referencia al día y hora actual
   
   constructor(
     private fb: FormBuilder,
@@ -30,9 +32,9 @@ export class FormReserva implements OnInit {
       trajeId: ['', Validators.required],
       fechaRetiro: ['', Validators.required],
       fechaDevolucion: ['', Validators.required],
-      senia: [0, Validators.required],
-      estado: ['PENDIENTE', Validators.required]
-    });
+      senia: [0, [Validators.required, Validators.min(0)]],
+      estado: [{value: 'PENDIENTE', disabled: true}, Validators.required]
+    }, { validators: this.fechasValidas }); // Es un validador de grupo
   }
 
   ngOnInit() {
@@ -45,7 +47,25 @@ export class FormReserva implements OnInit {
     this._trajeService.getTrajes().subscribe(res => {
       this.listTrajes = Array.isArray(res) ? res : (res.trajes || []);
       this.verificarParcheo();
-    });    
+    });
+
+    if (!this.data) {
+      this.form.get('estado')?.setValue('PENDIENTE');
+      this.form.get('estado')?.disable();
+    } else {
+      this.form.get('estado')?.enable();
+      this.form.patchValue({ estado: this.data.estado });
+    }
+  }
+
+  fechasValidas(group: FormGroup) {
+    const retiro = group.get('fechaRetiro')?.value;
+    const devolucion = group.get('fechaDevoución')?.value;
+
+    if (retiro && devolucion && new Date(devolucion) <= new Date(retiro)) {
+      return { fechaInvalida: true };
+    }
+    return null;
   }
 
   verificarParcheo() {
@@ -63,23 +83,25 @@ export class FormReserva implements OnInit {
 
   guardar() {
 
-    console.log("¿Es el form válido?:", this.form.valid);
-    console.log("Errores del form:", this.form.errors);
-    console.log("Valores:", this.form.value);
-
     if (this.form.invalid) {
-      this.form.markAllAsTouched(); // Esto hace que los campos inválidos se pongan rojos
+      this.form.markAllAsTouched();
       alert("Revisá los campos, hay errores de validación.");
       return;
     }
-    
-    if (this.form.invalid) return;
 
-    // Si data existe, es EDITAR, sino es CREAR
+    // USAMOS getRawValue para incluir el estado deshabilitado
+    const reservaData = this.form.getRawValue();
+    
     if (this.data) {
-      this._reservaService.updateReserva(this.data.id, this.form.value).subscribe(() => this.dialogRef.close(true));
+      // EDITAR: enviamos reservaData en lugar de this.form.value
+      this._reservaService.updateReserva(this.data.id, reservaData).subscribe(() => {
+        this.dialogRef.close(reservaData); // Devolvemos el objeto actualizado para la tabla       
+      });
     } else {
-      this._reservaService.addReserva(this.form.value).subscribe(() => this.dialogRef.close(true));
+      // CREAR: enviamos reservaData
+      this._reservaService.addReserva(reservaData).subscribe(() => {
+        this.dialogRef.close(true)
+      });
     }
   }
 

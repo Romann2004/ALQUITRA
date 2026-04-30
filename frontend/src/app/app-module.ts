@@ -12,6 +12,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatListModule } from '@angular/material/list';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -57,7 +59,9 @@ import { FormReserva } from './components/form-reserva/form-reserva';
     MatToolbarModule,
     MatListModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [provideAnimations(), provideBrowserGlobalErrorListeners(), { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true } ],
   bootstrap: [App]

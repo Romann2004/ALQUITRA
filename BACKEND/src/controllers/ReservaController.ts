@@ -7,7 +7,6 @@ import Cliente from "../models/Cliente";
 import { EstadoReserva } from "../models/Enums";
 
 export const postReserva = async (req: Request, res: Response) => {
-  console.log("¡EJECUTANDO EL POST BLINDADO!");
   const { fechaRetiro, fechaDevolucion, senia, clienteId, trajeId } = req.body;
 
   try {

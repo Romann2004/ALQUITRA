@@ -1,40 +1,46 @@
 <div class="container">
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>Buscar Reserva</mat-label>
+    <input matInput (keyup)="aplicarFiltro($event)" placeholder="Ej. Juan Pérez o Traje Azul">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field> 
+
   <mat-toolbar color="primary">
     <span>Listado de Reservas</span>
     <span class="example-spacer"></span>
     <button mat-raised-button color="accent" (click)="agregarReserva()">Nueva Reserva</button>
   </mat-toolbar>
 
-  <table mat-table [dataSource]="dataSource" #miTabla class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort #miTabla class="mat-elevation-z8">
 
     <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef> Nro. </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="id"> Nro. </th>
       <td mat-cell *matCellDef="let element"> {{element.id}} </td>
     </ng-container>
 
     <ng-container matColumnDef="cliente">
-      <th mat-header-cell *matHeaderCellDef> Cliente </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="cliente"> Cliente </th>
       <td mat-cell *matCellDef="let element">
         {{element.Cliente?.nombre}} 
       </td>
     </ng-container>
 
     <ng-container matColumnDef="traje">
-      <th mat-header-cell *matHeaderCellDef> Traje </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="traje"> Traje </th>
       <td mat-cell *matCellDef="let element">
         {{element.Traje?.categoria}} (Talle {{element.Traje?.talle}}) 
       </td>
     </ng-container>
 
     <ng-container matColumnDef="fechaRetiro">
-      <th mat-header-cell *matHeaderCellDef> Fecha Retiro </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaRetiro"> Fecha Retiro </th>
       <td mat-cell *matCellDef="let element">
         {{element.fechaRetiro | date:'dd/MM/yyyy'}}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="estado"> Estado </th>
         <td mat-cell *matCellDef="let element"> 
             <span class="badge" [ngClass]="element.estado.toLowerCase()">
               {{element.estado}}
@@ -43,14 +49,14 @@
     </ng-container>
 
     <ng-container matColumnDef="fechaDevolucion">
-      <th mat-header-cell *matHeaderCellDef> Fecha Devolución </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaDevolucion"> Fecha Devolución </th>
       <td mat-cell *matCellDef="let element">
         {{element.fechaDevolucion | date:'dd/MM/yyyy'}}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="senia">
-      <th mat-header-cell *matHeaderCellDef> Seña </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="senia"> Seña </th>
       <td mat-cell *matCellDef="let element"> ${{element.senia | number:'1.2-2'}} </td>
     </ng-container>
 

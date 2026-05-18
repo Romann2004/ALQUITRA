@@ -14,6 +14,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatSortModule } from '@angular/material/sort';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -56,6 +57,7 @@ import { FormReserva } from './components/form-reserva/form-reserva';
     MatTableModule,
     MatIconModule,
     MatSidenavModule,
+    MatSortModule,
     MatToolbarModule,
     MatListModule,
     MatSnackBarModule,

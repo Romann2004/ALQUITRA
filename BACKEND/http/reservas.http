@@ -3,18 +3,18 @@ GET http://localhost:3000/api/status
 
 ### Obtener todas las reservas
 GET http://localhost:3000/api/reservas
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3Njg4MjIzOCwiZXhwIjoxNzc2ODk2NjM4fQ.bMuOSpA3Z2yfn9DC0ygztebjcxoAAzdQ2rSJvbKI_MM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NzU4MTU1MSwiZXhwIjoxNzc3NTk1OTUxfQ.OlaExQ-sluvIjZT-LIE9tntv41QED0E3UclT52bryTk
 ### Crear una Reserva (Asegurarse de tener el servidor corriendo)
 POST http://localhost:3000/api/reservas
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3Njg4MjIzOCwiZXhwIjoxNzc2ODk2NjM4fQ.bMuOSpA3Z2yfn9DC0ygztebjcxoAAzdQ2rSJvbKI_MM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NzU4MTU1MSwiZXhwIjoxNzc3NTk1OTUxfQ.OlaExQ-sluvIjZT-LIE9tntv41QED0E3UclT52bryTk
 
 {
-    "fechaRetiro": "2026-05-20",
-    "fechaDevolucion": "2026-05-27",
-    "senia": 36780,
-    "clienteId": 2,
-    "trajeId": 1
+    "fechaRetiro": "2026-06-15",
+    "fechaDevolucion": "2026-06-20",
+    "senia": 2000,
+    "clienteId": 7,
+    "trajeId": 7
 }
 
 ### Actualizar una Reserva

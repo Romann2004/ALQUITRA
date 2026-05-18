@@ -1,32 +1,132 @@
 <div class="dashboard-container">
-  <h1>Resumen del Negocio</h1>
+  <header class="dashboard-header">
+    <h1>Resumen del Negocio</h1>
+    <p class="subtitle">Monitoreá el estado actual de los trajes y la tendencia de alquileres.</p>
+  </header>
 
-  <div class="stats-grid">
-    
+  <section class="stats-grid">
     <mat-card class="stat-card total">
       <mat-card-content>
-        <mat-icon>inventory_2</mat-icon>
-        <div class="stat-value">{{ stats.totalTrajes || 0 }}</div>
-        <div class="stat-label">Total Trajes</div>
+        <div class="card-icon-wrapper">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+        <div class="card-info">
+          <span class="stat-label">Total Trajes</span>
+          <h2 class="stat-value">{{ stats.totalTrajes || 0 }}</h2>
+        </div>
       </mat-card-content>
     </mat-card>
 
     <mat-card class="stat-card disponible">
       <mat-card-content>
-        <mat-icon>check_circle</mat-icon>
-        <div class="stat-value">{{ stats.disponibles || 0 }}</div>
-        <div class="stat-label">Disponibles</div>
+        <div class="card-icon-wrapper">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="card-info">
+          <span class="stat-label">Disponibles</span>
+          <h2 class="stat-value">{{ stats.disponibles || 0 }}</h2>
+        </div>
       </mat-card-content>
     </mat-card>
 
     <mat-card class="stat-card alquilado">
       <mat-card-content>
-        <mat-icon>sell</mat-icon>
-        <div class="stat-value">{{ stats.alquilados || 0 }}</div>
-        <div class="stat-label">En Alquiler</div>
+        <div class="card-icon-wrapper">
+          <mat-icon>sell</mat-icon>
+        </div>
+        <div class="card-info">
+          <span class="stat-label">En Alquiler</span>
+          <h2 class="stat-value">{{ stats.alquilados || 0 }}</h2>
+        </div>
       </mat-card-content>
     </mat-card>
+  </section>
+
+  <div class="dashboard-split-layout">
+    
+    <section class="chart-section">
+      <mat-card class="dashboard-card main-chart">
+        <mat-card-content>
+          <apx-chart
+            [series]="chartSeries"
+            [chart]="chartDetails"
+            [xaxis]="chartXAxis"
+            [yaxis]="chartYAxis"
+            [title]="chartTitle"
+            [colors]="chartColors"
+            [plotOptions]="chartPlotOptions"
+            [dataLabels]="chartDataLabels"
+            [grid]="chartGrid"
+            [states]="chartStates">
+          </apx-chart>
+        </mat-card-content>
+      </mat-card>
+    </section>
+
+    <aside class="sidebar-intelligence">
+      
+      <mat-card class="dashboard-card space-bottom">
+        <div class="sidebar-header">
+          <h3>Últimos Alquileres</h3>
+          <span class="badge-info">Actividad</span>
+        </div>
+        
+        <div class="sidebar-content">
+          <div *ngIf="recentReservations.length === 0" class="no-data">
+            No se registran alquileres recientes.
+          </div>
+          
+          <div class="reservation-list" *ngIf="recentReservations.length > 0">
+  <div class="reservation-item" *ngFor="let item of recentReservations">
+    <div class="item-avatar">
+      <mat-icon>person</mat-icon>
+    </div>
+    <div class="item-details">
+      <p class="client-name">{{ item.Cliente?.nombre || 'Cliente no especificado' }}</p>
+      <p class="suit-info">
+        {{ item.Traje?.categoria }} ({{ item.Traje?.color }}) • 
+        <span class="size-badge">Talle {{ item.Traje?.talle }}</span>
+      </p>
+    </div>
+    <div class="item-status">
+      <span class="status-dot" [ngClass]="item.estado?.toLowerCase()"></span>
+      <span class="status-text">{{ item.estado }}</span>
+    </div>
+  </div>
+</div>
+        </div>
+      </mat-card>
+
+      <mat-card class="dashboard-card">
+        <div class="sidebar-header">
+          <h3>Clientes más Fieles</h3>
+          <span class="badge-success">Top Rentas</span>
+        </div>
+        
+        <div class="sidebar-content">
+          <div *ngIf="topClients.length === 0" class="no-data">
+            Aún no hay historial de recurrencia.
+          </div>
+          
+          <div class="top-clients-list" *ngIf="topClients.length > 0">
+  <div class="top-client-item" *ngFor="let client of topClients; let i = index">
+    <div class="rank-badge" [ngClass]="'rank-' + (i + 1)">
+      {{ i + 1 }}°
+    </div>
+    <div class="client-rank-info">
+      <p class="rank-name">{{ client.nombre }}</p>
+      <p class="rank-meta">ID de Cliente: #{{ client.id }}</p>
+    </div>
+    <div class="rank-count">
+      <span class="count-number">{{ client.totalAlquileres || 0 }}</span>
+      <span class="count-label">alquileres</span>
+    </div>
+  </div>
+</div>
+        </div>
+      </mat-card>
+
+    </aside>
 
   </div>
 </div>
-

@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'; 
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReservaService } from '../../services/reserva.service';
 import { TrajeService } from '../../services/traje.service';
@@ -20,6 +21,7 @@ export class FormReserva implements OnInit {
   fechaMinima = new Date(); // Esto hace referencia al día y hora actual
   
   constructor(
+    private _snackBar: MatSnackBar,
     private fb: FormBuilder,
     private _reservaService: ReservaService,
     private _clienteService: Cliente,
@@ -70,11 +72,20 @@ export class FormReserva implements OnInit {
 
   verificarParcheo() {
     if (this.data && this.listClientes.length > 0 && this.listTrajes.length > 0) {
+
+      // Función auxiliar para arreglar el desfase de zona horaria
+      const corregirFecha = (fechaInput: any) => {
+        const d = new Date(fechaInput);
+        // Sumamos el desafase de la zona horaria local en minutos
+        d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+        return d;
+      };
+
       this.form.patchValue({
         clienteId: this.data.clienteId,
         trajeId: this.data.trajeId,
-        fechaRetiro: this.data.fechaRetiro.split('T')[0],
-        fechaDevolucion: this.data.fechaDevolucion.split('T')[0],
+        fechaRetiro: corregirFecha(this.data.fechaRetiro),
+        fechaDevolucion: corregirFecha(this.data.fechaDevolucion),
         senia: this.data.senia,
         estado: this.data.estado
       });
@@ -94,15 +105,41 @@ export class FormReserva implements OnInit {
     
     if (this.data) {
       // EDITAR: enviamos reservaData en lugar de this.form.value
-      this._reservaService.updateReserva(this.data.id, reservaData).subscribe(() => {
-        this.dialogRef.close(reservaData); // Devolvemos el objeto actualizado para la tabla       
+      this._reservaService.updateReserva(this.data.id, reservaData).subscribe({
+        next: (res) => {
+          this.mostrarMensaje('Reserva actualizada con éxito');
+          this.dialogRef.close(reservaData); // Devolvemos el objeto actualizado para la tabla
+        },
+        error: (err) => {
+          // Capturamos el error del back
+          const mensajeError = err.error?.msg || 'Error al actualizar la reserva';
+          this.mostrarMensaje(mensajeError, true);
+        }
       });
     } else {
       // CREAR: enviamos reservaData
-      this._reservaService.addReserva(reservaData).subscribe(() => {
-        this.dialogRef.close(true)
+      this._reservaService.addReserva(reservaData).subscribe({
+        next: (res) => {
+          this.mostrarMensaje('Reserva creada con éxito');
+          this.dialogRef.close(true)
+        },
+        error: (err) => {
+          // Si el traje está ocupado, acá va a llegar el mensaje del backend
+          const mensajeError = err.error.msg || 'Error al crear la reserva';
+          this.mostrarMensaje(mensajeError, true);
+        }
       });
     }
+  }
+
+  // Función auxiliar para no repetir código del SnackBar
+  mostrarMensaje(mensaje: string, esError: boolean = false) {
+    this._snackBar.open(mensaje, 'Cerrar', {
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: esError ? ['error-snackbar'] : ['success-snackbar']
+    });
   }
 
   compararObjetos(o1: any, o2: any): boolean {

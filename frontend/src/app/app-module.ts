@@ -60,7 +60,8 @@ import { NgApexchartsModule } from 'ng-apexcharts';
     MatToolbarModule,
     MatListModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    NgApexchartsModule
   ],
   providers: [provideAnimations(), provideBrowserGlobalErrorListeners(), { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true } ],
   bootstrap: [App]

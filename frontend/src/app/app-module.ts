@@ -29,6 +29,7 @@ import { GestionClientes } from './components/gestion-clientes/gestion-clientes'
 import { ListadoReservas } from './components/listado-reservas/listado-reservas';
 import { authInterceptor } from './helpers/auth-interceptor';
 import { FormReserva } from './components/form-reserva/form-reserva';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 
 @NgModule({
@@ -62,8 +63,7 @@ import { FormReserva } from './components/form-reserva/form-reserva';
     MatListModule,
     MatSnackBarModule,
     MatDialogModule,
-    MatDatepickerModule,
-    MatNativeDateModule
+    NgApexchartsModule
   ],
   providers: [provideAnimations(), provideBrowserGlobalErrorListeners(), { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true } ],
   bootstrap: [App]

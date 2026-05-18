@@ -77,23 +77,23 @@
           </div>
           
           <div class="reservation-list" *ngIf="recentReservations.length > 0">
-  <div class="reservation-item" *ngFor="let item of recentReservations">
-    <div class="item-avatar">
-      <mat-icon>person</mat-icon>
-    </div>
-    <div class="item-details">
-      <p class="client-name">{{ item.Cliente?.nombre || 'Cliente no especificado' }}</p>
-      <p class="suit-info">
-        {{ item.Traje?.categoria }} ({{ item.Traje?.color }}) • 
-        <span class="size-badge">Talle {{ item.Traje?.talle }}</span>
-      </p>
-    </div>
-    <div class="item-status">
-      <span class="status-dot" [ngClass]="item.estado?.toLowerCase()"></span>
-      <span class="status-text">{{ item.estado }}</span>
-    </div>
-  </div>
-</div>
+            <div class="reservation-item" *ngFor="let item of recentReservations">
+              <div class="item-avatar">
+                <mat-icon>person</mat-icon>
+              </div>
+              <div class="item-details">
+                <p class="client-name">{{ item.Cliente?.nombre || 'Cliente no especificado' }}</p>
+                <p class="suit-info">
+                  {{ item.Traje?.categoria }} ({{ item.Traje?.color }}) • 
+                  <span class="size-badge">Talle {{ item.Traje?.talle }}</span>
+                </p>
+              </div>
+              <div class="item-status">
+                <span class="status-dot" [ngClass]="item.estado?.toLowerCase()"></span>
+                <span class="status-text">{{ item.estado }}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </mat-card>
 
@@ -109,20 +109,20 @@
           </div>
           
           <div class="top-clients-list" *ngIf="topClients.length > 0">
-  <div class="top-client-item" *ngFor="let client of topClients; let i = index">
-    <div class="rank-badge" [ngClass]="'rank-' + (i + 1)">
-      {{ i + 1 }}°
-    </div>
-    <div class="client-rank-info">
-      <p class="rank-name">{{ client.nombre }}</p>
-      <p class="rank-meta">ID de Cliente: #{{ client.id }}</p>
-    </div>
-    <div class="rank-count">
-      <span class="count-number">{{ client.totalAlquileres || 0 }}</span>
-      <span class="count-label">alquileres</span>
-    </div>
-  </div>
-</div>
+            <div class="top-client-item" *ngFor="let client of topClients; let i = index">
+              <div class="rank-badge" [ngClass]="'rank-' + (i + 1)">
+                {{ i + 1 }}°
+              </div>
+              <div class="client-rank-info">
+                <p class="rank-name">{{ client.nombre }}</p>
+                <p class="rank-meta">ID de Cliente: #{{ client.id }}</p>
+              </div>
+              <div class="rank-count">
+                <span class="count-number">{{ client.totalAlquileres || 0 }}</span>
+                <span class="count-label">alquileres</span>
+              </div>
+            </div>
+          </div>
         </div>
       </mat-card>
 
@@ -130,3 +130,49 @@
 
   </div>
 </div>
+
+<ng-template #monthDialog>
+  <div class="modal-wrapper">
+    
+    <div class="modal-header">
+      <div>
+        <h3 class="modal-title">Alquileres de {{ selectedMonthName }}</h3>
+        <p class="modal-subtitle">Clientes registrados para este período de facturación.</p>
+      </div>
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div *ngIf="selectedMonthReservations.length === 0" class="modal-no-data">
+        <mat-icon class="no-data-icon">calendar_today</mat-icon>
+        <p>No se encontraron registros de trajes retirados en el mes seleccionado.</p>
+      </div>
+
+      <div class="modal-list" *ngIf="selectedMonthReservations.length > 0">
+        <div class="modal-item" *ngFor="let res of selectedMonthReservations">
+          <div class="modal-avatar">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+          <div class="modal-item-info">
+            <p class="modal-client-name">{{ res.Cliente?.nombre || 'Cliente Anónimo' }}</p>
+            <p class="modal-suit-detail">
+              {{ res.Traje?.categoria }} — <span class="modal-size-tag">Talle {{ res.Traje?.talle }}</span>
+            </p>
+          </div>
+          <span class="modal-badge-status" [ngClass]="res.estado?.toLowerCase()">
+            {{ res.estado }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button mat-flat-button color="primary" mat-dialog-close class="action-confirm-btn">
+        Entendido
+      </button>
+    </div>
+
+  </div>
+</ng-template>

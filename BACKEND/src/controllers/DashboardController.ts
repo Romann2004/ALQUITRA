@@ -24,7 +24,11 @@ export const getDashboardStats = async (req: Request, res: Response) => {
                     [Op.gte]: inicioBusqueda.toISOString().split('T')[0]
                 }
             },
-            attributes: ['fechaRetiro']
+            include: [
+                {model: Cliente, attributes: ['nombre']},
+                {model: Traje, attributes: ['categoria', 'talle', 'color']}
+            ],
+            order: [['fechaRetiro', 'DESC']]
         });
 
         // Últimos 4 alquileres con sus relaciones
@@ -88,7 +92,8 @@ export const getDashboardStats = async (req: Request, res: Response) => {
             },
             historico: {
                 categorias: Object.keys(historicoMap),
-                datos: Object.values(historicoMap)
+                datos: Object.values(historicoMap),
+                rawReservas: reservasRecientes // <-- ¡ESTA ES LA LÍNEA QUE FALTA AGREGAR!
             },
             ultimasReservas,
             clientesFieles

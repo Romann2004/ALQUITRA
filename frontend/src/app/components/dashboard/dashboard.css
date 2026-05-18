@@ -8,8 +8,10 @@
   box-sizing: border-box;
 }
 
-/* Cabecera */
-.dashboard-header { margin-bottom: 32px; }
+/* Cabecera Principal */
+.dashboard-header { 
+  margin-bottom: 32px; 
+}
 .dashboard-header h1 {
   font-size: 2.25rem;
   font-weight: 800;
@@ -17,9 +19,13 @@
   margin: 0 0 6px 0;
   letter-spacing: -0.025em;
 }
-.dashboard-header .subtitle { font-size: 1rem; color: #64748b; margin: 0; }
+.dashboard-header .subtitle { 
+  font-size: 1rem; 
+  color: #64748b; 
+  margin: 0; 
+}
 
-/* Tarjetas Métricas */
+/* Grilla de Tarjetas Métricas */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -33,9 +39,23 @@
   background-color: #ffffff;
   transition: transform 0.2s ease;
 }
-.stat-card:hover { transform: translateY(-4px); }
-mat-card-content { display: flex; align-items: center; padding: 24px !important; gap: 20px; }
-.card-icon-wrapper { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 12px; }
+.stat-card:hover { 
+  transform: translateY(-4px); 
+}
+mat-card-content { 
+  display: flex; 
+  align-items: center; 
+  padding: 24px !important; 
+  gap: 20px; 
+}
+.card-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+}
 mat-icon { font-size: 28px; width: 28px; height: 28px; }
 .card-info { display: flex; flex-direction: column; }
 .stat-label { font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
@@ -48,7 +68,7 @@ mat-icon { font-size: 28px; width: 28px; height: 28px; }
 .alquilado .card-icon-wrapper { background-color: #eef2ff; }
 .alquilado mat-icon { color: #4f46e5; }
 
-/* Layout de dos columnas */
+/* Estructura Split (Dos Columnas Asimétricas) */
 .dashboard-split-layout {
   display: grid;
   grid-template-columns: 1.5fr 1.1fr;
@@ -66,18 +86,30 @@ mat-icon { font-size: 28px; width: 28px; height: 28px; }
   background-color: #ffffff;
   padding: 24px;
 }
-.main-chart mat-card-content { display: block; padding: 8px 0 0 0 !important; }
-.space-bottom { margin-bottom: 24px; }
+.main-chart mat-card-content { 
+  display: block; 
+  padding: 8px 0 0 0 !important; 
+}
+.space-bottom { 
+  margin-bottom: 24px; 
+}
 
-/* Encabezados Sidebar */
-.sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
+/* Encabezados de Paneles Laterales */
+.sidebar-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 18px; 
+  border-bottom: 1px solid #f1f5f9; 
+  padding-bottom: 12px; 
+}
 .sidebar-header h3 { font-size: 1.1rem; font-weight: 700; color: #0f172a; margin: 0; }
 .badge-info, .badge-success { font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
 .badge-info { background-color: #f1f5f9; color: #475569; }
 .badge-success { background-color: #ecfdf5; color: #047857; }
 .no-data { color: #94a3b8; font-size: 0.9rem; text-align: center; padding: 30px 0; }
 
-/* Bloque 1: Lista de Alquileres */
+/* Bloque 1: Lista de Actividad */
 .reservation-list { display: flex; flex-direction: column; gap: 12px; }
 .reservation-item { display: flex; align-items: center; padding: 10px; border-radius: 12px; border: 1px solid transparent; transition: background-color 0.2s; }
 .reservation-item:hover { background-color: #f8fafc; }
@@ -87,7 +119,7 @@ mat-icon { font-size: 28px; width: 28px; height: 28px; }
 .client-name { font-size: 0.95rem; font-weight: 600; color: #1e293b; margin: 0 0 3px 0; }
 .suit-info { font-size: 0.8rem; color: #64748b; margin: 0; }
 
-/* NUEVO: Badge del Talle del Traje */
+/* Badge de Talle */
 .size-badge {
   background-color: #f1f5f9;
   color: #1e293b;
@@ -106,45 +138,73 @@ mat-icon { font-size: 28px; width: 28px; height: 28px; }
 .status-dot.cancelado { background-color: #ef4444; }
 .status-text { font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
 
-/* NUEVO: Bloque 2 - Ranking de Clientes más Fieles */
-.top-clients-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.top-client-item {
-  display: flex;
-  align-items: center;
-  padding: 10px 12px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #f1f5f9;
-}
-.rank-badge {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 0.85rem;
-  margin-right: 14px;
-  flex-shrink: 0;
-}
-/* Colores de podio suaves y modernos */
-.rank-1 { background-color: #fef3c7; color: #d97706; } /* Oro soft */
-.rank-2 { background-color: #f1f5f9; color: #475569; } /* Plata soft */
-.rank-3 { background-color: #ffedd5; color: #ea580c; } /* Bronce soft */
-
+/* Bloque 2: Ranking de Clientes */
+.top-clients-list { display: flex; flex-direction: column; gap: 12px; }
+.top-client-item { display: flex; align-items: center; padding: 10px 12px; background-color: #ffffff; border-radius: 12px; border: 1px solid #f1f5f9; }
+.rank-badge { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; margin-right: 14px; flex-shrink: 0; }
+.rank-1 { background-color: #fef3c7; color: #d97706; }
+.rank-2 { background-color: #f1f5f9; color: #475569; }
+.rank-3 { background-color: #ffedd5; color: #ea580c; }
 .client-rank-info { flex-grow: 1; min-width: 0; }
 .rank-name { font-size: 0.9rem; font-weight: 600; color: #0f172a; margin: 0 0 2px 0; }
 .rank-meta { font-size: 0.75rem; color: #94a3b8; margin: 0; }
-
-.rank-count {
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-}
+.rank-count { text-align: right; display: flex; flex-direction: column; }
 .count-number { font-size: 1.1rem; font-weight: 800; color: #4f46e5; line-height: 1; }
 .count-label { font-size: 0.65rem; color: #64748b; font-weight: 500; }
+
+/* =========================================
+   ESTILOS PREMIUM PARA LA VENTANA EMERGENTE
+   ========================================= */
+
+/* Desenfoque de fondo Gaussiano acoplado al CDK de Angular Material */
+::ng-deep .blur-backdrop {
+  background-color: rgba(15, 23, 42, 0.25) !important;
+  backdrop-filter: blur(8px) !important;
+  transition: backdrop-filter 0.3s ease;
+}
+
+.modal-wrapper {
+  padding: 8px;
+  background-color: #ffffff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.modal-title { font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0 0 4px 0; }
+.modal-subtitle { font-size: 0.85rem; color: #64748b; margin: 0; }
+.close-btn { color: #64748b; margin-top: -4px; }
+
+/* Contenedor escrolleable del modal */
+.modal-body {
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.modal-no-data { text-align: center; padding: 32px 16px; color: #94a3b8; }
+.no-data-icon { font-size: 40px; width: 40px; height: 40px; margin-bottom: 12px; opacity: 0.5; }
+
+/* Tarjetas internas del modal */
+.modal-list { display: flex; flex-direction: column; gap: 12px; }
+.modal-item { display: flex; align-items: center; padding: 12px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; }
+.modal-avatar { color: #4f46e5; margin-right: 12px; display: flex; align-items: center; }
+.modal-avatar mat-icon { font-size: 32px; width: 32px; height: 32px; }
+.modal-item-info { flex-grow: 1; }
+.modal-client-name { font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0 0 2px 0; }
+.modal-suit-detail { font-size: 0.8rem; color: #64748b; margin: 0; }
+.modal-size-tag { font-weight: 700; color: #1e293b; }
+
+/* Etiquetas de estado compactas */
+.modal-badge-status { font-size: 0.65rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.025em; }
+.modal-badge-status.pendiente { background-color: #fef9c3; color: #713f12; }
+.modal-badge-status.retirado { background-color: #dbeafe; color: #1e40af; }
+.modal-badge-status.completado { background-color: #dcfce7; color: #166534; }
+.modal-badge-status.cancelado { background-color: #fee2e2; color: #991b1b; }
+
+.modal-actions { margin-top: 24px; display: flex; justify-content: flex-end; }
+.action-confirm-btn { border-radius: 10px !important; font-weight: 600; padding: 0 20px !important; background-color: #4f46e5 !important; }

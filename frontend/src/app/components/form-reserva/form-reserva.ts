@@ -60,7 +60,7 @@ export class FormReserva implements OnInit {
 
   fechasValidas(group: FormGroup) {
     const retiro = group.get('fechaRetiro')?.value;
-    const devolucion = group.get('fechaDevoución')?.value;
+    const devolucion = group.get('fechaDevolucion')?.value;
 
     if (retiro && devolucion && new Date(devolucion) <= new Date(retiro)) {
       return { fechaInvalida: true };

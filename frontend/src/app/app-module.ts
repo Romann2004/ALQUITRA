@@ -13,7 +13,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatListModule } from '@angular/material/list';
 import { MatDialogModule } from '@angular/material/dialog';
 
-// 1. IMPORTS REQUERIDOS PARA EL CALENDARIO (DATEPICKER)
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
@@ -30,8 +29,7 @@ import { GestionClientes } from './components/gestion-clientes/gestion-clientes'
 import { ListadoReservas } from './components/listado-reservas/listado-reservas';
 import { authInterceptor } from './helpers/auth-interceptor';
 import { FormReserva } from './components/form-reserva/form-reserva';
-import { NgApexchartsModule } from 'ng-apexcharts';
-import { MatSortModule } from '@angular/material/sort';
+
 @NgModule({
   declarations: [
     App,
@@ -63,8 +61,6 @@ import { MatSortModule } from '@angular/material/sort';
     MatListModule,
     MatSnackBarModule,
     MatDialogModule,
-    
-    // 3. REGISTRO DE LOS NUEVOS MÓDULOS EN LA APLICACIÓN
     MatDatepickerModule,
     MatNativeDateModule,
     NgApexchartsModule

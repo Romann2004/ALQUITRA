@@ -15,6 +15,12 @@
           <mat-icon>event_note</mat-icon> Reservas
         </a>
         <mat-divider></mat-divider>
+        
+        <button mat-list-item (click)="toggleDarkMode()" title="Cambiar Apariencia">
+          <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+          {{ isDarkMode ? 'Modo Claro' : 'Modo Oscuro' }}
+        </button>
+
         <button mat-list-item (click)="logout()">
           <mat-icon>logout</mat-icon> Cerrar Sesión
         </button>

@@ -1,0 +1,4890 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+.repomixignore
+BACKEND/http/clientes.http
+BACKEND/http/login.http
+BACKEND/http/reservas.http
+BACKEND/http/trajes.http
+BACKEND/package.json
+BACKEND/src/app.ts
+BACKEND/src/config/db.ts
+BACKEND/src/controllers/AuthControllers.ts
+BACKEND/src/controllers/ClienteController.ts
+BACKEND/src/controllers/DashboardController.ts
+BACKEND/src/controllers/ReservaController.ts
+BACKEND/src/controllers/TrajeControllers.ts
+BACKEND/src/middlewares/validateToken.ts
+BACKEND/src/models/Cliente.ts
+BACKEND/src/models/Enums.ts
+BACKEND/src/models/Log.ts
+BACKEND/src/models/Reserva.ts
+BACKEND/src/models/Traje.ts
+BACKEND/src/models/Users.ts
+BACKEND/src/routes/AuthRoutes.ts
+BACKEND/src/routes/ClienteRoutes.ts
+BACKEND/src/routes/DashboardRoutes.ts
+BACKEND/src/routes/ReservaRoutes.ts
+BACKEND/src/routes/TrajeRoutes.ts
+BACKEND/tsconfig.json
+docker-compose.yml
+frontend/.gitignore
+frontend/angular.json
+frontend/package.json
+frontend/README.md
+frontend/src/app/app-module.ts
+frontend/src/app/app-routing-module.ts
+frontend/src/app/app.css
+frontend/src/app/app.html
+frontend/src/app/app.spec.ts
+frontend/src/app/app.ts
+frontend/src/app/components/dashboard/dashboard.css
+frontend/src/app/components/dashboard/dashboard.html
+frontend/src/app/components/dashboard/dashboard.spec.ts
+frontend/src/app/components/dashboard/dashboard.ts
+frontend/src/app/components/form-reserva/form-reserva.css
+frontend/src/app/components/form-reserva/form-reserva.html
+frontend/src/app/components/form-reserva/form-reserva.spec.ts
+frontend/src/app/components/form-reserva/form-reserva.ts
+frontend/src/app/components/gestion-clientes/gestion-clientes.css
+frontend/src/app/components/gestion-clientes/gestion-clientes.html
+frontend/src/app/components/gestion-clientes/gestion-clientes.spec.ts
+frontend/src/app/components/gestion-clientes/gestion-clientes.ts
+frontend/src/app/components/gestion-trajes/gestion-trajes.component.css
+frontend/src/app/components/gestion-trajes/gestion-trajes.component.html
+frontend/src/app/components/gestion-trajes/gestion-trajes.component.ts
+frontend/src/app/components/home/home.css
+frontend/src/app/components/home/home.html
+frontend/src/app/components/home/home.spec.ts
+frontend/src/app/components/home/home.ts
+frontend/src/app/components/listado-reservas/listado-reservas.css
+frontend/src/app/components/listado-reservas/listado-reservas.html
+frontend/src/app/components/listado-reservas/listado-reservas.spec.ts
+frontend/src/app/components/listado-reservas/listado-reservas.ts
+frontend/src/app/components/login/login.css
+frontend/src/app/components/login/login.html
+frontend/src/app/components/login/login.spec.ts
+frontend/src/app/components/login/login.ts
+frontend/src/app/guards/auth-guard.spec.ts
+frontend/src/app/guards/auth-guard.ts
+frontend/src/app/helpers/auth-interceptor.spec.ts
+frontend/src/app/helpers/auth-interceptor.ts
+frontend/src/app/models/reserva.model.ts
+frontend/src/app/models/traje.model.ts
+frontend/src/app/services/auth.service.ts
+frontend/src/app/services/cliente.spec.ts
+frontend/src/app/services/cliente.ts
+frontend/src/app/services/dashboard.spec.ts
+frontend/src/app/services/dashboard.ts
+frontend/src/app/services/reserva.service.spec.ts
+frontend/src/app/services/reserva.service.ts
+frontend/src/app/services/traje.service.spec.ts
+frontend/src/app/services/traje.service.ts
+frontend/src/environments/environment.ts
+frontend/src/index.html
+frontend/src/main.ts
+frontend/src/material-theme.scss
+frontend/src/styles.css
+frontend/tsconfig.app.json
+frontend/tsconfig.json
+frontend/tsconfig.spec.json
+README.md
+Swagger
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".repomixignore">
+# Repomix Ignore - Proyecto ALQUITRA
+
+# --- Dependencias de Node (Fundamentales ignorar) ---
+node_modules/
+**/node_modules/
+package-lock.json
+**/package-lock.json
+
+# --- Compilaciones y Caché de Angular/TS ---
+.angular/
+dist/
+**/dist/
+.tmp/
+.sass-cache/
+
+# --- Configuraciones de Entorno y Secretos ---
+.env
+.env.*
+*.env
+**/.env*
+
+# --- Archivos de Editores e IDEs ---
+.vscode/
+**/.vscode/
+.editorconfig
+.git/
+
+# --- Archivos del Sistema y Multimedia ---
+.DS_Store
+Thumbs.db
+*.png
+*.ico
+*.jpg
+*.jpeg
+*.svg
+
+# --- Archivos de Salida de Repomix ---
+repomix-output.txt
+</file>
+
+<file path="BACKEND/src/controllers/AuthControllers.ts">
+import { Request, Response } from 'express';
+import * as bcrypt from 'bcrypt'; // Importación correcta para TS
+import User from '../models/Users';
+import { Log } from '../models/Log';
+import * as jwt from 'jsonwebtoken';
+
+export const registrarUsuario = async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+    try {
+      //Encriptamos la contraseña (10 es el nivel de seguridad)
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const nuevoUsuario = await User.create({
+        username,
+        password: hashedPassword
+      });
+    
+      // Log de Registro exitoso
+      await Log.create({  
+        accion: 'REGISTRO_EXITOSO',
+        descripcion: `Nuevo usuario registrado: ${username}`,
+        metadata: { userId: nuevoUsuario.id }
+      });
+
+      res.json({
+        ok: true,
+        msg: 'Usuario creado con éxito',
+        usuario: nuevoUsuario.username
+      });
+    } catch (error) {
+      // LOG DE FALLO (Opcional, por si el username ya existe)
+      await Log.create({
+        accion: 'REGISTRO_FALLIDO',
+        descripcion: `Intento de registro fallido para el username: ${username}`
+    });
+        res.status(500).json({
+            ok: false,
+            msg: 'Error al registrar el usuario'
+        });
+    }
+};
+
+export const Login = async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+    try {
+      // 1. ¿Existe el usuario?   
+      const user = await User.findOne({ where: { username } });
+      if (!user) {
+        await Log.create({  
+          accion: 'LOGIN_FALLIDO',
+          descripcion: `Intento de acceso fallido: el usuario ${username} no existe.`,
+          metadata: { ip: req.ip, username }
+        });
+        return res.status(400).json({ msg: 'Usuario o contraseña incorrectos' });
+      } 
+
+      // 2. ¿La contraseña es correcta?
+      const validPassword = await bcrypt.compare(password, user.password);
+      if (!validPassword) {
+        await Log.create({
+          accion: 'LOGIN_FALLIDO',
+          descripcion: `Contraseña incorrecta para el usuario: ${username}`,
+          metadata: { userId: user.id }
+        });
+      return res.status(400).json({ msg: 'Usuario o contraseña incorrectos' });
+      }
+
+      // Generar JWT
+      const token = jwt.sign(
+        { id: user.id, username: user.username },
+        'CLAVE_SECRETA_SUPER_SEGURA',
+        { expiresIn: '4h' }  // El token expira en 4 horas 
+      );
+      
+      // 3. Respuesta exitosa
+      await Log.create({
+        accion: 'LOGIN_EXITOSO',
+        descripcion: `Token generado para ${username}`, //`Sesión iniciada por: ${username}`,
+        metadata: { userId: user.id }
+      });
+
+      // Devolvemos el token al Frontend
+      return res.json({
+        ok: true,
+        msg: 'Login exitoso',
+        username: user.username,
+        token: token
+      });
+
+    } catch (error) {
+        res.status(500).json({ ok: false, msg: 'Error en el servidor' });
+    } 
+};
+</file>
+
+<file path="BACKEND/src/middlewares/validateToken.ts">
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+
+const validateToken = (req: Request, res: Response, next: NextFunction) => {
+    const headerToken = req.headers['authorization'];
+
+    // ¿Tiene el token en el header? (Viene como 'Bearer <token>')
+    if (headerToken != undefined && headerToken.startsWith('Bearer ')) {
+        try {
+            const bearerToken = headerToken.slice(7); // Elimina 'Bearer ' para obtener solo el token
+            
+            jwt.verify(bearerToken, 'CLAVE_SECRETA_SUPER_SEGURA');
+
+            next(); // El token es válido, puede pasar al controlador            
+        } catch (error) {
+            res.status(401).json({ msg: 'Token no válido' });
+        }
+    } else {
+        res.status(401).json({ msg: 'Acceso denegado' });
+    }
+}
+
+export default validateToken;
+</file>
+
+<file path="BACKEND/src/models/Cliente.ts">
+import { DataTypes, Model } from 'sequelize';
+import { sequelize } from '../config/db';
+
+interface ClienteAttributes {
+    id?: number;
+    nombre: string;
+    dni: string;
+    telefono: string;
+    email: string;
+}
+
+const Cliente = sequelize.define<Model<ClienteAttributes>>('Cliente', {
+    nombre: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    dni: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    telefono: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: true
+    }
+}, {
+    tableName: 'clientes',
+    timestamps: true //Para saber cuando se crea el cliente
+});
+
+export default Cliente;
+</file>
+
+<file path="BACKEND/src/models/Log.ts">
+import { Schema, model } from 'mongoose';
+
+const LogSchema = new Schema({
+    accion: { type: String, required: true }, //Como por ej: CREAR_TRAJE
+    descripcion: { type: String, required: true },
+    fecha: { type: Date, default: Date.now },
+    metadata: { type: Object }  // Esto guarda el ID del traje que se creó
+});
+
+export const Log = model('Log', LogSchema);
+</file>
+
+<file path="BACKEND/src/models/Users.ts">
+import { DataTypes, Model } from 'sequelize';
+import { sequelize } from '../config/db';
+
+class User extends Model {
+    public id!: number;
+    public username!: string;
+    public password!: string;
+}
+
+User.init({
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}, {
+    sequelize,
+    modelName: 'User'
+
+});
+
+export default User;
+</file>
+
+<file path="BACKEND/src/routes/AuthRoutes.ts">
+import { Router } from 'express';
+import { Login, registrarUsuario } from '../controllers/AuthControllers';
+
+const router = Router();
+
+router.post('/login', Login);
+router.post('/register', registrarUsuario); // Solo para pruebas iniciales
+
+export default router;
+</file>
+
+<file path="BACKEND/src/routes/DashboardRoutes.ts">
+import { Router } from 'express';
+import { getDashboardStats } from '../controllers/DashboardController';
+// Aquí se puede importar el middleware de JWT para que solo el admin lo vea
+
+const router = Router();
+
+router.get('/stats', getDashboardStats);
+
+export default router;
+</file>
+
+<file path="BACKEND/tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "moduleResolution": "node", // Agregado para mejor detección de librerías
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true, // Permite importar archivos JSON
+    "experimentalDecorators": true, // Útil para consistencia con Angular
+    "emitDecoratorMetadata": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+</file>
+
+<file path="frontend/.gitignore">
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/
+
+# System files
+.DS_Store
+Thumbs.db
+</file>
+
+<file path="frontend/README.md">
+# Frontend
+
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.4.
+
+## Development server
+
+To start a local development server, run:
+
+```bash
+ng serve
+```
+
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## Code scaffolding
+
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+
+```bash
+ng generate component component-name
+```
+
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+
+```bash
+ng generate --help
+```
+
+## Building
+
+To build the project run:
+
+```bash
+ng build
+```
+
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+
+```bash
+ng test
+```
+
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+</file>
+
+<file path="frontend/src/app/app.spec.ts">
+import { TestBed } from '@angular/core/testing';
+import { RouterModule } from '@angular/router';
+import { App } from './app';
+
+describe('App', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        RouterModule.forRoot([])
+      ],
+      declarations: [
+        App
+      ],
+    }).compileComponents();
+  });
+
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(App);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+
+  it('should render title', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, frontend');
+  });
+});
+</file>
+
+<file path="frontend/src/app/components/dashboard/dashboard.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { Dashboard } from './dashboard';
+
+describe('Dashboard', () => {
+  let component: Dashboard;
+  let fixture: ComponentFixture<Dashboard>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [Dashboard]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(Dashboard);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/app/components/form-reserva/form-reserva.css">
+
+</file>
+
+<file path="frontend/src/app/components/form-reserva/form-reserva.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { FormReserva } from './form-reserva';
+
+describe('FormReserva', () => {
+  let component: FormReserva;
+  let fixture: ComponentFixture<FormReserva>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [FormReserva]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(FormReserva);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/app/components/gestion-clientes/gestion-clientes.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { GestionClientes } from './gestion-clientes';
+
+describe('GestionClientes', () => {
+  let component: GestionClientes;
+  let fixture: ComponentFixture<GestionClientes>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [GestionClientes]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(GestionClientes);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/app/components/home/home.css">
+
+</file>
+
+<file path="frontend/src/app/components/home/home.html">
+<p>home works!</p>
+</file>
+
+<file path="frontend/src/app/components/home/home.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { Home } from './home';
+
+describe('Home', () => {
+  let component: Home;
+  let fixture: ComponentFixture<Home>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [Home]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(Home);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/app/components/home/home.ts">
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-home',
+  standalone: false,
+  templateUrl: './home.html',
+  styleUrl: './home.css',
+})
+export class Home {
+
+}
+</file>
+
+<file path="frontend/src/app/components/listado-reservas/listado-reservas.css">
+.container {
+    margin: 20px;
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+}
+
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+/* Colores para los estados */
+.badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+}
+
+.pendiente { background-color: #ff9800; } /* Naranja */
+.retirado { background-color: #2196f3; }  /* Azul */
+.completado { background-color: #4caf50; } /* Verde */
+.cancelado { background-color: #f44336; }  /* Rojo */
+</file>
+
+<file path="frontend/src/app/components/listado-reservas/listado-reservas.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ListadoReservas } from './listado-reservas';
+
+describe('ListadoReservas', () => {
+  let component: ListadoReservas;
+  let fixture: ComponentFixture<ListadoReservas>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ListadoReservas]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(ListadoReservas);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/app/components/login/login.css">
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.login-card {
+  width: 400px;
+  padding: 20px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+</file>
+
+<file path="frontend/src/app/components/login/login.html">
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Ingreso al Sistema</mat-card-title>
+    </mat-card-header>
+    
+    <form [formGroup]="LoginForm" (ngSubmit)="onLogin()">
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Usuario</mat-label>
+          <input matInput formControlName="username" placeholder="Tu username">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput formControlName="password" type="password" placeholder="Tu contraseña">
+        </mat-form-field>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-raised-button color="primary" class="full-width" type="submit" [disabled]="LoginForm.invalid">
+          ENTRAR
+        </button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div>
+</file>
+
+<file path="frontend/src/app/components/login/login.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { Login } from './login';
+
+describe('Login', () => {
+  let component: Login;
+  let fixture: ComponentFixture<Login>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [Login]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(Login);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/app/guards/auth-guard.spec.ts">
+import { TestBed } from '@angular/core/testing';
+import { CanActivateFn } from '@angular/router';
+
+import { authGuard } from './auth-guard';
+
+describe('authGuard', () => {
+  const executeGuard: CanActivateFn = (...guardParameters) => 
+      TestBed.runInInjectionContext(() => authGuard(...guardParameters));
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+  });
+
+  it('should be created', () => {
+    expect(executeGuard).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/app/helpers/auth-interceptor.spec.ts">
+import { TestBed } from '@angular/core/testing';
+import { HttpInterceptorFn } from '@angular/common/http';
+
+import { authInterceptor } from './auth-interceptor';
+
+describe('authInterceptor', () => {
+  const interceptor: HttpInterceptorFn = (req, next) => 
+    TestBed.runInInjectionContext(() => authInterceptor(req, next));
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+  });
+
+  it('should be created', () => {
+    expect(interceptor).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/app/helpers/auth-interceptor.ts">
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class authInterceptor implements HttpInterceptor {
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    const token = sessionStorage.getItem('token');
+
+    if (token) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
+
+    return next.handle(request);
+  }
+};
+</file>
+
+<file path="frontend/src/app/models/reserva.model.ts">
+export enum EstadoReserva {
+    PENDIENTE = 'PENDIENTE',
+    RETIRADO = 'RETIRADO',
+    COMPLETADO = 'COMPLETADO',
+    CANCELADO = 'CANCELADO'
+}
+
+export interface Reserva {
+    id?: number;
+    fechaRetiro: Date;
+    fechaDevolucion: Date;
+    senia: number;
+    estado: EstadoReserva;
+    clienteId: number;
+    trajeId: number;
+    // Campos que vienen del include de Sequelize
+    cliente?: {
+        nombre: string;
+        dni: string;
+    };
+    traje?: {
+        categoria: string;
+        talle: string;
+        color: string;
+    };
+}
+</file>
+
+<file path="frontend/src/app/models/traje.model.ts">
+export enum EstadoTraje {
+    DISPONIBLE = 'Disponible',
+    RESERVADO = 'Reservado',
+    ALQUILADO = 'Alquilado',
+    MANTENIMIENTO = 'En Mantenimiento',
+    BAJA = 'Baja'
+}
+
+export interface Traje {
+    id?: number;
+    codigoEtiqueta: string;
+    talle: string;
+    color: string;
+    categoria: string;
+    precioAlquilerBase: number;
+    estado: EstadoTraje;
+}
+</file>
+
+<file path="frontend/src/app/services/cliente.spec.ts">
+import { TestBed } from '@angular/core/testing';
+
+import { Cliente } from './cliente';
+
+describe('Cliente', () => {
+  let service: Cliente;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(Cliente);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/app/services/dashboard.spec.ts">
+import { TestBed } from '@angular/core/testing';
+
+import { Dashboard } from './dashboard';
+
+describe('Dashboard', () => {
+  let service: Dashboard;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(Dashboard);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/app/services/dashboard.ts">
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class DashboardService {
+  private apiUrl = 'http://localhost:3000/api/dashboard/stats';
+
+  constructor(private http: HttpClient) { }
+
+  getStats(): Observable<any> {
+    return this.http.get(this.apiUrl);
+  }
+}
+</file>
+
+<file path="frontend/src/app/services/reserva.service.spec.ts">
+import { TestBed } from '@angular/core/testing';
+
+import { ReservaService } from './reserva.service';
+
+describe('ReservaService', () => {
+  let service: ReservaService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(ReservaService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/app/services/traje.service.spec.ts">
+import { TestBed } from '@angular/core/testing';
+
+import { TrajeService } from './traje.service';
+
+describe('TrajeService', () => {
+  let service: TrajeService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(TrajeService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+</file>
+
+<file path="frontend/src/environments/environment.ts">
+export const environment = {
+    production: false,
+    endpoint: 'http://localhost:3000/'
+}
+</file>
+
+<file path="frontend/src/index.html">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Frontend</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
+</file>
+
+<file path="frontend/src/main.ts">
+import { platformBrowser } from '@angular/platform-browser';
+import { AppModule } from './app/app-module';
+
+platformBrowser().bootstrapModule(AppModule, {
+  
+})
+  .catch(err => console.error(err));
+</file>
+
+<file path="frontend/src/material-theme.scss">
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme((
+    color: (
+      primary: mat.$magenta-palette,
+      tertiary: mat.$violet-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+body {
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+  height: 100%;
+}
+</file>
+
+<file path="frontend/tsconfig.app.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": []
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
+  ]
+}
+</file>
+
+<file path="frontend/tsconfig.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "preserve"
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}
+</file>
+
+<file path="frontend/tsconfig.spec.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/spec",
+    "types": [
+      "vitest/globals"
+    ]
+  },
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.ts"
+  ]
+}
+</file>
+
+<file path="README.md">
+# ALQUITRA
+Sistema de gestión de alquileres de trajes
+</file>
+
+<file path="Swagger">
+openapi: 3.0.0
+info:
+  title: API Sistema de Gestión de Alquiler de Trajes
+  description: API para la gestión de reservas, entregas y devoluciones de trajes.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor de desarrollo local
+
+paths:
+  /reservas:
+    post:
+      summary: Registrar una nueva reserva (RF-01)
+      [cite_start]description: Permite al empleado cargar una reserva validando disponibilidad de stock[cite: 305, 1166].
+      responses:
+        '201':
+          description: Reserva creada con éxito.
+        '400':
+          description: Error en la solicitud o falta de stock.
+
+  /alquileres/{id}/devolucion:
+    put:
+      summary: Registrar devolución de traje (RF-03)
+      [cite_start]description: Calcula automáticamente recargos por mora o daños y libera el stock[cite: 308, 1172].
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Devolucion'
+      responses:
+        '200':
+          description: Devolución procesada exitosamente.
+
+components:
+  schemas:
+    Reserva:
+      type: object
+      properties:
+        clienteId:
+          type: integer
+        trajeId:
+          type: integer
+        fechaPactadaRetiro:
+          type: string
+          format: date-time
+        fechaPactadaDevolucion:
+          type: string
+          format: date-time
+          
+    Devolucion:
+      type: object
+      properties:
+        estadoFisico:
+          type: string
+          enum: [Óptimo, Daño Menor, Daño Crítico]
+        observaciones:
+          type: string
+</file>
+
+<file path="BACKEND/http/login.http">
+### PRUEBAS DE AUTENTICACIÓN
+
+### Variable para la URL base
+@baseUrl = http://localhost:3000/api/auth
+
+GET http://localhost:3000/api/trajes?codigo=SMOK-003
+
+### Registro de Usuario (Ejecutar una sola vez p/usuario de prueba)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "username": "Leonel",
+    "password": "46995121"
+}
+
+### Login Exitoso
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "username": "Roman",
+    "password": "45654005"
+}
+
+### Login Fallido (Contraseña incorrecta)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "username": "Roman",
+    "password": "Error"
+}
+
+### Login Fallido (Usuario no existe)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "username": "Error",
+    "password": "45654005"
+}
+
+### Obtener Estadísticas del Dashboard
+GET http://localhost:3000/api/dashboard/stats
+</file>
+
+<file path="BACKEND/src/models/Enums.ts">
+export enum EstadoTraje {
+    DISPONIBLE = 'Disponible',
+    RESERVADO = 'Reservado',
+    ALQUILADO = 'Alquilado',
+    MANTENIMIENTO = 'En Mantenimiento',
+    BAJA = 'Baja'
+}
+
+export enum EstadoReserva {
+    PENDIENTE = 'PENDIENTE',
+    RETIRADO = 'RETIRADO',
+    COMPLETADO = 'COMPLETADO',
+    CANCELADO = 'CANCELADO'
+}
+</file>
+
+<file path="BACKEND/src/models/Reserva.ts">
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/db";
+import Cliente from "./Cliente";
+import { Traje } from "./Traje";
+import { EstadoReserva } from "./Enums";
+
+const Reserva = sequelize.define('reserva', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    fechaReserva: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    fechaRetiro: {
+        type: DataTypes.DATEONLY, // Solo fecha, sin hora
+        allowNull: false
+    },
+    fechaDevolucion: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
+    estado: {
+        type: DataTypes.ENUM(...Object.values(EstadoReserva)),
+        defaultValue: EstadoReserva.PENDIENTE,
+        allowNull: false
+    },
+    senia: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+    }
+}, {
+    tableName: 'reservas',
+    timestamps: true
+});
+
+//Definimos las relaciones acá
+
+// 1. Unimos Reserva con Cliente
+Cliente.hasMany(Reserva, { foreignKey: 'clienteId' });
+Reserva.belongsTo(Cliente, { foreignKey: 'clienteId' });
+
+// 2. Unimos Reserva con Traje
+Traje.hasMany(Reserva, { foreignKey: 'trajeId' });
+Reserva.belongsTo(Traje, { foreignKey: 'trajeId' });
+
+export default Reserva;
+</file>
+
+<file path="BACKEND/src/models/Traje.ts">
+import { Model, DataTypes, Optional } from 'sequelize';
+import { sequelize } from '../config/db';
+import { EstadoTraje } from './Enums';
+
+//Se define lo que tiene un traje en una interfaz tipada
+interface TrajeAttributes {
+    id: number;
+    codigoEtiqueta: string;
+    talle: string;
+    color: string;
+    categoria: string;
+    precioAlquilerBase: number;
+    estado: EstadoTraje;
+}
+
+//Se define el ID como atributo opcional, ya que es auto incremental la bd
+interface TrajeCreationAttributes extends Optional<TrajeAttributes, 'id'>{}
+
+//Se define la clase del modelo Traje, que extiende de Model y utiliza las interfaces definidas para tipar sus atributos y creación
+export class Traje extends Model<TrajeAttributes, TrajeCreationAttributes> implements TrajeAttributes {
+    public id!: number;
+    public codigoEtiqueta!: string;
+    public talle!: string;
+    public color!: string;
+    public categoria!: string;
+    public precioAlquilerBase!: number;
+    public estado!: EstadoTraje;
+
+    //Timestamps automaticos de sequelize
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+}
+
+//Se inicializa el modelo Traje en la base de datos
+Traje.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    codigoEtiqueta: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    talle: {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+    },
+    color: {
+      type: DataTypes.STRING(50),
+    },
+    categoria: {
+      type: DataTypes.STRING(50),
+    },
+    precioAlquilerBase: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    estado: {
+      type: DataTypes.ENUM(...Object.values(EstadoTraje)),
+      allowNull: false,
+      defaultValue: EstadoTraje.DISPONIBLE,
+    },
+  },
+  {
+    sequelize,
+    tableName: 'trajes',
+  }
+);
+</file>
+
+<file path="BACKEND/src/routes/ReservaRoutes.ts">
+import { Router } from "express";
+import { postReserva, updateReserva, updateEstadoReserva, getReservas, deleteReserva } from "../controllers/ReservaController";
+import validateToken from "../middlewares/validateToken";
+
+const router = Router();
+
+router.post('/', validateToken, postReserva);
+router.get('/', validateToken, getReservas);
+router.put('/:id', validateToken, updateReserva);
+router.patch('/:id/estado', validateToken, updateEstadoReserva);
+router.delete('/:id', validateToken, deleteReserva);
+export default router;
+</file>
+
+<file path="BACKEND/src/routes/TrajeRoutes.ts">
+import { Router } from 'express';
+import { crearTraje, obtenerTrajes, actualizarTraje, eliminarTraje, actualizarParcialTraje } from '../controllers/TrajeControllers';
+
+const router = Router();
+
+// Definimos los endpoints
+router.post('/', crearTraje);     // POST http://localhost:3000/api/trajes
+router.get('/', obtenerTrajes);   // GET  http://localhost:3000/api/trajes
+router.put('/:id', actualizarTraje); // PUT  http://localhost:3000/api/trajes/:id
+router.patch('/:id', actualizarParcialTraje); // PATCH  http://localhost:3000/api/trajes/:id
+router.delete('/:id', eliminarTraje); // DELETE http://localhost:3000/api/trajes/:id
+
+export default router;
+</file>
+
+<file path="frontend/angular.json">
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm",
+    "analytics": false
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "frontend": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "standalone": false
+        },
+        "@schematics/angular:directive": {
+          "standalone": false
+        },
+        "@schematics/angular:pipe": {
+          "standalone": false
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.css"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "frontend:build:production"
+            },
+            "development": {
+              "buildTarget": "frontend:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    }
+  }
+}
+</file>
+
+<file path="frontend/src/app/components/gestion-trajes/gestion-trajes.component.css">
+/* Estilos para Gestión de Trajes */
+.table-wrapper {
+  max-height: 75vh; 
+  overflow: auto;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.disponible {
+  background-color: #c8e6c9;
+  color: #2e7d32;
+}
+</file>
+
+<file path="frontend/src/app/guards/auth-guard.ts">
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+
+
+export const authGuard: CanActivateFn = (route, state) => {
+  const router = inject(Router);
+  const token = sessionStorage.getItem('token')
+
+  if (token) {
+    return true; // Puede pasar
+  } else {
+    router.navigate(['/login']) // Lo devuelve al login
+    return false;
+  }
+};
+</file>
+
+<file path="frontend/src/app/services/auth.service.ts">
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
+import { Observable, tap, BehaviorSubject } from "rxjs";
+
+@Injectable({
+    providedIn: 'root'
+})
+export class AuthService {
+    // El BehaviorSubject guarda el estado inicial (¿hay token?)
+    private loggedIn = new BehaviorSubject<boolean>(!!sessionStorage.getItem('token'));
+
+    // Esto es lo que los componentes van a "escuchar"
+    isLoggedIn$ = this.loggedIn.asObservable();
+
+    private apiUrl = 'http://localhost:3000/api/auth';
+
+    constructor(private http: HttpClient, private router: Router) { }
+
+    login(user: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}/login`, user).pipe(
+            tap((res: any) => {
+                if (res.ok && res.token) {
+                    // Guardamos el token en el almacenamiento de la sesión del navegador
+                    sessionStorage.setItem('token', res.token);
+                    sessionStorage.setItem('username', res.username); // Opcional, para mostrarlo en el menú
+                    this.loggedIn.next(true); // Actualizamos el estado a "logueado"
+                }
+            })
+        );
+    }
+    
+    // Método p/ cerrar sesión
+    logout() {
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('username');
+        this.loggedIn.next(false); // Actualizamos el estado a "no logueado"
+        this.router.navigate(['/login']);
+    }
+}
+</file>
+
+<file path="frontend/src/app/services/reserva.service.ts">
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Reserva } from '../models/reserva.model';
+import { environment } from '../../environments/environment';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ReservaService {
+  private myAppUrl: string;
+  private myApiUrl: string;
+
+  constructor(private http: HttpClient) {
+    this.myAppUrl = environment.endpoint;
+    this.myApiUrl = 'api/reservas';
+  }
+
+  getReservas(): Observable<Reserva[]> {
+    return this.http.get<Reserva[]>(`${this.myAppUrl}${this.myApiUrl}`);
+  }
+
+  addReserva(reserva: Reserva): Observable<any> {
+    return this.http.post<Reserva>(`${this.myAppUrl}${this.myApiUrl}`, reserva);
+  }
+
+  updateReserva(id: number, reserva: any): Observable<any> {
+    return this.http.put<any>(`${this.myAppUrl}${this.myApiUrl}/${id}`, reserva);
+  }
+  
+  deleteReserva(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.myAppUrl}${this.myApiUrl}/${id}`);
+  }
+}
+</file>
+
+<file path=".gitignore">
+#Base de datos
+postgres_data/
+mongo_db_new/
+mongo_db_final/
+mongo_db_nueva/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs generated by jscoverage/JSCover
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.*
+!.env.example
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+# vuepress build output
+.vuepress/dist
+
+# vuepress v2.x temp and cache directory
+.temp
+.cache
+
+# Sveltekit cache directory
+.svelte-kit/
+
+# vitepress build output
+**/.vitepress/dist
+
+# vitepress cache directory
+**/.vitepress/cache
+
+# Docusaurus cache and generated files
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# Firebase cache directory
+.firebase/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v3
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Vite logs files
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+</file>
+
+<file path="BACKEND/src/controllers/ClienteController.ts">
+import { Request, Response } from 'express';
+import Cliente from '../models/Cliente';
+import { Log } from '../models/Log';
+
+export const getClientes = async (req: Request, res: Response) => {
+    const listClientes = await Cliente.findAll();
+    res.json(listClientes);
+};
+
+export const getClienteById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const cliente = await Cliente.findByPk(Number(id));
+    res.json(cliente);
+};
+
+export const postCliente = async (req: Request, res: Response) => {
+    const { body } = req;
+    try {
+        const cliente: any = await Cliente.create(body);
+
+        await Log.create({
+            accion: 'CREAR_CLIENTE',
+            descripcion: `Se creó el cliente ${cliente.nombre}`,
+            metadata: { clienteId: cliente.id }
+        });
+
+        res.json({ msg: 'Cliente creado con éxito', cliente });
+    } catch (error) {
+        res.status(500).json({ msg: 'Error al crear el cliente', error });
+    }
+};
+
+export const putCliente = async (req: Request<{ id: string }>, res: Response) => {
+  const { id } = req.params;
+  const { body } = req;
+
+  try {
+    const cliente: any = await Cliente.findByPk(Number(id));
+    if (!cliente) {
+      return res.status(404).json({ msg: 'Cliente no encontrado' });
+    }
+
+    await cliente.update(body);
+
+    await Log.create({
+      accion: 'ACTUALIZAR_CLIENTE',
+      descripcion: `Se actualizó el cliente ${cliente.nombre}`,
+      metadata: { clienteId: cliente.id },
+    });
+
+    return res.json({ msg: 'Cliente actualizado con éxito', cliente });
+  } catch (error) {
+    return res.status(500).json({ msg: 'Error al actualizar el cliente', error });
+  }
+};
+
+export const patchCliente = async (req: Request<{id: string}>, res: Response) => {
+    const { id } = req.params;
+    const camposCambiados = req.body; // Ejemplo {telefono: '3462 554477'}
+
+    try {
+        const cliente: any = await Cliente.findByPk(id);
+        if (!cliente) {
+            return res.status(404).json({ msg: 'Cliente no encontrado' });
+        }
+        
+        // Actualizamos solo lo que viene en el body
+        await cliente.update(camposCambiados);
+
+        await Log.create({
+            accion: 'ACTUALIZAR_PARCIAL_CLIENTE',
+            descripcion: `Se actualizó parcialmente el cliente ${cliente.nombre}`,
+            metadata: { clienteId: cliente.id },
+        });
+
+        return res.json({ msg: 'Cliente actualizado parcialmente con éxito', cliente });
+
+    } catch (error) {
+        return res.status(500).json({ msg: 'Error al actualizar parcialmenteel cliente', error });
+    }
+}
+
+export const deleteCliente = async (req: Request<{ id: string }>, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const cliente: any = await Cliente.findByPk(Number(id));
+        if (!cliente) {
+            return res.status(404).json({ msg: 'Cliente no encontrado' });
+        }
+
+        await cliente.destroy();
+
+        await Log.create({
+            accion: 'ELIMINAR_CLIENTE',
+            descripcion: `Se eliminó el cliente ${cliente.nombre}`,
+            metadata: { clienteId: cliente.id },
+        });
+
+        return res.json({ msg: 'Cliente eliminado con éxito' });
+    } catch (error) {
+        return res.status(500).json({ msg: 'Error al eliminar el cliente', error });
+    }
+};
+</file>
+
+<file path="BACKEND/src/controllers/DashboardController.ts">
+import { Request, Response } from 'express';
+import { Traje } from '../models/Traje';
+import Reserva from '../models/Reserva'; 
+import Cliente from '../models/Cliente'; 
+import { Op } from 'sequelize';          
+import { sequelize } from '../config/db'; 
+
+export const getDashboardStats = async (req: Request, res: Response) => {
+    try {
+        const [total, disponibles, alquilados] = await Promise.all([
+            Traje.count(), 
+            Traje.count({ where: { estado: 'Disponible' } }), 
+            Traje.count({ where: { estado: 'Alquilado' } }) 
+        ]);
+
+        const inicioBusqueda = new Date();
+        inicioBusqueda.setMonth(inicioBusqueda.getMonth() - 5);
+        inicioBusqueda.setDate(1); 
+
+        // Histórico mensual para el gráfico
+        const reservasRecientes = await Reserva.findAll({
+            where: {
+                fechaRetiro: {
+                    [Op.gte]: inicioBusqueda.toISOString().split('T')[0]
+                }
+            },
+            include: [
+                {model: Cliente, attributes: ['nombre']},
+                {model: Traje, attributes: ['categoria', 'talle', 'color']}
+            ],
+            order: [['fechaRetiro', 'DESC']]
+        });
+
+        // Últimos 4 alquileres con sus relaciones
+        const ultimasReservas = await Reserva.findAll({
+            limit: 4,
+            order: [['id', 'DESC']], 
+            include: [
+                { model: Cliente, attributes: ['id', 'nombre'] },
+                { model: Traje, attributes: ['id', 'categoria', 'color', 'talle'] }
+            ]
+        });
+
+        // --- SOLUCIÓN BULLETPROOF PARA POSTGRESQL (GROUP BY) ---
+        // 1. Conseguimos los IDs agrupados de forma pura y limpia
+        const topReservas = await Reserva.findAll({
+            attributes: [
+                'clienteId',
+                [sequelize.fn('COUNT', sequelize.col('id')), 'totalAlquileres']
+            ],
+            group: ['clienteId'],
+            order: [[sequelize.fn('COUNT', sequelize.col('id')), 'DESC']],
+            limit: 3,
+            raw: true
+        });
+
+        // 2. Mapeamos los IDs para traer los nombres en paralelo sin romper la consulta
+        const clientesFieles = await Promise.all(
+            topReservas.map(async (item: any) => {
+                const cliente = await Cliente.findByPk(item.clienteId, { attributes: ['nombre'] });
+                return {
+                    id: item.clienteId,
+                    nombre: cliente ? (cliente as any).nombre : 'Cliente Anónimo',
+                    totalAlquileres: parseInt(item.totalAlquileres, 10) || 0
+                };
+            })
+        );
+
+        // Procesamiento del mapa de meses
+        const nombresMeses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        const historicoMap: { [key: string]: number } = {};
+
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date();
+            d.setMonth(d.getMonth() - i);
+            historicoMap[nombresMeses[d.getMonth()]] = 0;
+        }
+
+        reservasRecientes.forEach((reserva: any) => {
+            const fecha = new Date(reserva.fechaRetiro);
+            const nombreMes = nombresMeses[fecha.getMonth()];
+            if (historicoMap[nombreMes] !== undefined) historicoMap[nombreMes]++;
+        });
+
+        res.json({
+            ok: true,
+            stats: {
+                totalTrajes: total,
+                disponibles,
+                alquilados,
+                otros: total - (disponibles + alquilados)
+            },
+            historico: {
+                categorias: Object.keys(historicoMap),
+                datos: Object.values(historicoMap),
+                rawReservas: reservasRecientes // <-- ¡ESTA ES LA LÍNEA QUE FALTA AGREGAR!
+            },
+            ultimasReservas,
+            clientesFieles
+        });
+
+    } catch (error) {
+        console.error("Error crítico en Dashboard:", error);
+        res.status(500).json({ ok: false, msg: 'Error al obtener estadísticas' });
+    }
+};
+</file>
+
+<file path="BACKEND/src/routes/ClienteRoutes.ts">
+import { Router } from 'express';
+import { getClientes, postCliente, getClienteById, putCliente, deleteCliente, patchCliente } from '../controllers/ClienteController';
+import validateToken from '../middlewares/validateToken'; //middleware de seguridad
+
+const router = Router();
+
+//Protegemos las rutas con el token
+router.get('/', validateToken, getClientes);
+router.post('/', validateToken, postCliente);
+router.get('/:id', validateToken, getClienteById);
+router.put('/:id', validateToken, putCliente);
+router.patch('/:id', validateToken, patchCliente);
+router.delete('/:id', validateToken, deleteCliente);
+
+export default router;
+</file>
+
+<file path="frontend/package.json">
+{
+  "name": "frontend",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
+  "private": true,
+  "packageManager": "npm@10.9.2",
+  "dependencies": {
+    "@angular/animations": "^21.2.0",
+    "@angular/cdk": "^21.2.0",
+    "@angular/common": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/forms": "^21.2.0",
+    "@angular/material": "^21.2.0",
+    "@angular/platform-browser": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "apexcharts": "^5.12.0",
+    "ng-apexcharts": "^2.4.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.2.0",
+    "@angular/cli": "^21.2.0",
+    "@angular/compiler-cli": "^21.2.0",
+    "jsdom": "^27.1.0",
+    "typescript": "~5.9.2",
+    "vitest": "^4.0.8"
+  }
+}
+</file>
+
+<file path="frontend/src/app/app.css">
+.wrapper-sistema {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+mat-sidenav-container {
+  flex: 1;
+  height: 100%; 
+  width: 100%;
+}
+
+mat-sidenav-content {
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.sidenav {
+  width: 250px;
+  background-color: #f8f9fa;
+  border-right: 1px solid #ddd;
+}
+
+.main-content {
+  padding: 24px;
+  flex-grow: 1;
+  background-color: #ffffff;
+}
+</file>
+
+<file path="frontend/src/app/components/dashboard/dashboard.css">
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+.dashboard-container {
+  padding: 32px;
+  background-color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Cabecera Principal */
+.dashboard-header { 
+  margin-bottom: 32px; 
+}
+.dashboard-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.025em;
+}
+.dashboard-header .subtitle { 
+  font-size: 1rem; 
+  color: #64748b; 
+  margin: 0; 
+}
+
+/* Grilla de Tarjetas Métricas */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  border-radius: 16px !important;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+  background-color: #ffffff;
+  transition: transform 0.2s ease;
+}
+.stat-card:hover { 
+  transform: translateY(-4px); 
+}
+mat-card-content { 
+  display: flex; 
+  align-items: center; 
+  padding: 24px !important; 
+  gap: 20px; 
+}
+.card-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+}
+mat-icon { font-size: 28px; width: 28px; height: 28px; }
+.card-info { display: flex; flex-direction: column; }
+.stat-label { font-size: 0.875rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.stat-value { font-size: 2rem; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.1; }
+
+.total .card-icon-wrapper { background-color: #f1f5f9; }
+.total mat-icon { color: #475569; }
+.disponible .card-icon-wrapper { background-color: #f0fdf4; }
+.disponible mat-icon { color: #16a34a; }
+.alquilado .card-icon-wrapper { background-color: #eef2ff; }
+.alquilado mat-icon { color: #4f46e5; }
+
+/* Estructura Split (Dos Columnas Asimétricas) */
+.dashboard-split-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1.1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .dashboard-split-layout { grid-template-columns: 1fr; }
+}
+
+.dashboard-card {
+  border-radius: 16px !important;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+  background-color: #ffffff;
+  padding: 24px;
+}
+.main-chart mat-card-content { 
+  display: block; 
+  padding: 8px 0 0 0 !important; 
+}
+.space-bottom { 
+  margin-bottom: 24px; 
+}
+
+/* Encabezados de Paneles Laterales */
+.sidebar-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 18px; 
+  border-bottom: 1px solid #f1f5f9; 
+  padding-bottom: 12px; 
+}
+.sidebar-header h3 { font-size: 1.1rem; font-weight: 700; color: #0f172a; margin: 0; }
+.badge-info, .badge-success { font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+.badge-info { background-color: #f1f5f9; color: #475569; }
+.badge-success { background-color: #ecfdf5; color: #047857; }
+.no-data { color: #94a3b8; font-size: 0.9rem; text-align: center; padding: 30px 0; }
+
+/* Bloque 1: Lista de Actividad */
+.reservation-list { display: flex; flex-direction: column; gap: 12px; }
+.reservation-item { display: flex; align-items: center; padding: 10px; border-radius: 12px; border: 1px solid transparent; transition: background-color 0.2s; }
+.reservation-item:hover { background-color: #f8fafc; }
+.item-avatar { display: flex; align-items: center; justify-content: center; background-color: #f1f5f9; color: #64748b; width: 38px; height: 38px; border-radius: 50%; margin-right: 12px; flex-shrink: 0; }
+.item-avatar mat-icon { font-size: 18px; width: 18px; height: 18px; }
+.item-details { flex-grow: 1; min-width: 0; }
+.client-name { font-size: 0.95rem; font-weight: 600; color: #1e293b; margin: 0 0 3px 0; }
+.suit-info { font-size: 0.8rem; color: #64748b; margin: 0; }
+
+/* Badge de Talle */
+.size-badge {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.item-status { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; margin-left: 12px; flex-shrink: 0; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background-color: #cbd5e1; }
+.status-dot.pendiente { background-color: #eab308; }
+.status-dot.retirado { background-color: #3b82f6; }
+.status-dot.completado { background-color: #22c55e; }
+.status-dot.cancelado { background-color: #ef4444; }
+.status-text { font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+
+/* Bloque 2: Ranking de Clientes */
+.top-clients-list { display: flex; flex-direction: column; gap: 12px; }
+.top-client-item { display: flex; align-items: center; padding: 10px 12px; background-color: #ffffff; border-radius: 12px; border: 1px solid #f1f5f9; }
+.rank-badge { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; margin-right: 14px; flex-shrink: 0; }
+.rank-1 { background-color: #fef3c7; color: #d97706; }
+.rank-2 { background-color: #f1f5f9; color: #475569; }
+.rank-3 { background-color: #ffedd5; color: #ea580c; }
+.client-rank-info { flex-grow: 1; min-width: 0; }
+.rank-name { font-size: 0.9rem; font-weight: 600; color: #0f172a; margin: 0 0 2px 0; }
+.rank-meta { font-size: 0.75rem; color: #94a3b8; margin: 0; }
+.rank-count { text-align: right; display: flex; flex-direction: column; }
+.count-number { font-size: 1.1rem; font-weight: 800; color: #4f46e5; line-height: 1; }
+.count-label { font-size: 0.65rem; color: #64748b; font-weight: 500; }
+
+/* =========================================
+   ESTILOS PREMIUM PARA LA VENTANA EMERGENTE
+   ========================================= */
+
+/* Desenfoque de fondo Gaussiano acoplado al CDK de Angular Material */
+::ng-deep .blur-backdrop {
+  background-color: rgba(15, 23, 42, 0.25) !important;
+  backdrop-filter: blur(8px) !important;
+  transition: backdrop-filter 0.3s ease;
+}
+
+.modal-wrapper {
+  padding: 8px;
+  background-color: #ffffff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.modal-title { font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0 0 4px 0; }
+.modal-subtitle { font-size: 0.85rem; color: #64748b; margin: 0; }
+.close-btn { color: #64748b; margin-top: -4px; }
+
+/* Contenedor escrolleable del modal */
+.modal-body {
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.modal-no-data { text-align: center; padding: 32px 16px; color: #94a3b8; }
+.no-data-icon { font-size: 40px; width: 40px; height: 40px; margin-bottom: 12px; opacity: 0.5; }
+
+/* Tarjetas internas del modal */
+.modal-list { display: flex; flex-direction: column; gap: 12px; }
+.modal-item { display: flex; align-items: center; padding: 12px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; }
+.modal-avatar { color: #4f46e5; margin-right: 12px; display: flex; align-items: center; }
+.modal-avatar mat-icon { font-size: 32px; width: 32px; height: 32px; }
+.modal-item-info { flex-grow: 1; }
+.modal-client-name { font-size: 0.95rem; font-weight: 600; color: #0f172a; margin: 0 0 2px 0; }
+.modal-suit-detail { font-size: 0.8rem; color: #64748b; margin: 0; }
+.modal-size-tag { font-weight: 700; color: #1e293b; }
+
+/* Etiquetas de estado compactas */
+.modal-badge-status { font-size: 0.65rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.025em; }
+.modal-badge-status.pendiente { background-color: #fef9c3; color: #713f12; }
+.modal-badge-status.retirado { background-color: #dbeafe; color: #1e40af; }
+.modal-badge-status.completado { background-color: #dcfce7; color: #166534; }
+.modal-badge-status.cancelado { background-color: #fee2e2; color: #991b1b; }
+
+.modal-actions { margin-top: 24px; display: flex; justify-content: flex-end; }
+.action-confirm-btn { border-radius: 10px !important; font-weight: 600; padding: 0 20px !important; background-color: #4f46e5 !important; }
+</file>
+
+<file path="frontend/src/app/components/dashboard/dashboard.html">
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>Resumen del Negocio</h1>
+    <p class="subtitle">Monitoreá el estado actual de los trajes y la tendencia de alquileres.</p>
+  </header>
+
+  <section class="stats-grid">
+    <mat-card class="stat-card total">
+      <mat-card-content>
+        <div class="card-icon-wrapper">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+        <div class="card-info">
+          <span class="stat-label">Total Trajes</span>
+          <h2 class="stat-value">{{ stats.totalTrajes || 0 }}</h2>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card disponible">
+      <mat-card-content>
+        <div class="card-icon-wrapper">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="card-info">
+          <span class="stat-label">Disponibles</span>
+          <h2 class="stat-value">{{ stats.disponibles || 0 }}</h2>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card alquilado">
+      <mat-card-content>
+        <div class="card-icon-wrapper">
+          <mat-icon>sell</mat-icon>
+        </div>
+        <div class="card-info">
+          <span class="stat-label">En Alquiler</span>
+          <h2 class="stat-value">{{ stats.alquilados || 0 }}</h2>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <div class="dashboard-split-layout">
+    
+    <section class="chart-section">
+      <mat-card class="dashboard-card main-chart">
+        <mat-card-content>
+          <apx-chart
+            [series]="chartSeries"
+            [chart]="chartDetails"
+            [xaxis]="chartXAxis"
+            [yaxis]="chartYAxis"
+            [title]="chartTitle"
+            [colors]="chartColors"
+            [plotOptions]="chartPlotOptions"
+            [dataLabels]="chartDataLabels"
+            [grid]="chartGrid"
+            [states]="chartStates">
+          </apx-chart>
+        </mat-card-content>
+      </mat-card>
+    </section>
+
+    <aside class="sidebar-intelligence">
+      
+      <mat-card class="dashboard-card space-bottom">
+        <div class="sidebar-header">
+          <h3>Últimos Alquileres</h3>
+          <span class="badge-info">Actividad</span>
+        </div>
+        
+        <div class="sidebar-content">
+          <div *ngIf="recentReservations.length === 0" class="no-data">
+            No se registran alquileres recientes.
+          </div>
+          
+          <div class="reservation-list" *ngIf="recentReservations.length > 0">
+            <div class="reservation-item" *ngFor="let item of recentReservations">
+              <div class="item-avatar">
+                <mat-icon>person</mat-icon>
+              </div>
+              <div class="item-details">
+                <p class="client-name">{{ item.Cliente?.nombre || 'Cliente no especificado' }}</p>
+                <p class="suit-info">
+                  {{ item.Traje?.categoria }} ({{ item.Traje?.color }}) • 
+                  <span class="size-badge">Talle {{ item.Traje?.talle }}</span>
+                </p>
+              </div>
+              <div class="item-status">
+                <span class="status-dot" [ngClass]="item.estado?.toLowerCase()"></span>
+                <span class="status-text">{{ item.estado }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card class="dashboard-card">
+        <div class="sidebar-header">
+          <h3>Clientes más Fieles</h3>
+          <span class="badge-success">Top Rentas</span>
+        </div>
+        
+        <div class="sidebar-content">
+          <div *ngIf="topClients.length === 0" class="no-data">
+            Aún no hay historial de recurrencia.
+          </div>
+          
+          <div class="top-clients-list" *ngIf="topClients.length > 0">
+            <div class="top-client-item" *ngFor="let client of topClients; let i = index">
+              <div class="rank-badge" [ngClass]="'rank-' + (i + 1)">
+                {{ i + 1 }}°
+              </div>
+              <div class="client-rank-info">
+                <p class="rank-name">{{ client.nombre }}</p>
+                <p class="rank-meta">ID de Cliente: #{{ client.id }}</p>
+              </div>
+              <div class="rank-count">
+                <span class="count-number">{{ client.totalAlquileres || 0 }}</span>
+                <span class="count-label">alquileres</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+    </aside>
+
+  </div>
+</div>
+
+<ng-template #monthDialog>
+  <div class="modal-wrapper">
+    
+    <div class="modal-header">
+      <div>
+        <h3 class="modal-title">Alquileres de {{ selectedMonthName }}</h3>
+        <p class="modal-subtitle">Clientes registrados para este período de facturación.</p>
+      </div>
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div *ngIf="selectedMonthReservations.length === 0" class="modal-no-data">
+        <mat-icon class="no-data-icon">calendar_today</mat-icon>
+        <p>No se encontraron registros de trajes retirados en el mes seleccionado.</p>
+      </div>
+
+      <div class="modal-list" *ngIf="selectedMonthReservations.length > 0">
+        <div class="modal-item" *ngFor="let res of selectedMonthReservations">
+          <div class="modal-avatar">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+          <div class="modal-item-info">
+            <p class="modal-client-name">{{ res.Cliente?.nombre || 'Cliente Anónimo' }}</p>
+            <p class="modal-suit-detail">
+              {{ res.Traje?.categoria }} — <span class="modal-size-tag">Talle {{ res.Traje?.talle }}</span>
+            </p>
+          </div>
+          <span class="modal-badge-status" [ngClass]="res.estado?.toLowerCase()">
+            {{ res.estado }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button mat-flat-button color="primary" mat-dialog-close class="action-confirm-btn">
+        Entendido
+      </button>
+    </div>
+
+  </div>
+</ng-template>
+</file>
+
+<file path="frontend/src/app/components/dashboard/dashboard.ts">
+import { Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef } from '@angular/core';
+import { DashboardService } from '../../services/dashboard';
+import { MatDialog } from '@angular/material/dialog'; // 1. Importamos el gestor de modales
+
+@Component({
+  selector: 'app-dashboard',
+  standalone: false,
+  templateUrl: './dashboard.html',
+  styleUrl: './dashboard.css',
+})
+export class Dashboard implements OnInit {
+  @ViewChild('monthDialog') monthDialog!: TemplateRef<any>; // Captura la plantilla del HTML
+
+  stats: any = {};
+  recentReservations: any[] = []; 
+  topClients: any[] = []; 
+  
+  // PROPIEDADES NUEVAS PARA EL MODAL INTERACTIVO
+  allRecentReservations: any[] = [];      // Almacena la bolsa completa de reservas de los 6 meses
+  selectedMonthReservations: any[] = []; // Guarda solo las reservas filtradas del mes clickeado
+  selectedMonthName: string = '';        // Nombre del mes seleccionado para el título del modal
+
+  public chartSeries: any[] = [];
+  public chartDetails: any = {};
+  public chartXAxis: any = {};
+  public chartYAxis: any = {}; 
+  public chartTitle: any = {};
+  public chartColors: string[] = [];
+  public chartPlotOptions: any = {};
+  public chartDataLabels: any = {};
+  public chartGrid: any = {};
+  public chartStates: any = {};
+
+  constructor(
+    private dashboardService: DashboardService,
+    private dialog: MatDialog, // 2. Inyectamos el servicio en el constructor
+    private cdr: ChangeDetectorRef  
+  ) {
+    this.initChartConfig([], []);
+  }
+
+  ngOnInit(): void {
+    console.log('Cargando Dashboard...');
+    this.dashboardService.getStats().subscribe({
+      next: (res) => {
+        console.log('Datos recibidos del server:', res);
+        if (res && res.ok) {
+          this.stats = res.stats;
+          this.recentReservations = res.ultimasReservas || [];
+          this.topClients = res.clientesFieles || [];
+          
+          // Guardamos la lista extendida para poder filtrarla localmente en el frontend
+          this.allRecentReservations = res.historico?.rawReservas || []; 
+          // Si el backend no la anidó directo, usamos las reservas crudas calculadas
+          if (res.historico) {
+            this.initChartConfig(res.historico.categorias, res.historico.datos);
+          }
+
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => console.error('Error al cargar las estadísticas', err)
+    });
+  }
+
+  initChartConfig(categories: string[], data: number[]): void {
+    this.chartSeries = [{ name: 'Trajes Retirados', data: data }];
+
+    this.chartDetails = {
+      type: 'bar',
+      height: 340,
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
+      toolbar: { show: false },
+      animations: { enabled: true, easing: 'easeinout', speed: 600 },
+      
+      // 3. NUEVO: Escuchamos el evento de click sobre las barras del gráfico
+      events: {
+        dataPointSelection: (event: any, chartContext: any, config: any) => {
+          const monthIndex = config.dataPointIndex;
+          const monthName = config.w.config.xaxis.categories[monthIndex];
+          if (monthName) {
+            this.onMonthBarClick(monthName);
+          }
+        }
+      }
+    };
+
+    this.chartColors = ['#4f46e5']; 
+    this.chartPlotOptions = { bar: { borderRadius: 6, columnWidth: '35%' } };
+    this.chartDataLabels = { enabled: false };
+    this.chartGrid = {
+      borderColor: '#f1f5f9',
+      strokeDashArray: 4,
+      xaxis: { lines: { show: false } },
+      yaxis: { lines: { show: true } }
+    };
+
+    this.chartXAxis = {
+      categories: categories,
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      labels: { style: { colors: '#64748b', fontSize: '13px', fontWeight: 500 } }
+    };
+
+    const maxVal = data.length ? Math.max(...data) : 0;
+    this.chartYAxis = {
+      min: 0,
+      tickAmount: maxVal > 0 && maxVal < 5 ? maxVal : undefined,
+      labels: {
+        style: { colors: '#64748b', fontSize: '13px' },
+        formatter: (val: number) => val.toFixed(0)
+      }
+    };
+
+    this.chartTitle = {
+      text: 'Tendencia Mensual de Alquileres',
+      align: 'left',
+      style: { fontSize: '16px', fontWeight: 600, color: '#1e293b' }
+    };
+
+    this.chartStates = { hover: { filter: { type: 'darken', value: 0.9 } } };
+  }
+
+  // 4. NUEVO MÉTODO: Filtra los alquileres del mes clickeado y despliega el modal emergente
+  // Reemplazá este método completo en tu archivo dashboard.ts
+  onMonthBarClick(monthName: string): void {
+    const nombresMeses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    this.selectedMonthName = monthName;
+
+    // Filtramos las reservas del mes de manera segura usando strings directos
+    this.selectedMonthReservations = this.allRecentReservations.filter((reserva: any) => {
+      if (!reserva.fechaRetiro) return false;
+      
+      // Como fechaRetiro viene en formato "YYYY-MM-DD", la picamos por el guion
+      const partes = reserva.fechaRetiro.split('-'); // Ejemplo: ['2026', '05', '18']
+      const mesIndex = parseInt(partes[1], 10) - 1;  // Convertimos '05' a número (5) y restamos 1 para el índice del array
+      const etiquetaMes = nombresMeses[mesIndex];    // 'May'
+      
+      return etiquetaMes === monthName;
+    });
+
+    // Abrimos el modal con el fondo difuminado
+    this.dialog.open(this.monthDialog, {
+      width: '480px',
+      backdropClass: 'blur-backdrop',
+      autoFocus: false
+    });
+    
+    this.cdr.detectChanges();
+  }
+}
+</file>
+
+<file path="frontend/src/app/components/form-reserva/form-reserva.html">
+<h2 mat-dialog-title>{{ data ? 'Editar Reserva' : 'Nueva Reserva' }}</h2>
+
+<mat-dialog-content [formGroup]="form">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Cliente</mat-label>
+    <mat-select formControlName="clienteId" [compareWith]="compararObjetos">
+      <mat-option *ngFor="let c of listClientes" [value]="c.id">
+        {{c.nombre}} {{c.apellido}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Traje</mat-label>
+    <mat-select formControlName="trajeId" [compareWith]="compararObjetos">
+      <mat-option *ngFor="let t of listTrajes" [value]="t.id">
+        {{t.categoria}} - Talle {{t.talle}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Fecha de Retiro</mat-label>
+    <input matInput [matDatepicker]="pickerRetiro" formControlName="fechaRetiro" [min]="fechaMinima">
+    <mat-datepicker-toggle matSuffix [for]="pickerRetiro"></mat-datepicker-toggle>
+    <mat-datepicker #pickerRetiro></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Fecha de Devolución</mat-label>
+    <input matInput [matDatepicker]="pickerDev" formControlName="fechaDevolucion" [min]="form.get('fechaRetiro')?.value || fechaMinima">
+    <mat-datepicker-toggle matSuffix [for]="pickerDev"></mat-datepicker-toggle>
+    <mat-datepicker #pickerDev></mat-datepicker>
+    <mat-error *ngIf="form.hasError('fechaInvalida')">La devolución debe ser posterior al retiro.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Seña</mat-label>
+    <input matInput type="number" formControlName="senia">
+    <mat-error *ngIf="form.get('senia')?.hasError('min')">
+      La seña debe ser un valor positivo.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Estado</mat-label>
+    <mat-select formControlName="estado">      
+      <mat-option value="PENDIENTE">PENDIENTE</mat-option>
+      <mat-option value="RETIRADO">RETIRADO</mat-option>
+      <mat-option value="COMPLETADO">COMPLETADO</mat-option>
+      <mat-option value="CANCELADO">CANCELADO</mat-option>
+    </mat-select>
+    <mat-hint *ngIf="!this.data">Las nuevas reservas se crean siempre como PENDIENTE.</mat-hint>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+</mat-dialog-actions>
+</file>
+
+<file path="frontend/src/app/components/gestion-clientes/gestion-clientes.css">
+/* --- NUEVA CLASE PARA EL FORMULARIO --- */
+.cliente-form {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-start; /* Mantiene los inputs alineados arriba */
+  margin-top: 15px;
+}
+
+/* Modificamos los inputs para que no crezcan de más y mantengan el bloque limpio */
+.cliente-form mat-form-field {
+  flex: 1 1 auto; /* Permite que se adapten al espacio disponible */
+  min-width: 180px; /* Evita que se aplasten en pantallas pequeñas */
+}
+
+/* --- ESTILOS DE BOTONES CORREGIDOS --- */
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* Centra el botón exactamente con el alto del recuadro del input (56px) */
+  height: 56px; 
+  /* Le quitamos el width: 100% que tenías antes para que no baje a la siguiente línea */
+}
+
+.btn-accion {
+  padding: 4px 20px;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  height: 40px; /* Alto definido para igualar proporciones */
+}
+
+.btn-accion mat-icon {
+  margin-right: 6px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.btn-cancelar {
+  border-radius: 6px;
+  padding: 4px 16px;
+  height: 40px;
+}
+
+/* Contenedor de la celda para que sea posicionable */
+td.mat-cell {
+  position: relative;
+  padding: 0 8px !important;
+}
+
+/* Estilo del texto cuando no se está editando */
+.dato-texto {
+  cursor: pointer;
+  display: block;
+  padding: 10px 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  min-height: 20px; /* Para poder clickear celdas vacías */
+}
+
+.dato-texto:hover {
+  background-color: rgba(63, 81, 181, 0.05); /* Un azul muy suave */
+  color: #3f51b5; /* El color de Angular Material */
+}
+
+/* Estilo del input cuando se activa el doble clic */
+.edit-input {
+  width: 100%;
+  padding: 8px 4px;
+  font-family: inherit;
+  font-size: 14px;
+  border: 2px solid #3f51b5; /* Borde del color principal */
+  border-radius: 4px;
+  outline: none;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-sizing: border-box; /* Vital para que no se agrande la celda */
+}
+</file>
+
+<file path="frontend/src/styles.css">
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+mat-form-field {
+  margin-top: 8px;
+}
+
+.cdk-overlay-container {
+  z-index: 9999 !important;
+}
+
+.snack-exito {
+  /* Estas variables sobreescriben el color interno del componente */
+  --mdc-snackbar-container-color: #2e7d32 !important;
+  --mdc-snackbar-label-text-color: white !important;
+  --mat-snack-bar-button-color: white !important;
+}
+
+/* Por si acaso las variables no bastan, atacamos la clase interna */
+.snack-exito .mdc-snackbar__surface {
+  background-color: #2e7d32 !important;
+}
+
+.snack-error {
+  --mdc-snackbar-container-color: #d32f2f !important;
+  --mdc-snackbar-label-text-color: white !important;
+  --mat-snack-bar-button-color: white !important;
+}
+
+.snack-error .mdc-snackbar__surface {
+  background-color: #d32f2f !important;
+}
+</file>
+
+<file path="BACKEND/http/reservas.http">
+### Probar si el servidor responde (Ruta de prueba)
+GET http://localhost:3000/api/status
+
+### Obtener todas las reservas
+GET http://localhost:3000/api/reservas
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NzU4MTU1MSwiZXhwIjoxNzc3NTk1OTUxfQ.OlaExQ-sluvIjZT-LIE9tntv41QED0E3UclT52bryTk
+### Crear una Reserva (Asegurarse de tener el servidor corriendo)
+POST http://localhost:3000/api/reservas
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NzU4MTU1MSwiZXhwIjoxNzc3NTk1OTUxfQ.OlaExQ-sluvIjZT-LIE9tntv41QED0E3UclT52bryTk
+
+{
+    "fechaRetiro": "2026-06-15",
+    "fechaDevolucion": "2026-06-20",
+    "senia": 2000,
+    "clienteId": 7,
+    "trajeId": 7
+}
+
+### Actualizar una Reserva
+PUT http://localhost:3000/api/reservas/12
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3Njg4MjIzOCwiZXhwIjoxNzc2ODk2NjM4fQ.bMuOSpA3Z2yfn9DC0ygztebjcxoAAzdQ2rSJvbKI_MM
+
+{
+    "fechaRetiro": "2026-05-20",
+    "fechaDevolucion": "2026-05-27",
+    "senia": 36780,
+    "clienteId": 2,
+    "trajeId": 3
+}
+
+### Actualizar el estado de una Reserva
+PATCH http://localhost:3000/api/reservas/12/estado
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3Njg4MjIzOCwiZXhwIjoxNzc2ODk2NjM4fQ.bMuOSpA3Z2yfn9DC0ygztebjcxoAAzdQ2rSJvbKI_MM
+
+{
+    "estado": "PENDIENTE"
+}
+
+### Eliminar una Reserva
+DELETE http://localhost:3000/api/reservas/8
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3Njg4MjIzOCwiZXhwIjoxNzc2ODk2NjM4fQ.bMuOSpA3Z2yfn9DC0ygztebjcxoAAzdQ2rSJvbKI_MM
+</file>
+
+<file path="BACKEND/http/trajes.http">
+### Variable para la URL base
+@baseUrl = http://localhost:3000/api/trajes
+
+### Prueba 0: Prueba del servidor funcionando
+GET http://localhost:3000/api/status
+
+### Prueba 1: Crear un nuevo Traje
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codigoEtiqueta": "CAS-002",
+  "talle": "22",
+  "color": "Azul",
+  "categoria": "Casual",
+  "precioAlquilerBase": 40600.00
+}
+
+### Prueba 2: Obtener todos los trajes
+GET {{baseUrl}}
+
+### Prueba 3: Actualizar un traje completo (ID:1)
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "codigoEtiqueta": "SMOK-025",
+  "talle": "35",
+  "color": "Rojo",
+  "categoria": "Smoking",
+  "precioAlquilerBase": 26000.00
+}
+
+### Prueba 4: Actualizar un campo de un traje (ID:1)
+PATCH {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "color": "Azul"
+}
+
+### Prueba 5: Eliminar un traje (ID:8)
+DELETE {{baseUrl}}/8
+</file>
+
+<file path="BACKEND/package.json">
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/app.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.2.1",
+    "pg": "^8.18.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.3.0",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
+</file>
+
+<file path="docker-compose.yml">
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:17
+    container_name: postgres-alquiler
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: alquiler_trajes
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_vol:/var/lib/postgresql/data
+
+  mongo-db:
+    image: mongo:latest
+    container_name: mongo-alquiler
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data_vol:/data/db
+
+volumes:
+  postgres_data_vol:
+  mongo_data_vol:
+</file>
+
+<file path="frontend/src/app/app.ts">
+import { Component, OnInit, signal } from '@angular/core';
+import { AuthService } from './services/auth.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.html',
+  standalone: false,
+  styleUrl: './app.css'
+})
+export class App implements OnInit {
+  mostrarMenu: boolean = false;
+  protected readonly title = signal('frontend');
+  
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    // Nos suscribimos una sola vez. La variable mostrarMenu se encarga de todo.
+    this.authService.isLoggedIn$.subscribe(res => {
+      this.mostrarMenu = res;
+
+      if (!res) {
+        this.router.navigate(['/login']);
+      } else if (this.router.url === '/login' || this.router.url === '/') {
+        this.router.navigate(['/dashboard']);
+      }
+    });
+  }
+
+  // 2. Creamos la función para cerrar sesión
+  logout() {
+    this.authService.logout();
+  }
+}
+</file>
+
+<file path="frontend/src/app/components/gestion-clientes/gestion-clientes.html">
+<div class="container">
+  
+  <div class="page-header">
+    <div class="header-icon">
+      <mat-icon>groups</mat-icon>
+    </div>
+    <mat-card-header>
+      <mat-card-title>Gestión de Clientes</mat-card-title>
+    </mat-card-header>
+  </div>
+
+  <mat-card class="form-card" style="margin-bottom: 20px; padding: 20px;">
+    <mat-card-header>
+      <mat-card-title>{{ modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente' }}</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form [formGroup]="clienteForm" (ngSubmit)="guardarCliente()" class="cliente-form">
+        
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="nombre" placeholder="Ej. Juan Pérez">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>DNI</mat-label>
+          <input matInput formControlName="dni" type="number">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="telefono">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email">
+        </mat-form-field>
+        
+        <br>
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="clienteForm.invalid" class="btn-accion">
+            <mat-icon>{{ modoEdicion ? 'sync' : 'save' }}</mat-icon>
+            {{ modoEdicion ? 'Actualizar' : 'Guardar Cliente' }}
+          </button>
+          
+          <button mat-stroked-button type="button" *ngIf="modoEdicion" (click)="cancelarEdicion()" color="warn" class="btn-cancelar">
+            <mat-icon>close</mat-icon>
+            Cancelar
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+  <div *ngIf="listClientes && listClientes.length >= 0; else cargando">
+    <table mat-table [dataSource]="listClientes" class="mat-elevation-z8" style="width: 100%;">
+      
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let element">
+          <span (dblclick)="element.editNombre = true" *ngIf="!element.editNombre">
+            {{element.nombre}}
+          </span>
+          <input *ngIf="element.editNombre"
+                 [(ngModel)]="element.nombre"
+                 (keyup.enter)="guardarCambio(element, 'nombre')"
+                 (blur)="guardarCambio(element, 'nombre')"
+                 class="edit-input">
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="dni">
+        <th mat-header-cell *matHeaderCellDef> DNI </th>
+        <td mat-cell *matCellDef="let element">
+          <span (dblclick)="element.editDni = true" *ngIf="!element.editDni">
+            {{element.dni}}
+          </span>
+          <input *ngIf="element.editDni"
+                 [(ngModel)]="element.dni"
+                 (keyup.enter)="guardarCambio(element, 'dni')"
+                 (blur)="guardarCambio(element, 'dni')"
+                 class="edit-input">
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="telefono">
+        <th mat-header-cell *matHeaderCellDef> Teléfono </th>
+        <td mat-cell *matCellDef="let element">
+          <span (dblclick)="element.editTelefono = true" *ngIf="!element.editTelefono">
+            {{element.telefono}}
+          </span>
+          <input *ngIf="element.editTelefono"
+                 [(ngModel)]="element.telefono"
+                 (keyup.enter)="guardarCambio(element, 'telefono')"
+                 (blur)="guardarCambio(element, 'telefono')"
+                 class="edit-input">
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let element">
+          <span (dblclick)="element.editEmail = true" *ngIf="!element.editEmail">
+            {{element.email}}
+          </span>
+          <input *ngIf="element.editEmail"
+                 [(ngModel)]="element.email"
+                 (keyup.enter)="guardarCambio(element, 'email')"
+                 (blur)="guardarCambio(element, 'email')"
+                 class="edit-input">
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="blue" (click)="editarCliente(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminarCliente(element.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+  <ng-template #cargando>
+    <p>Conectando con el servidor o no hay clientes registrados...</p>
+  </ng-template>
+</div>
+</file>
+
+<file path="frontend/src/app/components/login/login.ts">
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+
+@Component({
+  selector: 'app-login',
+  standalone: false,
+  templateUrl: './login.html',
+  styleUrl: './login.css',
+})
+export class Login {
+  LoginForm: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.LoginForm = this.fb.group({
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]]
+    });
+  }
+
+  onLogin() {
+    if (this.LoginForm.invalid) return;
+
+    this.authService.login(this.LoginForm.value).subscribe({
+      next: (res) => {
+        console.log('Respuesta del servidor:', res);
+        if (res.ok) {
+          alert('¡Bienvenido!');
+          sessionStorage.setItem('token', res.token); // Guarda el token en SessionStorage
+          this.router.navigate(['/dashboard']); //Navega al panel inicial
+        }
+      },
+      error: (err) => {
+        alert('Error: ' + err.error.msg); // Muestra el mensaje de error del backend  
+      }
+    });
+  }
+}
+</file>
+
+<file path="frontend/src/app/services/cliente.ts">
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class Cliente {
+  private apiUrl = 'http://localhost:3000/api/clientes';
+
+  constructor(private http: HttpClient) { }
+
+  private getHeaders() {
+    const token = sessionStorage.getItem('token');
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+
+  getClientes(): Observable<any> {
+    return this.http.get(this.apiUrl, { headers: this.getHeaders() });
+  }
+  
+  getCliente(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  }
+
+  postCliente(cliente: any): Observable<any> {
+    return this.http.post(this.apiUrl, cliente, { headers: this.getHeaders() });
+  }
+
+  putCliente(id: number, cliente: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, cliente, { headers: this.getHeaders() });
+  }
+
+  patchCliente(id: number, cambios: any): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}`, cambios, { headers: this.getHeaders() });
+  }
+
+  deleteCliente(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  }
+}
+</file>
+
+<file path="frontend/src/app/services/traje.service.ts">
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { Traje } from "../models/traje.model";
+
+// CAPA TÉCNICA: Definimos la forma de la respuesta del Backend
+interface RespuestaApiTrajes {
+    ok: boolean;
+    trajes: Traje[]; // Aquí está la lista real
+}
+
+interface RespuestaApiIndividual {
+    ok: boolean;
+    msg?: string;
+    traje: Traje;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class TrajeService {
+    private apiUrl = 'http://localhost:3000/api/trajes';
+
+    constructor(private http: HttpClient) { }
+
+    // CAMBIO 1: El GET ahora espera el objeto con la propiedad 'trajes'
+    getTrajes(filtros?: any): Observable<RespuestaApiTrajes> {
+        let params = new HttpParams();
+
+        if (filtros) {
+            Object.keys(filtros).forEach(key => {
+                if (filtros[key]) {
+                    params = params.append(key, filtros[key]);
+                }
+            });
+        }
+
+        return this.http.get<RespuestaApiTrajes>(this.apiUrl, { params });
+    }
+
+    // CAMBIO 2: El POST también devuelve un objeto envuelto { ok, msg, traje }
+    crearTraje(nuevoTraje: Traje): Observable<RespuestaApiIndividual> {
+        return this.http.post<RespuestaApiIndividual>(this.apiUrl, nuevoTraje);
+    }
+
+    actualizarTraje(id: number, traje: any): Observable<RespuestaApiIndividual> {
+        return this.http.put<RespuestaApiIndividual>(`${this.apiUrl}/${id}`, traje);
+    }
+
+    // ... los demás métodos pueden quedarse con <any> si no necesitas el retorno exacto
+    eliminarTraje(id: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${id}`);
+    }
+}
+</file>
+
+<file path="BACKEND/http/clientes.http">
+### Crear Cliente
+POST http://localhost:3000/api/clientes
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NzU4MzY0NywiZXhwIjoxNzc3NTk4MDQ3fQ.eJ7PIRPsmWxlsHX5gUNvOwTCvxZc_kfw5W_TbBde2Us
+
+{
+    "nombre": "Franco Lopez",
+    "dni": "12545300",
+    "telefono": "341 340 8855",
+    "email": "fran05Lopez@gmail.com"
+}
+
+### Obtener Clientes
+GET http://localhost:3000/api/clientes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NzU4ODQxNSwiZXhwIjoxNzc3NjAyODE1fQ.tTERgP30VT-vjQBaZQw6DInHCPblxG9b39mGX2r6Qso
+
+### Obtener cliente por id
+GET http://localhost:3000/api/clientes/3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTQ5NzQ3NywiZXhwIjoxNzc1NTExODc3fQ.J5BCRcu7TIqzm1-iQm9ngKk37fsZ6Ftog0freGolVgQ
+
+### Actualizar cliente
+PUT http://localhost:3000/api/clientes/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTQ5NzQ3NywiZXhwIjoxNzc1NTExODc3fQ.J5BCRcu7TIqzm1-iQm9ngKk37fsZ6Ftog0freGolVgQ
+
+{
+    "nombre": "Juan Pereyra",
+    "dni": "44240469",
+    "telefono": "3462578996",
+    "email": "JuanPe@gmail.com"
+}
+
+### Actualizar cliente parcialmente
+PATCH http://localhost:3000/api/clientes/3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTQ5NzQ3NywiZXhwIjoxNzc1NTExODc3fQ.J5BCRcu7TIqzm1-iQm9ngKk37fsZ6Ftog0freGolVgQ
+
+{
+    "telefono": "3462 606009"
+}
+
+### Eliminar cliente
+DELETE http://localhost:3000/api/clientes/4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3NTQ5NzQ3NywiZXhwIjoxNzc1NTExODc3fQ.J5BCRcu7TIqzm1-iQm9ngKk37fsZ6Ftog0freGolVgQ
+</file>
+
+<file path="frontend/src/app/app-routing-module.ts">
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { Login } from './components/login/login';
+import { GestionTrajesComponent } from './components/gestion-trajes/gestion-trajes.component';
+import { authGuard } from './guards/auth-guard';
+import { Dashboard } from './components/dashboard/dashboard';
+import { GestionClientes } from './components/gestion-clientes/gestion-clientes';
+import { ListadoReservas } from './components/listado-reservas/listado-reservas';
+
+const routes: Routes = [
+  { path: 'login', component: Login },
+  { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
+  { 
+    path: 'gestion-trajes',
+    component: GestionTrajesComponent,
+    canActivate: [authGuard]  
+  },
+  { path: 'gestion-clientes', component: GestionClientes, canActivate: [authGuard] },
+  { path: 'reservas', component: ListadoReservas },
+  
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+</file>
+
+<file path="frontend/src/app/components/gestion-clientes/gestion-clientes.ts">
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Cliente } from '../../services/cliente';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+@Component({
+  selector: 'app-gestion-clientes',
+  standalone: false,
+  templateUrl: './gestion-clientes.html',
+  styleUrl: './gestion-clientes.css',
+})
+export class GestionClientes implements OnInit {
+  listClientes: any[] = [];
+  displayedColumns: string[] = ['id', 'nombre', 'dni', 'telefono', 'email', 'acciones'];
+
+  clienteForm: FormGroup;
+  modoEdicion: boolean = false;
+  clienteIdActual: number | null = null;
+  cargando: boolean = false;
+
+  constructor(
+    private _cliente: Cliente,
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder ,
+    private _snackBar: MatSnackBar
+  ) { 
+    // Inicializamos el formulario con validaciones
+    this.clienteForm = this.fb.group({
+      nombre: ['', Validators.required],
+      dni: ['', Validators.required],
+      telefono: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  ngOnInit(): void {
+    this.obtenerClientes();
+  }
+
+  obtenerClientes() {
+    this._cliente.getClientes().subscribe({
+      next: (data) => {
+        this.listClientes = data;
+        this.cdr.detectChanges();
+      },
+      error: (e) => console.error('Error al cargar clientes', e)
+    });
+  }
+
+  guardarCambio(cliente: any, campo: string) {
+    // 1. Identificamos el nombre de la variable que controla el input (ej: editNombre)
+    const fieldName = 'edit' + campo.charAt(0).toUpperCase() + campo.slice(1);
+
+    // 2. Si por alguna razón el campo ya está en false, salimos para evitar el doble disparo
+    if (cliente[fieldName] === true) {
+          
+      cliente[fieldName] = false;
+
+      const body = { [campo]: cliente[campo] };
+
+      this._cliente.patchCliente(cliente.id, body).subscribe({
+        next: () => {
+          this._snackBar.open('¡Cambio Guardado!', 'Cerrar', {
+            duration: 3000,
+            panelClass: ['snack-exito'],
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+          });
+        },
+        error: () => {
+          this._snackBar.open('Error al guardar el cambio. Intenta nuevamente,', 'Cerrar', {
+            duration: 3000,
+            panelClass: ['snack-error'],
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+          });
+          this.obtenerClientes(); // Si falla, volvemos al valor anterior
+        }
+      });
+    }
+  }
+
+
+
+
+  // --- FUNCIONES DEL FORMULARIO ---
+
+  guardarCliente() {
+    if (this.clienteForm.invalid) {
+      alert('Por favor, completa todos los campos correctamente.');
+      return;
+    }
+
+    const clienteData = this.clienteForm.value;
+
+    if (this.modoEdicion && this.clienteIdActual) {
+      this._cliente.putCliente(this.clienteIdActual, clienteData).subscribe({
+        next: () => {
+          alert('Cliente actualizado exitosamente');
+          this.resetearFormulario();
+          this.obtenerClientes();
+        },
+        error: (e) => console.error('Error al actualizar', e)
+      });
+    } else {
+      this._cliente.postCliente(clienteData).subscribe({
+        next: () => {
+          alert('Cliente creado exitosamente');
+          this.resetearFormulario();
+          this.obtenerClientes();
+        },
+        error: (e) => console.error('Error al crear', e)
+      });
+    }
+  }
+
+  editarCliente(cliente: any) {
+    this.modoEdicion = true;
+    this.clienteIdActual = cliente.id;
+    this.clienteForm.patchValue({
+      nombre: cliente.nombre,
+      dni: cliente.dni,
+      telefono: cliente.telefono,
+      email: cliente.email
+    });
+  }
+
+  cancelarEdicion() {
+    this.resetearFormulario();
+  }
+
+  resetearFormulario() {
+    this.clienteForm.reset();
+    this.modoEdicion = false;
+    this.clienteIdActual = null;
+  }
+
+  // --- FUNCIÓN DE ELIMINAR ---
+
+  eliminarCliente(id: number) {
+    if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+      this._cliente.deleteCliente(id).subscribe({
+        next: () => {
+          alert('Cliente eliminado exitosamente');
+          this.obtenerClientes();
+        },
+        error: (e) => console.error('Error al eliminar cliente', e)
+      });
+    }
+  }
+}
+</file>
+
+<file path="BACKEND/src/controllers/ReservaController.ts">
+import { Request, Response } from "express";
+import { Traje } from "../models/Traje";
+import { Op } from "sequelize";
+import { Log } from "../models/Log";
+import Reserva from "../models/Reserva";
+import Cliente from "../models/Cliente";
+import { EstadoReserva } from "../models/Enums";
+
+export const postReserva = async (req: Request, res: Response) => {
+  const { fechaRetiro, fechaDevolucion, senia, clienteId, trajeId } = req.body;
+
+  try {
+    // --- 1. VALIDACIONES BÁSICAS ---
+    if (senia < 0) {
+      return res.status(400).json({ msg: "La seña no puede ser negativa." });
+    }
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Reseteamos la hora para comparar solo fechas
+    const retiro = new Date(fechaRetiro);
+    const devolucion = new Date(fechaDevolucion);
+
+    if (retiro < hoy) {
+      return res
+        .status(400)
+        .json({ msg: "La fecha de retiro no puede ser anterior a hoy." });
+    }
+    if (devolucion <= retiro) {
+      return res
+        .status(400)
+        .json({ msg: "La fecha de devolución debe ser posterior al retiro." });
+    }
+
+    // --- 2. VALIDACIÓN DE SUPERPOSICIÓN (Fórmula segura) ---
+    const reservaExistente = await Reserva.findOne({
+      where: {
+        trajeId,
+        estado: {
+          [Op.notIn]: [EstadoReserva.CANCELADO, EstadoReserva.COMPLETADO],
+        }, // Solo consideramos reservas activas
+        fechaRetiro: { [Op.lt]: fechaDevolucion },
+        fechaDevolucion: { [Op.gt]: fechaRetiro },
+      },
+    });
+
+    if (reservaExistente) {
+      return res
+        .status(400)
+        .json({ msg: "El traje ya está reservado para esas fechas." });
+    }
+
+    const nuevaReserva: any = await Reserva.create({
+      fechaRetiro,
+      fechaDevolucion,
+      senia,
+      clienteId,
+      trajeId,
+      estado: EstadoReserva.PENDIENTE,
+    });
+
+    await Log.create({
+      accion: "CREAR_RESERVA",
+      descripcion: `Se creó la reserva #${nuevaReserva.id} para el cliente ${clienteId} y traje ${trajeId}`,
+      metadata: { clienteId: clienteId, trajeId: trajeId },
+    });
+
+    res.json({ msg: "Reserva creada con éxito", reserva: nuevaReserva });
+  } catch (error) {
+    console.error("Error técnico:", error);
+    res.status(500).json({ msg: "Error al crear la reserva", error });
+  }
+};
+
+export const getReservas = async (req: Request, res: Response) => {
+  try {
+    const reservas = await Reserva.findAll({
+      include: [
+        { model: Cliente, attributes: ["nombre", "dni"] },
+        { model: Traje, attributes: ["categoria", "talle", "color"] },
+      ],
+    });
+    res.json(reservas);
+  } catch (error) {
+    res.status(500).json({ msg: "Error al obtener reservas", error });
+  }
+};
+
+export const updateReserva = async (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const { fechaRetiro, fechaDevolucion, senia, trajeId, estado } = req.body;
+
+  try {
+    const reserva = (await Reserva.findByPk(id)) as any;
+    if (!reserva) {
+      return res.status(404).json({ msg: "No existe esa reserva" });
+    }
+
+    // --- 1. VALIDACIONES BÁSICAS EN EDICIÓN ---
+    if (senia !== undefined && senia < 0) {
+      return res.status(400).json({ msg: "La seña no puede ser negativa" });
+    }
+
+    // Solo validamos las fechas si ambas vienen en el body
+    if (fechaRetiro && fechaDevolucion) {
+      const retiro = new Date(fechaRetiro);
+      const devolucion = new Date(fechaDevolucion);
+
+      if (devolucion <= retiro) {
+        return res
+          .status(400)
+          .json({
+            msg: "La fecha de devolución debe ser posterior al retiro.",
+          });
+      }
+
+      // --- 2. VALIDACIÓN DE SUPERPOSICIÓN EN EDICIÓN ---
+      // Verificamos que no pise otra reserva distinta a la que estamos editando
+      const reservaExistente = await Reserva.findOne({
+        where: {
+          trajeId: trajeId || reserva.trajeId, //usamos el nuevo traje o el que ya tenía
+          id: { [Op.ne]: id }, //Excluímos esta misma reserva de la búsqueda
+          estado: {
+            [Op.notIn]: [EstadoReserva.CANCELADO, EstadoReserva.COMPLETADO],
+          },
+          fechaRetiro: { [Op.lt]: fechaDevolucion },
+          fechaDevolucion: { [Op.gt]: fechaRetiro },
+        },
+      });
+
+      if (reservaExistente) {
+        return res
+          .status(400)
+          .json({
+            msg: "El traje ya está reservado en esas fechas por otro cliente.",
+          });
+      }
+    }
+
+    await reserva.update(req.body);
+    await registrarLog(
+      "ACTUALIZAR_RESERVA",
+      Number(id),
+      "Se actualizó la reserva",
+    );
+
+    res.json({ msg: "Reserva actualizada", reserva });
+  } catch (error) {
+    console.error("Error técnico:", error);
+    res.status(500).json({ msg: "Error al actualizar la reserva", error });
+  }
+};
+
+export const updateEstadoReserva = async (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const { estado } = req.body;
+
+  const estadosValidos = ["PENDIENTE", "RETIRADO", "COMPLETADO", "CANCELADO"];
+  if (!estadosValidos.includes(estado)) {
+    return res.status(400).json({ msg: "Estado no válido" });
+  }
+
+  try {
+    const reserva = await Reserva.findByPk(id);
+    if (!reserva) return res.status(404).json({ msg: "No existe esa reserva" });
+
+    await reserva.update({ estado });
+    await registrarLog(
+      "ACTUALIZAR_ESTADO_RESERVA",
+      Number(id),
+      `Se actualizó el estado de la reserva a ${estado}`,
+    );
+    res.json({ msg: "Estado actualizado" });
+  } catch (error) {
+    res.status(500).json({ msg: "Error al cambiar el estado de la reserva" });
+  }
+};
+
+export const deleteReserva = async (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  try {
+    const reserva = await Reserva.findByPk(id);
+    if (!reserva) {
+      return res.status(404).json({ msg: "No existe una reserva con ese id" });
+    }
+    await reserva.destroy();
+    await registrarLog("ELIMINAR_RESERVA", Number(id), "Se eliminó la reserva");
+    res.json({ msg: "Reserva eliminada con éxito" });
+  } catch (error) {
+    res.status(500).json({ msg: "Error al eliminar la reserva", error });
+  }
+};
+
+const registrarLog = async (accion: string, id: number, detalle: string) => {
+  await Log.create({
+    accion,
+    descripcion: `Reserva #${id}: ${detalle}`,
+    metadata: { reservaId: id },
+  });
+};
+</file>
+
+<file path="BACKEND/src/controllers/TrajeControllers.ts">
+import { Request, Response } from 'express';
+import { Traje } from '../models/Traje';
+import { Log } from '../models/Log';
+import { EstadoTraje } from '../models/Enums';
+import { Op } from 'sequelize';
+
+export const crearTraje = async (req: Request, res: Response) => {
+    try {
+        // Extraemos los datos que vienen del frontend o Postman
+        const { codigoEtiqueta, talle, color, categoria, precioAlquilerBase } = req.body;
+
+        // Creamos el registro en PostgreSQL usando Sequelize
+        const nuevoTraje = await Traje.create({
+            codigoEtiqueta,
+            talle,
+            color,
+            categoria,
+            precioAlquilerBase,
+            estado: EstadoTraje.DISPONIBLE // Por defecto nace disponible
+        });
+
+        await Log.create({
+            accion: 'CREAR_TRAJE',
+            descripcion: `Se registró un nuevo traje: ${codigoEtiqueta}`,
+            metadata: {trajeId: nuevoTraje.id},
+        })
+
+        res.status(201).json({
+            ok: true,
+            msg: 'Traje y Log registrados con éxito',
+            traje: nuevoTraje
+        });
+    } catch (error: any) {
+        console.error(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error al crear el traje',
+            error: error.message
+        });
+    }
+};
+
+export const obtenerTrajes = async (req: Request, res: Response) => {
+    try {
+        // 1. Extraemos los posibles filtros de la query de la URL
+        const { codigo, talle, color, categoria, estado } = req.query;
+
+        // 2. Construimos el objeto de condiciones dinámicamente
+        // Si el filtro no viene en la URL, Sequelize simplemente lo ignora
+        const whereConditions: any = {};
+
+        if (codigo) {
+            whereConditions.codigoEtiqueta = { [Op.iLike]: `%${codigo}%` };
+        }
+        if (talle) {
+            whereConditions.talle = talle; // Filtro exacto para talle
+        }
+        if (color) {
+            whereConditions.color = { [Op.iLike]: `%${color}%` };
+        }
+        if (categoria) {
+            whereConditions.categoria = { [Op.iLike]: `%${categoria}%` };
+        }
+        if (estado) {
+            whereConditions.estado = estado; // Filtro exacto por ser Enum
+        }
+
+        // 3. Ejecutamos la búsqueda con el objeto 'where' dinámico
+        const trajes = await Traje.findAll({ 
+            where: whereConditions,
+            order: [['id', 'ASC']] 
+        }); 
+
+        // MSJ DE TOMI: Log opcional en MongoDB para trackear qué está buscando la gente, es decir, para futuros análisis de "más buscados"
+        /* if (Object.keys(req.query).length > 0) {
+            await Log.create({
+                accion: 'FILTRAR_TRAJES',
+                descripcion: `Búsqueda con filtros: ${JSON.stringify(req.query)}`,
+                metadata: { filtros: req.query, resultadosEncontrados: trajes.length }
+            });
+        } */
+
+        res.json({ ok: true, trajes });
+    } catch (error: any) {
+        console.error(error);
+        res.status(500).json({ 
+            ok: false, 
+            msg: 'Error al obtener trajes con filtros',
+            error: error.message 
+        });
+    }
+};
+
+export const actualizarTraje = async (req: Request, res: Response) => {
+    try {
+        const id = Number(req.params.id);
+        const { codigoEtiqueta, talle, color, categoria, precioAlquilerBase } = req.body;
+
+        const traje = await Traje.findByPk(id);
+        if (!traje) return res.status(404).json({ mensaje: 'Traje no encontrado' });
+
+        // Actualizamos en Postgre
+        await traje.update ({ codigoEtiqueta, talle, color, categoria, precioAlquilerBase });
+
+        //Registramos el Log en Mongo
+        await Log.create({
+            accion: 'ACTUALIZAR_TRAJE',
+            descripcion: `Se actualizó el traje con ID: ${id}`,
+            metadata: { trajeId: id }
+        });
+
+        res.json({ ok: true, mensaje: 'Traje actualizado', traje });
+    } catch (error) {
+        res.status(500).json({ ok: false, error: 'Error al actualizar' })
+    }
+};
+
+export const actualizarParcialTraje = async (req: Request, res: Response) => {
+    try{
+        const id = Number(req.params.id);
+        const traje = await Traje.findByPk(id);
+
+        if(!traje) return res.status(404).json({ ok: false, mensaje: 'No existe el traje' });
+
+        // Solo actualizamos los campos que vienen en el body
+        await traje.update(req.body);
+
+        await Log.create({
+            accion: 'ACTUALIZAR_PARCIAL_TRAJE',
+            descripcion: `Se actualizaron algunos campos del traje con ID: ${id}`,
+            metadata: { trajeId: id, camposCambiados: Object.keys(req.body) }
+        });
+
+        res.json({ ok: true, mensaje: 'Traje actualizado (parcial)', traje });
+    }   catch (error) {
+        res.status(500).json({ ok: false, error: 'Error al actualizar parcialmente' })       
+    }
+
+}
+
+export const eliminarTraje = async (req: Request, res: Response) => {
+    try{
+        const id = Number(req.params.id);
+        const traje = await Traje.findByPk(id);
+
+        if (!traje) return res.status(404).json({ mensaje: 'No existe el traje' });
+
+        const codigoCopiado = traje.codigoEtiqueta;
+        await traje.destroy(); // Borra de postgre
+
+        //Registramos el log en mongo
+        await Log.create({
+            accion: 'ELIMINAR_TRAJE',
+            descripcion: `Se eliminó el traje con ID: ${id}`,
+            metadata: { trajeId: id }
+        });
+
+        res.json({ ok: true, mensaje: 'Traje eliminado correctamente' });
+    } catch (error) {
+        res.status(500).json({ ok: false, error: 'Error al eliminar' });
+    }
+};
+</file>
+
+<file path="frontend/src/app/app.html">
+<div *ngIf="mostrarMenu; else vistaPublica" class="wrapper-sistema">
+  <mat-sidenav-container>
+    <mat-sidenav mode="side" opened class="sidenav">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/dashboard">
+          <mat-icon>dashboard</mat-icon> Dashboard
+        </a>
+        <a mat-list-item routerLink="/gestion-clientes">
+          <mat-icon>groups</mat-icon> Clientes
+        </a>
+        <a mat-list-item routerLink="/gestion-trajes">
+          <mat-icon>inventory_2</mat-icon> Trajes
+        </a>
+        <a mat-list-item routerLink="/reservas">
+          <mat-icon>event_note</mat-icon> Reservas
+        </a>
+        <mat-divider></mat-divider>
+        <button mat-list-item (click)="logout()">
+          <mat-icon>logout</mat-icon> Cerrar Sesión
+        </button>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="main-content">
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
+
+<ng-template #vistaPublica>
+  <div class="login-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+</ng-template>
+</file>
+
+<file path="frontend/src/app/components/gestion-trajes/gestion-trajes.component.html">
+<div class="container p-4">
+    
+  <mat-card class="mb-4 shadow">
+    <mat-card-header>
+      <mat-card-title>Gestión de Trajes</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content class="mt-3">
+      <form [formGroup]="trajeForm" (ngSubmit)="guardarTraje()" class="row">
+        
+        <mat-form-field class="col-md-3" appearance="outline">
+          <mat-label>Código Etiqueta</mat-label>
+          <input matInput formControlName="codigoEtiqueta" placeholder="Ej: SMOK-001">
+        </mat-form-field>
+
+        <mat-form-field class="col-md-3" appearance="outline">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="categoria">
+            <mat-option value="Smokings">Smokings</mat-option>
+            <mat-option value="Gala">Gala</mat-option>
+            <mat-option value="Casual">Casual</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="col-md-2" appearance="outline">
+          <mat-label>Talle</mat-label>
+          <input matInput formControlName="talle" placeholder="Ej: 52">
+        </mat-form-field>
+
+        <mat-form-field class="col-md-2" appearance="outline">
+          <mat-label>Color</mat-label>
+          <input matInput formControlName="color" placeholder="Ej: Negro">
+        </mat-form-field>
+
+        <mat-form-field class="col-md-2" appearance="outline">
+          <mat-label>Precio Base</mat-label>
+          <input type="number" matInput formControlName="precioAlquilerBase">
+          <span matPrefix>$&nbsp;</span>
+        </mat-form-field>
+
+        <div class="col-12 d-flex justify-content-end mt-2">
+          <button mat-raised-button color="primary" type="submit" [disabled]="trajeForm.invalid">
+            <mat-icon>save</mat-icon> Guardar Traje
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="mb-4 shadow border-info">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon inline>search</mat-icon> Filtrar Inventario
+    </mat-card-title>
+  </mat-card-header>
+  
+  <mat-card-content class="mt-3">
+    <form [formGroup]="filtroForm" class="row align-items-center">
+      
+      <mat-form-field class="col-md-2" appearance="outline">
+        <mat-label>Código</mat-label>
+        <input matInput formControlName="codigo" (keyup.enter)="cargarTrajes()">
+      </mat-form-field>
+
+      <mat-form-field class="col-md-2" appearance="outline">
+        <mat-label>Color</mat-label>
+        <input matInput formControlName="color" (keyup.enter)="cargarTrajes()">
+      </mat-form-field>
+
+      <mat-form-field class="col-md-2" appearance="outline">
+        <mat-label>Talle</mat-label>
+        <input matInput formControlName="talle" (keyup.enter)="cargarTrajes()">
+      </mat-form-field>
+
+      <mat-form-field class="col-md-3" appearance="outline">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="categoria">
+          <mat-option value="">-- Todas --</mat-option>
+          <mat-option value="Smokings">Smokings</mat-option>
+          <mat-option value="Gala">Gala</mat-option>
+          <mat-option value="Casual">Casual</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="col-md-3 d-flex gap-2">
+        <button mat-raised-button color="accent" type="button" (click)="cargarTrajes()">
+          Buscar
+        </button>
+        <button mat-button type="button" (click)="limpiarFiltros()">
+          Limpiar
+        </button>
+      </div>
+
+    </form>
+  </mat-card-content>
+</mat-card>
+
+  <mat-card class="shadow">
+    <mat-card-header class="mb-3">
+      <mat-card-title>Inventario en Tiempo Real</mat-card-title>
+    </mat-card-header>
+    
+    <div class="main-content">
+  
+      <div class="table-wrapper mat-elevation-z8">
+        <table mat-table [dataSource]="trajes" class="w-100"> *ngIf="trajes && trajes.length > 0">
+      
+      <ng-container matColumnDef="codigo">
+        <th mat-header-cell *matHeaderCellDef> Código </th>
+        <td mat-cell *matCellDef="let t"> {{t.codigoEtiqueta}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="categoria">
+        <th mat-header-cell *matHeaderCellDef> Categoría </th>
+        <td mat-cell *matCellDef="let t"> {{t.categoria}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="talle">
+        <th mat-header-cell *matHeaderCellDef> Talle </th>
+        <td mat-cell *matCellDef="let t"> {{t.talle}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="color">
+        <th mat-header-cell *matHeaderCellDef> Color </th>
+        <td mat-cell *matCellDef="let t"> {{t.color}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="precio">
+        <th mat-header-cell *matHeaderCellDef> Precio </th>
+        <td mat-cell *matCellDef="let t"> {{t.precioAlquilerBase | currency}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <td mat-cell *matCellDef="let t">
+          <span class="status-badge" [class.disponible]="t.estado === 'Disponible'">
+            {{t.estado}}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let t">
+          <button mat-icon-button color="blue" (click)="prepararEdicion(t)" title="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminarTraje(t.id)" title="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnasVisibles"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnasVisibles;"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="6" style="padding: 20px; text-align: center;">
+          No hay datos disponibles que coincidan con la búsqueda.
+        </td>
+      </tr>
+        </table>
+      </div>
+    </div>
+    
+  </mat-card>
+
+</div>
+</file>
+
+<file path="frontend/src/app/components/listado-reservas/listado-reservas.html">
+<div class="container">
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>Buscar Reserva</mat-label>
+    <input matInput (keyup)="aplicarFiltro($event)" placeholder="Ej. Juan Pérez o Traje Azul">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field> 
+
+  <mat-toolbar color="primary">
+    <span>Listado de Reservas</span>
+    <span class="example-spacer"></span>
+    <button mat-raised-button color="accent" (click)="agregarReserva()">Nueva Reserva</button>
+  </mat-toolbar>
+
+  <table mat-table [dataSource]="dataSource" matSort #miTabla class="mat-elevation-z8">
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="id"> Nro. </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="cliente">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="cliente"> Cliente </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.Cliente?.nombre}} 
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="traje">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="traje"> Traje </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.Traje?.categoria}} (Talle {{element.Traje?.talle}}) 
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaRetiro">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaRetiro"> Fecha Retiro </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.fechaRetiro | date:'dd/MM/yyyy'}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="estado"> Estado </th>
+        <td mat-cell *matCellDef="let element"> 
+            <span class="badge" [ngClass]="element.estado.toLowerCase()">
+              {{element.estado}}
+            </span>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaDevolucion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaDevolucion"> Fecha Devolución </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.fechaDevolucion | date:'dd/MM/yyyy'}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="senia">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header="senia"> Seña </th>
+      <td mat-cell *matCellDef="let element"> ${{element.senia | number:'1.2-2'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef> Acciones </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon color="primary" style="cursor: pointer;" (click)="editarReserva(element)">edit</mat-icon>
+        <mat-icon color="warn" style="cursor: pointer;" (click)="eliminarReserva(element.id)" title="Eliminar">delete</mat-icon>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+</file>
+
+<file path="frontend/src/app/components/listado-reservas/listado-reservas.ts">
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Reserva } from '../../models/reserva.model';
+import { ReservaService } from '../../services/reserva.service';
+import { MatTableDataSource, MatTable } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
+import { FormReserva } from '../form-reserva/form-reserva';
+
+@Component({
+  selector: 'app-listado-reservas',
+  standalone: false,
+  templateUrl: './listado-reservas.html',
+  styleUrl: './listado-reservas.css',
+})
+export class ListadoReservas implements OnInit {
+  displayedColumns: string[] = ['id', 'cliente', 'traje', 'fechaRetiro', 'estado', 'fechaDevolucion', 'senia', 'acciones'];
+  
+  dataSource!: MatTableDataSource<Reserva>;
+  @ViewChild('miTabla') table!: MatTable<any>;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(private _reservaService: ReservaService, public dialog: MatDialog, private cdr: ChangeDetectorRef) {
+    this.dataSource = new MatTableDataSource<Reserva>();
+  }
+
+  ngOnInit(): void {
+    this.obtenerReservas();
+  }
+
+  ngAfterContentChecked() {
+    this.cdr.detectChanges();
+  }
+
+  obtenerReservas() {
+    this._reservaService.getReservas().subscribe({
+      next: (data: any) => {
+        this.dataSource.data = data;
+
+        // 1. Asignamos el sort
+        this.dataSource.sort = this.sort;
+
+        // Personalización del ordenamiento para objetos relacionales
+        this.dataSource.sortingDataAccessor = (item: any, property: string) => {
+          switch (property) {
+            case 'cliente': return item.Cliente?.nombre?.toLowerCase() || '';
+            case 'traje':
+              // Obtenemos la categoría y el talle
+              const categoria = item.Traje?.categoria?.toLowerCase() || '';
+              const talleNum = Number(item.Traje?.talle) || 0;
+              const talleStr = String(talleNum).padStart(3, '0');
+
+              // Retornamos la combinación. Ej: "smoking-048" o "smoking-052"
+              return `${categoria}-${talleStr}`;
+            case 'id': return Number(item.id);
+            case 'senia': return Number(item.senia);
+            case 'estado': return item.estado?.toLowerCase() || '';
+            default: return item[property]; 
+          }
+        };
+
+        // 2. CREAMOS EL PREDICADO DE FILTRADO PERSONALIZADO
+        this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+          const transformFilter = filter.trim().toLowerCase();
+
+          // Campos básicos planos
+          const id = data.id?.toString() || '';
+          const estado = data.estado?.toLowerCase() || '';
+          const senia = data.senia?.toString() || '';
+
+          // Datos del Cliente
+          const clienteNombre = data.Cliente?.nombre?.toLowerCase() || '';
+          const clienteApellido = data.Cliente?.apellido?.toLowerCase() || '';
+
+          // Datos del Traje
+          const trajeTalle = data.Traje?.talle?.toString() || ''; // Filtra por ej: "48", "50", "L"
+          const trajeCategoria = data.Traje?.categoria?.toLowerCase() || ''; // Filtra por ej: "Saco", "Pantalon", "Smoking"
+
+          // Procesamiento de Fechas (Convertimos las fechas a texto legible tipo "DD/MM/YYYY")
+          const formatearFecha = (fechaInput: any): string => {
+            if (!fechaInput) return '';
+            const d = new Date(fechaInput);
+            // Sumamos el desfasaje de zona horaria para que no se corra un día al formatear
+            d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+            const dia = String(d.getDate()).padStart(2, '0');
+            const mes = String(d.getMonth() + 1).padStart(2, '0');
+            const anio = d.getFullYear();
+            return `${dia}/${mes}/${anio}`; // Devuelve "25/05/2026"
+          };
+
+          const fechaRetiroStr = formatearFecha(data.fechaRetiro);
+          const fechaDevolucionStr = formatearFecha(data.fechaDevolucion);
+
+          // Si el buscador coincide con CUALQUIERA de estas cosas, la fila se muestra
+          return id.includes(transformFilter) ||
+                 estado.includes(transformFilter) ||
+                 senia.includes(transformFilter) ||
+                 clienteNombre.includes(transformFilter) ||
+                 clienteApellido.includes(transformFilter)  ||
+                 trajeTalle.includes(transformFilter) ||
+                 trajeCategoria.includes(transformFilter) ||
+                 fechaRetiroStr.includes(transformFilter) ||
+                 fechaDevolucionStr.includes(transformFilter);
+        };
+      },
+      error: (err) => {
+        console.log(err);
+      }      
+    });
+  }
+
+  agregarReserva() {
+    this.dialog.open(FormReserva, { 
+      width: '500px', 
+      data: null // Esto le dice al formulario que NO estamos editando
+    }).afterClosed().subscribe(() => this.obtenerReservas());
+  }
+
+  editarReserva(reserva: any) {
+    const dialogRef = this.dialog.open(FormReserva, {width: '500px', data: reserva });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result)  {
+        // Accedemos al array real dentro del datasource
+        const dataActual = [...this.dataSource.data];
+
+        // Buscamos el índice
+        const index = dataActual.findIndex(r => Number(r.id) === Number(reserva.id));
+        console.log("Índice real encontrado:", index);
+
+        if (index !== -1) {
+          // Actualizamos el array local
+          dataActual[index] = {
+            ...reserva,
+            ... result
+          };
+
+          // Asignamos el nuevo array al datasource para que la tabla se entere
+          this.dataSource.data = dataActual;
+
+          if (this.table) {
+            this.table.renderRows(); // Esto fuerza a la tabla a refrescar su vista
+          }
+
+          console.log("Tabla actualizada localmente. No debería haberse movido.");
+        } 
+
+      }
+    });
+  }
+
+  eliminarReserva(id: number) {
+    // Confirmación simple para evitar errores
+    if (confirm('¿Estás seguro que queres eliminar esta reserva?')) {
+      this._reservaService.deleteReserva(id).subscribe(() => {
+        // Si todo sale bien, recargamos la lista
+        this.obtenerReservas();
+      }, error => {
+        console.log('Error al eliminar:', error);
+      });
+    }
+  }
+
+  aplicarFiltro(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+}
+</file>
+
+<file path="frontend/src/app/components/form-reserva/form-reserva.ts">
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReservaService } from '../../services/reserva.service';
+import { TrajeService } from '../../services/traje.service';
+import { Cliente } from '../../services/cliente';
+
+@Component({
+  selector: 'app-form-reserva',
+  standalone: false,
+  templateUrl: './form-reserva.html',
+  styleUrl: './form-reserva.css',
+})
+
+export class FormReserva implements OnInit {
+  form: FormGroup;
+  listClientes: any[] = [];
+  listTrajes: any[] = [];
+
+  fechaMinima = new Date(); // Esto hace referencia al día y hora actual
+  
+  constructor(
+    private _snackBar: MatSnackBar,
+    private fb: FormBuilder,
+    private _reservaService: ReservaService,
+    private _clienteService: Cliente,
+    private _trajeService: TrajeService,
+    public dialogRef: MatDialogRef<FormReserva>,
+    @Inject(MAT_DIALOG_DATA) public data: any // Aquí llega la reserva si es editar
+  ) {
+    this.form = this.fb.group({
+      clienteId: ['', Validators.required],
+      trajeId: ['', Validators.required],
+      fechaRetiro: ['', Validators.required],
+      fechaDevolucion: ['', Validators.required],
+      senia: [0, [Validators.required, Validators.min(0)]],
+      estado: [{value: 'PENDIENTE', disabled: true}, Validators.required]
+    }, { validators: this.fechasValidas }); // Es un validador de grupo
+  }
+
+  ngOnInit() {
+    // Cargamos listas y al terminar intentamos parchear
+    this._clienteService.getClientes().subscribe(res => {
+      this.listClientes = Array.isArray(res) ? res : (res.clientes || []);
+      this.verificarParcheo();
+    });
+
+    this._trajeService.getTrajes().subscribe(res => {
+      this.listTrajes = Array.isArray(res) ? res : (res.trajes || []);
+      this.verificarParcheo();
+    });
+
+    if (!this.data) {
+      this.form.get('estado')?.setValue('PENDIENTE');
+      this.form.get('estado')?.disable();
+    } else {
+      this.form.get('estado')?.enable();
+      this.form.patchValue({ estado: this.data.estado });
+    }
+  }
+
+  fechasValidas(group: FormGroup) {
+    const retiro = group.get('fechaRetiro')?.value;
+    const devolucion = group.get('fechaDevolucion')?.value;
+
+    if (retiro && devolucion && new Date(devolucion) <= new Date(retiro)) {
+      return { fechaInvalida: true };
+    }
+    return null;
+  }
+
+  verificarParcheo() {
+    if (this.data && this.listClientes.length > 0 && this.listTrajes.length > 0) {
+
+      // Función auxiliar para arreglar el desfase de zona horaria
+      const corregirFecha = (fechaInput: any) => {
+        const d = new Date(fechaInput);
+        // Sumamos el desafase de la zona horaria local en minutos
+        d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+        return d;
+      };
+
+      this.form.patchValue({
+        clienteId: this.data.clienteId,
+        trajeId: this.data.trajeId,
+        fechaRetiro: corregirFecha(this.data.fechaRetiro),
+        fechaDevolucion: corregirFecha(this.data.fechaDevolucion),
+        senia: this.data.senia,
+        estado: this.data.estado
+      });
+    }  
+  }
+
+  guardar() {
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      alert("Revisá los campos, hay errores de validación.");
+      return;
+    }
+
+    // USAMOS getRawValue para incluir el estado deshabilitado
+    const reservaData = this.form.getRawValue();
+    
+    if (this.data) {
+      // EDITAR: enviamos reservaData en lugar de this.form.value
+      this._reservaService.updateReserva(this.data.id, reservaData).subscribe({
+        next: (res) => {
+          this.mostrarMensaje('Reserva actualizada con éxito');
+          this.dialogRef.close(reservaData); // Devolvemos el objeto actualizado para la tabla
+        },
+        error: (err) => {
+          // Capturamos el error del back
+          const mensajeError = err.error?.msg || 'Error al actualizar la reserva';
+          this.mostrarMensaje(mensajeError, true);
+        }
+      });
+    } else {
+      // CREAR: enviamos reservaData
+      this._reservaService.addReserva(reservaData).subscribe({
+        next: (res) => {
+          this.mostrarMensaje('Reserva creada con éxito');
+          this.dialogRef.close(true)
+        },
+        error: (err) => {
+          // Si el traje está ocupado, acá va a llegar el mensaje del backend
+          const mensajeError = err.error.msg || 'Error al crear la reserva';
+          this.mostrarMensaje(mensajeError, true);
+        }
+      });
+    }
+  }
+
+  // Función auxiliar para no repetir código del SnackBar
+  mostrarMensaje(mensaje: string, esError: boolean = false) {
+    this._snackBar.open(mensaje, 'Cerrar', {
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: esError ? ['error-snackbar'] : ['success-snackbar']
+    });
+  }
+
+  compararObjetos(o1: any, o2: any): boolean {
+    // Comparamos el valor del control con el ID de la opción
+    return o1 == o2;
+  }
+}
+</file>
+
+<file path="frontend/src/app/components/gestion-trajes/gestion-trajes.component.ts">
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import {
+  MatCard,
+  MatCardModule,
+  MatCardHeader,
+  MatCardTitle,
+  MatCardContent,
+} from '@angular/material/card';
+import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatSelect, MatOption } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { Traje } from '../../models/traje.model';
+import { TrajeService } from '../../services/traje.service';
+import { ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+
+@Component({
+  selector: 'app-gestion-trajes',
+  standalone: false,
+  templateUrl: './gestion-trajes.component.html',
+  styleUrls: ['./gestion-trajes.component.css']
+})
+
+export class GestionTrajesComponent implements OnInit {
+  trajes: Traje[] = [];
+  trajeForm: FormGroup;
+  filtroForm: FormGroup;
+  dataSource = new MatTableDataSource<any>();
+  columnasVisibles: string[] = [
+    'codigo',
+    'categoria',
+    'talle',
+    'color',
+    'precio',
+    'estado',
+    'acciones',
+  ];
+
+  constructor(
+    private fb: FormBuilder,
+    private trajeService: TrajeService,
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.trajeForm = this.fb.group({
+      codigoEtiqueta: ['', Validators.required],
+      categoria: ['', Validators.required],
+      talle: ['', Validators.required],
+      color: ['', Validators.required],
+      precioAlquilerBase: ['', [Validators.required, Validators.min(1)]],
+      estado: ['Disponible'],
+    });
+    this.filtroForm = this.fb.group({
+      codigo: [''],
+      talle: [''],
+      color: [''],
+      categoria: [''],
+      estado: [''],
+    });
+  }
+
+  ngOnInit(): void {
+    // Cargar trajes del backend cuando se cargue el componente
+    this.cargarTrajes();
+  }
+
+  cargarTrajes() {
+    // Extraemos los valores del formulario de búsqueda
+    const filtros = this.filtroForm ? this.filtroForm.value : null;
+
+    this.trajeService.getTrajes(filtros).subscribe({
+      next: (res) => {
+        this.trajes = res.trajes;
+        this.dataSource.data = this.trajes;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error al cargar', err),
+    });
+  }
+
+  // Función para poder limpiar la búsqueda
+  limpiarFiltros() {
+    this.filtroForm.reset();
+    this.cargarTrajes();
+  }
+
+  trajeIdEnEdicion: number | null = null;
+
+  prepararEdicion(traje: Traje) {
+    this.trajeIdEnEdicion = traje.id!; //Guardamos el id que estamos editando
+    //Seteamos los valores en el formulario para que el usuario pueda editarlos
+    this.trajeForm.patchValue(traje); // Rellena el formulario con los datos de la fila
+  }
+  guardarTraje() {
+    if (this.trajeForm.invalid) return;
+    const datosTraje = this.trajeForm.value;
+    if (this.trajeIdEnEdicion) {
+      this.trajeService.actualizarTraje(this.trajeIdEnEdicion, datosTraje).subscribe({
+        next: () => {
+          alert(
+            'Cambios guardados correctamente en el servidor. Por favor, recargue la página para visualizar los cambios en la tabla.',
+          );
+          this.trajeIdEnEdicion = null;
+          this.trajeForm.reset();
+        },
+        error: (err) => {
+          console.error('Error al actualizar', err);
+          alert('Hubo un error al guardar los cambios.');
+        },
+      });
+    } else {
+      this.trajeService.crearTraje(datosTraje).subscribe({
+        next: () => this.finalizarOperacion('Traje creado con éxito'),
+        error: (err) => console.error(err),
+      });
+    }
+  }
+  eliminarTraje(id: number) {
+    if (confirm('¿Estás seguro de que quieres eliminar este traje?')) {
+      this.trajeService.eliminarTraje(id).subscribe({
+        next: () => {
+          this.cargarTrajes(); // Acá refrescamos la tablas
+          // Msje de éxito opcional
+        },
+        error: (err) => alert('Eror al eliminar: ' + err.message),
+      });
+    }
+  }
+  finalizarOperacion(mensaje: string) {
+    alert(mensaje);
+    this.cargarTrajes();
+    this.trajeForm.reset();
+    this.trajeIdEnEdicion = null; // Limpia el modo edición
+  }
+  cerrarSesion() {
+    this.authService.logout(); // Esto borra el token del SessionStorage
+    this.router.navigate(['/login']); //Redirige al login
+  }
+}
+</file>
+
+<file path="BACKEND/src/app.ts">
+import express from 'express';
+import cors from 'cors';
+import { sequelize,connectMongo } from './config/db';
+import TrajeRoutes from './routes/TrajeRoutes';
+import authRoutes from './routes/AuthRoutes';
+import dashboardRoutes from './routes/DashboardRoutes';
+import routerClientes from './routes/ClienteRoutes';
+import ReservaRoutes from './routes/ReservaRoutes';
+
+// Configuración inicial
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middlewares
+app.use(express.json());
+app.use(cors());
+app.use('/api/trajes', TrajeRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/clientes', routerClientes);
+app.use('/api/reservas', ReservaRoutes );
+
+// Ruta de prueba
+app.get('/api/status', (req, res) => {
+    res.json({ 
+        status: 'ok', 
+        message: 'Servidor de Alquiler de Trajes funcionando' 
+    });
+});
+
+//Función de arranque del servidor
+async function bootstrap() {
+    try {
+        // Conectar a PostgreSQL
+        await sequelize.authenticate();
+        console.log('PostgreSQL conectado.');
+
+        // Conectar a MongoDB
+        await connectMongo();
+
+        //Sincronizar tablas
+        await sequelize.sync({ force: false });
+        console.log("Tablas sincronizadas con la DB.");
+        console.log('Modelos sincronizados con la DB')
+
+        //Abrir el puerto
+        app.listen(PORT, () => {
+            console.log(`Servidor corriendo en http://localhost:${PORT}`);
+        })
+    } catch (error) {
+        console.log('Error al iniciar el servidor:', error);
+        process.exit(1);
+    }
+}
+
+bootstrap();
+</file>
+
+<file path="frontend/src/app/app-module.ts">
+import { BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from './app-routing-module';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatListModule } from '@angular/material/list';
+import { MatDialogModule } from '@angular/material/dialog';
+
+// 1. IMPORTS REQUERIDOS PARA EL CALENDARIO (DATEPICKER)
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
+import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+
+import { App } from './app';
+import { Home } from './components/home/home';
+import { GestionTrajesComponent } from './components/gestion-trajes/gestion-trajes.component';
+import { Login } from './components/login/login';
+import { Dashboard } from './components/dashboard/dashboard';
+import { GestionClientes } from './components/gestion-clientes/gestion-clientes';
+import { ListadoReservas } from './components/listado-reservas/listado-reservas';
+import { authInterceptor } from './helpers/auth-interceptor';
+import { FormReserva } from './components/form-reserva/form-reserva';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { MatSortModule } from '@angular/material/sort';
+@NgModule({
+  declarations: [
+    App,
+    Home,
+    Dashboard,
+    Login,
+    GestionClientes,
+    GestionTrajesComponent,
+    ListadoReservas,
+    FormReserva
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,  
+    MatTableModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatSortModule,
+    MatToolbarModule,
+    MatListModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    
+    // 3. REGISTRO DE LOS NUEVOS MÓDULOS EN LA APLICACIÓN
+    MatDatepickerModule,
+    MatNativeDateModule,
+    NgApexchartsModule
+  ],
+  providers: [
+    provideAnimations(), 
+    provideBrowserGlobalErrorListeners(), 
+    { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true } 
+  ],
+  bootstrap: [App]
+})
+export class AppModule { }
+</file>
+
+</files>

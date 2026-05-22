@@ -1,0 +1,38 @@
+# Repomix Ignore - Proyecto ALQUITRA
+
+# --- Dependencias de Node (Fundamentales ignorar) ---
+node_modules/
+**/node_modules/
+package-lock.json
+**/package-lock.json
+
+# --- Compilaciones y Caché de Angular/TS ---
+.angular/
+dist/
+**/dist/
+.tmp/
+.sass-cache/
+
+# --- Configuraciones de Entorno y Secretos ---
+.env
+.env.*
+*.env
+**/.env*
+
+# --- Archivos de Editores e IDEs ---
+.vscode/
+**/.vscode/
+.editorconfig
+.git/
+
+# --- Archivos del Sistema y Multimedia ---
+.DS_Store
+Thumbs.db
+*.png
+*.ico
+*.jpg
+*.jpeg
+*.svg
+
+# --- Archivos de Salida de Repomix ---
+repomix-output.txt

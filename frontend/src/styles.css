@@ -1,3 +1,7 @@
+/* ==========================================================================
+   ESTILOS GENERALES Y CONFIGURACIÓN DE ANGULAR MATERIAL (ALQUITRA)
+   ========================================================================== */
+
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
 
 mat-form-field {
@@ -8,14 +12,13 @@ mat-form-field {
   z-index: 9999 !important;
 }
 
+/* --- CONFIGURACIÓN DE NOTIFICACIONES (SNACKBARS) --- */
 .snack-exito {
-  /* Estas variables sobreescriben el color interno del componente */
   --mdc-snackbar-container-color: #2e7d32 !important;
   --mdc-snackbar-label-text-color: white !important;
   --mat-snack-bar-button-color: white !important;
 }
 
-/* Por si acaso las variables no bastan, atacamos la clase interna */
 .snack-exito .mdc-snackbar__surface {
   background-color: #2e7d32 !important;
 }
@@ -28,4 +31,188 @@ mat-form-field {
 
 .snack-error .mdc-snackbar__surface {
   background-color: #d32f2f !important;
+}
+
+
+/* ==========================================================================
+   SISTEMA DE TRANSICIONES FLUIDAS PARA INTERCAMBIO DE TEMAS
+   ========================================================================== */
+
+body, 
+.wrapper-sistema, 
+.main-content, 
+.dashboard-container,
+.sidenav, 
+mat-card, 
+.mat-mdc-card, 
+table, 
+.mat-mdc-table,
+th.mat-mdc-header-cell, 
+td.mat-mdc-cell, 
+.edit-input,
+.mat-mdc-form-field,
+.mat-mdc-dialog-container,
+.mat-mdc-select-value,
+.mat-mdc-select-arrow {
+  transition: background-color 0.4s ease-in-out, 
+              color 0.4s ease-in-out, 
+              border-color 0.4s ease-in-out, 
+              box-shadow 0.4s ease-in-out !important;
+}
+
+
+/* ==========================================================================
+   HOJA DE SOBREESCRITURA PREMIUM PARA MODO OSCURO (UI/UX BULLETPROOF)
+   ========================================================================== */
+
+/* 1. CAMBIO RADICAL DEL ENTORNO DE FONDO GENERAL */
+html.dark-theme,
+html.dark-theme body,
+html.dark-theme .wrapper-sistema,
+html.dark-theme .main-content,
+html.dark-theme .dashboard-container {
+  background-color: #0f172a !important; /* Slate ultra oscuro */
+  color: #f8fafc !important;            /* Blanco nieve */
+}
+
+/* 2. CONTROL TOTAL DE LA BARRA LATERAL (SIDENAV) */
+html.dark-theme .sidenav {
+  background-color: #1e293b !important; /* Gris slate intermedio */
+  border-right: 1px solid #334155 !important;
+}
+
+/* Forzar legibilidad de textos, iconos y enlaces en la barra lateral */
+html.dark-theme .sidenav .mat-mdc-nav-list a,
+html.dark-theme .sidenav .mat-mdc-nav-list button,
+html.dark-theme .sidenav mat-icon,
+html.dark-theme .sidenav span,
+html.dark-theme .sidenav a {
+  color: #f1f5f9 !important;
+}
+
+/* 3. CONTRASTE EN TARJETAS (MAT-CARD) */
+html.dark-theme mat-card,
+html.dark-theme .mat-mdc-card,
+html.dark-theme .form-card,
+html.dark-theme .page-header {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #f8fafc !important;
+}
+
+/* Forzar títulos de tarjetas */
+html.dark-theme mat-card-title,
+html.dark-theme .mat-mdc-card-title,
+html.dark-theme h1,
+html.dark-theme h2,
+html.dark-theme h3 {
+  color: #ffffff !important;
+}
+
+/* Textos secundarios informativos */
+html.dark-theme .subtitle,
+html.dark-theme .rank-meta,
+html.dark-theme .suit-info,
+html.dark-theme p {
+  color: #94a3b8 !important;
+}
+
+/* 4. ARREGLO COMPLETO PARA LAS TABLAS DE DATOS (CLIENTES, TRAJES Y RESERVAS) */
+html.dark-theme table,
+html.dark-theme .mat-mdc-table,
+html.dark-theme .mat-elevation-z8 {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+/* Encabezados de tablas */
+html.dark-theme th.mat-mdc-header-cell,
+html.dark-theme .mat-mdc-header-cell {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border-bottom: 2px solid #334155 !important;
+  font-weight: bold !important;
+}
+
+/* Filas de datos comunes de las tablas */
+html.dark-theme td.mat-mdc-cell,
+html.dark-theme .mat-mdc-cell,
+html.dark-theme .mat-mdc-runtime- King,
+html.dark-theme .dato-texto {
+  color: #cbd5e1 !important;
+}
+
+/* Doble clic de edición rápida en las tablas */
+html.dark-theme .edit-input {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border: 2px solid #6366f1 !important;
+}
+
+/* Efecto hover sobre las filas */
+html.dark-theme tr.mat-mdc-row:hover,
+html.dark-theme .mat-mdc-row:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+
+/* 5. ARREGLO CRÍTICO DE FORMULARIOS E INPUTS DE MATERIAL (MDC COMPONENTES) */
+
+/* Contenedor del recuadro del input */
+html.dark-theme .mat-mdc-form-field {
+  --mdc-outlined-text-field-container-color: #1e293b !important;
+  --mdc-outlined-text-field-input-text-color: #ffffff !important;
+  --mdc-outlined-text-field-label-text-color: #94a3b8 !important;
+  --mdc-outlined-text-field-outline-color: #334155 !important;
+  
+  --mdc-outlined-text-field-focus-label-text-color: #6366f1 !important;
+  --mdc-outlined-text-field-focus-outline-color: #6366f1 !important;
+  
+  --mat-form-field-state-hint-text-color: #94a3b8 !important;
+}
+
+/* Texto escrito real, selectores y placeholders internos de Material */
+html.dark-theme .mat-mdc-text-field-wrapper input,
+html.dark-theme .mat-mdc-form-field-value,
+html.dark-theme .mat-mdc-select-value-text,
+html.dark-theme .mat-mdc-select-arrow,
+html.dark-theme .mat-form-field-suffix mat-icon,
+html.dark-theme .mat-input-element {
+  color: #ffffff !important;
+}
+
+/* Forzar visibilidad del texto de la etiqueta flotante (Label) */
+html.dark-theme .mdc-floating-label,
+html.dark-theme .mdc-floating-label span {
+  color: #94a3b8 !important;
+}
+
+
+/* 6. CORRECCIÓN DE COMPONENTES FLOTANTES (SELECT PANELS Y DIÁLOGOS) */
+
+/* Fondo de ventanas modales abiertas (Ej: mes del dashboard o formulario de reservas) */
+html.dark-theme .mat-mdc-dialog-container .mdc-dialog__surface,
+html.dark-theme .modal-wrapper,
+html.dark-theme .mat-dialog-content {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+/* Panel flotante de opciones (mat-select desplegado) */
+html.dark-theme .mat-mdc-select-panel,
+html.dark-theme .mat-mdc-select-panel-scoped {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+/* Texto de cada opción del mat-select */
+html.dark-theme .mat-mdc-option .mdc-list-item__primary-text,
+html.dark-theme .mat-mdc-option {
+  color: #f8fafc !important;
+}
+
+/* Hover de las opciones del selector desplegable */
+html.dark-theme .mat-mdc-option:hover:not(.mdc-list-item--disabled),
+html.dark-theme .mat-mdc-option.mat-mdc-option-active {
+  background-color: rgba(255, 255, 255, 0.08) !important;
 }

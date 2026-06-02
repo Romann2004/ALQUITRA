@@ -12,16 +12,19 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatListModule } from '@angular/material/list';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { MatSortModule } from '@angular/material/sort';
+import { NgApexchartsModule } from 'ng-apexcharts';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
-import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { NgModule, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-
+import { registerLocaleData } from '@angular/common';
+import localeEsAr from '@angular/common/locales/es-AR';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+registerLocaleData(localeEsAr, 'es-AR');
 import { App } from './app';
-import { Home } from './components/home/home';
 import { GestionTrajesComponent } from './components/gestion-trajes/gestion-trajes.component';
 import { Login } from './components/login/login';
 import { Dashboard } from './components/dashboard/dashboard';
@@ -33,7 +36,6 @@ import { FormReserva } from './components/form-reserva/form-reserva';
 @NgModule({
   declarations: [
     App,
-    Home,
     Dashboard,
     Login,
     GestionClientes,
@@ -68,7 +70,9 @@ import { FormReserva } from './components/form-reserva/form-reserva';
   providers: [
     provideAnimations(), 
     provideBrowserGlobalErrorListeners(), 
-    { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true } 
+    { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true },
+    { provide: LOCALE_ID, useValue: 'es-AR' },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-AR' }
   ],
   bootstrap: [App]
 })

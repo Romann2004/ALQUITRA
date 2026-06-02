@@ -3,6 +3,113 @@
    ========================================================================== */
 
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden !important; /* Elimina la barra externa fantasma */
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  background-color: #f8fafc; /* Fondo gris súper claro */
+}
+
+/* Forzar tipografía en componentes de Material Design */
+.mat-mdc-button, .mat-mdc-unelevated-button, .mat-mdc-raised-button, 
+.mat-mdc-outlined-button, .mat-mdc-form-field, input, .mat-mdc-select, 
+.mat-mdc-cell, .mat-mdc-header-cell, mat-card-title, .mat-mdc-menu-item {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+/* Contenedor principal de cada pantalla */
+.premium-container {
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+/* Cabeceras unificadas */
+.premium-header {
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.premium-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.premium-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+}
+.premium-icon-box.clientes { background-color: #eef2ff; color: #4f46e5; }
+.premium-icon-box.trajes { background-color: #f0fdf4; color: #16a34a; }
+.premium-icon-box.reservas { background-color: #fef3c7; color: #d97706; }
+.premium-icon-box mat-icon { font-size: 28px; width: 28px; height: 28px; }
+
+.premium-title h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.025em;
+}
+.premium-title p {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Tarjetas (Formularios, Filtros) */
+.premium-card {
+  border-radius: 16px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+  background-color: #ffffff !important;
+  padding: 10px; 
+  margin-bottom: 24px !important;
+}
+
+/* Tablas Premium */
+.premium-table-wrapper {
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+  background-color: #ffffff;
+  overflow-x: auto;     /* Permite deslizar a los costados si la pantalla es muy chica */
+  overflow-y: hidden;
+}
+.premium-table-wrapper table {
+  width: 100%;
+  box-shadow: none !important; /* Anula sombra original de mat-elevation */
+}
+th.mat-mdc-header-cell {
+  font-weight: 700 !important;
+  color: #475569 !important;
+  background-color: #f8fafc !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+td.mat-mdc-cell {
+  font-size: 0.95rem !important;
+  color: #1e293b !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+/* Compatibilidad extra con el Modo Oscuro existente */
+html.dark-theme .premium-title h1 { color: #ffffff !important; }
+html.dark-theme .premium-title p { color: #94a3b8 !important; }
+html.dark-theme .premium-icon-box { background-color: #0f172a !important; border: 1px solid #334155; }
+html.dark-theme .premium-card, html.dark-theme .premium-table-wrapper { border-color: #334155 !important; background-color: #1e293b !important; }
 
 mat-form-field {
   margin-top: 8px;

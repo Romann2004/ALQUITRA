@@ -31,12 +31,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hb
 }
 
 ### Actualizar el estado de una Reserva
-PATCH http://localhost:3000/api/reservas/12/estado
+PATCH http://localhost:3000/api/reservas/7/estado
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJSb21hbiIsImlhdCI6MTc3Njg4MjIzOCwiZXhwIjoxNzc2ODk2NjM4fQ.bMuOSpA3Z2yfn9DC0ygztebjcxoAAzdQ2rSJvbKI_MM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJMZW9uZWwiLCJpYXQiOjE3ODAzNzYyMjgsImV4cCI6MTc4MDM5MDYyOH0.jByS-3d9Sor-gZTUSmduRBt5I5qhcuZRuTDR66QDN6Y
 
 {
-    "estado": "PENDIENTE"
+    "estado": "RETIRADO"
 }
 
 ### Eliminar una Reserva

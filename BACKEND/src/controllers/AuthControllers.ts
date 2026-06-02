@@ -69,7 +69,7 @@ export const Login = async (req: Request, res: Response) => {
       const token = jwt.sign(
         { id: user.id, username: user.username },
         'CLAVE_SECRETA_SUPER_SEGURA',
-        { expiresIn: '4h' }  // El token expira en 4 horas 
+        { expiresIn: '24h' }  // El token expira en 24 horas
       );
       
       // 3. Respuesta exitosa

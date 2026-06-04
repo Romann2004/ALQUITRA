@@ -29,33 +29,41 @@ export const getClienteById = async (req: Request, res: Response) => {
 };
 
 export const postCliente = async (req: Request, res: Response) => {
-    let { nombre, dni, email, telefono } = req.body;
-    // const { body } = req;
     try {
-        // 1. LIMPIEZA DE ESPACIOS Y SUBSTRINGS
-        nombre = nombre?.trim();
-        dni = dni?.trim();
-        email = email?.trim();
+        //Extraemos y sanitizamos de forma segura forzando Strings limpios
+        const nombreClean = req.body.nombre ? String(req.body.nombre).trim() : '';
+        const dniClean = req.body.dni ? String(req.body.dni).trim() : '';
+        const emailClean = req.body.email ? String(req.body.email).trim().toLowerCase() : '';
+        const telefonoClean = req.body.telefono ? String(req.body.telefono).trim() : '';
 
-        // 2. DETECTOR DE DUPLICADOS (DNI o Email repetido)
+        if (!nombreClean || !dniClean) {
+            return res.status(400).json({ msg: 'El nombre y el DNI son campos obligatorios.' });
+        }
+        
+        // DETECTOR DE DUPLICADOS (DNI o Email repetido)
         const clienteExistente = await Cliente.findOne({
             where: {
-                [Op.or]: [{ dni }, { email }]
+                [Op.or]: [
+                    { dni: dniClean },
+                    { email: emailClean }
+                ]
             }
         });
 
         if (clienteExistente) {
+            // Le especificamos al usuario cuál es el campo que ya está tomado
+            const campoDuplicado = (clienteExistente as any).dni === dniClean ? 'DNI' : 'Email';
             return res.status(400).json({
-                msg: 'Ya existe un cliente registrado con ese DNI o Email.'
+                msg: `El ${campoDuplicado} ingresado ya se encuentra registrado en el sistema.`
             });
         }
 
-        // 3. GUARDADO REFORZADO
+        // Creación inyectando los valores sanitizados explícitamente
         const cliente: any = await Cliente.create({
-            nombre,
-            dni,
-            email,
-            telefono,
+            nombre: nombreClean,
+            dni: dniClean,
+            email: emailClean,
+            telefono: telefonoClean,
             activo: true // Forzamos que nazca activo
         });
 
@@ -67,21 +75,50 @@ export const postCliente = async (req: Request, res: Response) => {
 
         res.json({ msg: 'Cliente creado con éxito', cliente });
     } catch (error) {
-        res.status(500).json({ msg: 'Error al crear el cliente', error });
+        console.error('Error interno en postCliente:', error); // Esto nos muestra en la terminal de Node si algo falla
+        res.status(500).json({ msg: 'Error interno en el servidor al crear el cliente', error });
     }
 };
 
-export const putCliente = async (req: Request<{ id: string }>, res: Response) => {
+export const putCliente = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { body } = req;
 
   try {
     const cliente: any = await Cliente.findByPk(Number(id));
-    if (!cliente) {
+    if (!cliente || !cliente.activo) {
       return res.status(404).json({ msg: 'Cliente no encontrado' });
     }
+    
+    // 1. Sanitización explícita mapeando tipos string
+    const nombreClean = req.body.nombre ? String(req.body.nombre).trim() : cliente.nombre;
+    const dniClean = req.body.dni ? String(req.body.dni).trim() : cliente.dni;
+    const emailClean = req.body.email ? String(req.body.email).trim().toLowerCase() : cliente.email;
+    const telefonoClean = req.body.telefono ? String(req.body.telefono).trim() : cliente.telefono;
 
-    await cliente.update(body);
+    // 2. CONTROL DE DUPLICADOS EXCLUYENDO AL MISMO USUARIO
+    const duplicado = await Cliente.findOne({
+        where: {
+            id: { [Op.ne]: Number(id) }, // para no comparar con el mismo usuario
+            [Op.or]: [
+                { dni: dniClean },
+                { email: emailClean }
+            ]
+        }
+    });
+
+    if (duplicado) {
+        const campoDuplicado = (duplicado as any).dni === dniClean ? 'DNI' : 'Email';
+        return res.status(400).json({
+            msg: `No se pudo actualizar: El ${campoDuplicado} ya pertenece a otro cliente.`
+        });
+    }
+    
+    await cliente.update({
+        nombre: nombreClean,
+        dni: dniClean,
+        email: emailClean,
+        telefono: telefonoClean
+    });
 
     await Log.create({
       accion: 'ACTUALIZAR_CLIENTE',
@@ -91,27 +128,54 @@ export const putCliente = async (req: Request<{ id: string }>, res: Response) =>
 
     return res.json({ msg: 'Cliente actualizado con éxito', cliente });
   } catch (error) {
-    return res.status(500).json({ msg: 'Error al actualizar el cliente', error });
+    console.error('Error interno en putCliente:', error);
+    return res.status(500).json({ msg: 'Error interno en el servidor al actualizar el cliente', error });
   }
 };
 
-export const patchCliente = async (req: Request<{id: string}>, res: Response) => {
+export const patchCliente = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const camposCambiados = req.body; // Ejemplo {telefono: '3462 554477'}
-
+    let { nombre, dni, email, telefono } = req.body;
+    
     try {
-        const cliente: any = await Cliente.findByPk(id);
-        if (!cliente) {
+        const cliente: any = await Cliente.findByPk(Number(id));
+        if (!cliente || !cliente.activo) {
             return res.status(404).json({ msg: 'Cliente no encontrado' });
         }
+
+        // --- 1. CONTROL DE DUPLICADOS (Solo si vienen en la petición) ---
+        if (dni || email) {
+            const condiciones: any[] = [];
+            if (dni) condiciones.push({ dni: dni.trim() });
+            if (email) condiciones.push({ email: email.trim().toLowerCase() });
+
+            const duplicado = await Cliente.findOne({
+                where: {
+                    id: { [Op.ne]: Number(id) }, // Excluimos al cliente actual}
+                    [Op.or]: condiciones
+                }
+            });
+
+            if (duplicado) {
+                return res.status(400).json({
+                    msg: 'El DNI o Email ya corresponden a otro cliente registrado.'
+                });
+            }
+        }
+
+        // --- 2. ACTUALIZACIÓN PARCIAL CON SANITIZACIÓN ---
+        const camposAActualizar: any = {}
+        if (nombre !== undefined) camposAActualizar.nombre = nombre.trim();
+        if (dni !== undefined) camposAActualizar.dni = dni.trim();
+        if (email !== undefined) camposAActualizar.email = email.trim().toLowerCase();
+        if (telefono !== undefined) camposAActualizar.telefono = telefono;
         
-        // Actualizamos solo lo que viene en el body
-        await cliente.update(camposCambiados);
+        await cliente.update(camposAActualizar);
 
         await Log.create({
             accion: 'ACTUALIZAR_PARCIAL_CLIENTE',
             descripcion: `Se actualizó parcialmente el cliente ${cliente.nombre}`,
-            metadata: { clienteId: cliente.id },
+            metadata: { clienteId: cliente.id, camposModificados: Object.keys(camposAActualizar) },
         });
 
         return res.json({ msg: 'Cliente actualizado parcialmente con éxito', cliente });
@@ -121,7 +185,7 @@ export const patchCliente = async (req: Request<{id: string}>, res: Response) =>
     }
 }
 
-export const deleteCliente = async (req: Request<{ id: string }>, res: Response) => {
+export const deleteCliente = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
@@ -130,11 +194,12 @@ export const deleteCliente = async (req: Request<{ id: string }>, res: Response)
             return res.status(404).json({ msg: 'Cliente no encontrado' });
         }
 
-        await cliente.destroy();
+        // BORRADO LÓGICO
+        await cliente.update({ activo: false });
 
         await Log.create({
-            accion: 'ELIMINAR_CLIENTE',
-            descripcion: `Se eliminó el cliente ${cliente.nombre}`,
+            accion: 'ELIMINAR_CLIENTE_LÓGICO',
+            descripcion: `Se desactivó al cliente ${cliente.nombre} (Borrado Lógico)`,
             metadata: { clienteId: cliente.id },
         });
 

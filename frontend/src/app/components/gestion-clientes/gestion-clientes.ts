@@ -43,73 +43,69 @@ export class GestionClientes implements OnInit {
         this.listClientes = data;
         this.cdr.detectChanges();
       },
-      error: (e) => console.error('Error al cargar clientes', e)
+      error: (err) => console.error('Error al cargar clientes', err)
     });
   }
 
   guardarCambio(cliente: any, campo: string) {
-    // 1. Identificamos el nombre de la variable que controla el input (ej: editNombre)
+    // Identificamos el nombre de la variable que controla el input (ej: editNombre)
     const fieldName = 'edit' + campo.charAt(0).toUpperCase() + campo.slice(1);
 
-    // 2. Si por alguna razón el campo ya está en false, salimos para evitar el doble disparo
     if (cliente[fieldName] === true) {
-          
       cliente[fieldName] = false;
-
       const body = { [campo]: cliente[campo] };
 
       this._cliente.patchCliente(cliente.id, body).subscribe({
         next: () => {
-          this._snackBar.open('¡Cambio Guardado!', 'Cerrar', {
-            duration: 3000,
-            panelClass: ['snack-exito'],
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-          });
-        },
-        error: () => {
-          this._snackBar.open('Error al guardar el cambio. Intenta nuevamente,', 'Cerrar', {
-            duration: 3000,
-            panelClass: ['snack-error'],
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-          });
+          this.mostrarMensaje('¡Cambio Guardado!', false);
+          },
+        error: (err) => {
+          // Capturamos el 400 del back si modificó el DNI/Email por uno duplicado
+          const msg = err.error?.msg || 'Error al guardar el cambio';
+          this.mostrarMensaje(msg, true);
           this.obtenerClientes(); // Si falla, volvemos al valor anterior
         }
       });
     }
   }
 
-
-
-
   // --- FUNCIONES DEL FORMULARIO ---
 
   guardarCliente() {
     if (this.clienteForm.invalid) {
-      alert('Por favor, completa todos los campos correctamente.');
+      this.mostrarMensaje('Por favor, completa todos los campos correctamente.', true);
       return;
     }
 
     const clienteData = this.clienteForm.value;
 
     if (this.modoEdicion && this.clienteIdActual) {
+      // --- MODO EDICIÓN (PUT) ---
       this._cliente.putCliente(this.clienteIdActual, clienteData).subscribe({
         next: () => {
-          alert('Cliente actualizado exitosamente');
+          this.mostrarMensaje('Cliente actualizado exitosamente', false);
           this.resetearFormulario();
           this.obtenerClientes();
         },
-        error: (e) => console.error('Error al actualizar', e)
+        error: (err) => {
+          // Capturamos el error por si duplicó DNI o Email de otro cliente
+          const msg = err.error?.msg || 'Error al actualizar el cliente';
+          this.mostrarMensaje(msg, true);
+        }
       });
     } else {
+      // --- MODO CREACIÓN (POST) ---
       this._cliente.postCliente(clienteData).subscribe({
         next: () => {
-          alert('Cliente creado exitosamente');
+          this.mostrarMensaje('Cliente creado exitosamente', false);
           this.resetearFormulario();
           this.obtenerClientes();
         },
-        error: (e) => console.error('Error al crear', e)
+        error: (err) => {
+          // Capturamos el error del backend si el DNI o Email ya existen
+          const msg = err.error?.msg || 'Error al crear el cliente';
+          this.mostrarMensaje(msg, true);
+        }
       });
     }
   }
@@ -141,11 +137,24 @@ export class GestionClientes implements OnInit {
     if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
       this._cliente.deleteCliente(id).subscribe({
         next: () => {
-          alert('Cliente eliminado exitosamente');
-          this.obtenerClientes();
+          this.mostrarMensaje('Cliente eliminado exitosamente', false);
+          this.obtenerClientes(); // Recarga la lista (ya no vendrá porque activo será false)
         },
-        error: (e) => console.error('Error al eliminar cliente', e)
+        error: (err) => {
+          const msg = err.error?.msg ||'Error al eliminar cliente';
+          this.mostrarMensaje(msg, true);
+        }
       });
     }
+  }
+
+  // FUNCIÓN AUXILIAR (Para no repetir código del SnackBar)
+  mostrarMensaje(mensaje: string, esError: boolean = false) {
+    this._snackBar.open(mensaje, 'Cerrar', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: esError ? ['snackbar-error'] : ['snackbar-exito'] // Reutiliza nuestras clases CSS existentes
+    })
   }
 }

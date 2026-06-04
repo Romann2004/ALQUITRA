@@ -3,14 +3,21 @@ import { Traje } from '../models/Traje';
 import Reserva from '../models/Reserva'; 
 import Cliente from '../models/Cliente'; 
 import { Op } from 'sequelize';          
-import { sequelize } from '../config/db'; 
+import { sequelize } from '../config/db';
+import { EstadoTraje } from '../models/Enums'; 
 
 export const getDashboardStats = async (req: Request, res: Response) => {
-    try {
+try {
         const [total, disponibles, alquilados] = await Promise.all([
             Traje.count(), 
-            Traje.count({ where: { estado: 'Disponible' } }), 
-            Traje.count({ where: { estado: 'Alquilado' } }) 
+            Traje.count({ where: { estado: EstadoTraje.DISPONIBLE } }), 
+            Traje.count({ 
+                where: { 
+                    estado: {
+                        [Op.in]: [EstadoTraje.ALQUILADO, EstadoTraje.RESERVADO]
+                    } 
+                } 
+            }) 
         ]);
 
         const inicioBusqueda = new Date();

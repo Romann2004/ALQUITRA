@@ -3,29 +3,129 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background-color: #f8fafc; /* Color de fondo unificado */
 }
 
-mat-sidenav-container {
+.premium-sidenav-container {
   flex: 1;
   height: 100%; 
   width: 100%;
+  background-color: transparent;
 }
 
-mat-sidenav-content {
-  height: 100%;
-  overflow-y: auto;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.sidenav {
-  width: 250px;
-  background-color: #f8f9fa;
-  border-right: 1px solid #ddd;
-}
-
-.main-content {
-  padding: 24px;
-  flex-grow: 1;
+/* ==========================================================================
+   ESTILOS DE LA BARRA LATERAL (SIDENAV)
+   ========================================================================== */
+.premium-sidenav {
+  width: 260px;
   background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.02); /* Sombra sutil hacia la derecha */
+}
+
+/* Contenedor flex para empujar el footer hacia abajo */
+.sidenav-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* --- LOGO Y MARCA --- */
+.sidenav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 20px;
+  margin-bottom: 8px;
+}
+.brand-icon {
+  background-color: #4f46e5; /* Primario */
+  color: white;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.brand-icon mat-icon { margin: 0; font-size: 20px; width: 20px; height: 20px; }
+.brand-text {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: 0.05em;
+}
+
+/* --- MENÚ PRINCIPAL --- */
+.sidenav-menu {
+  flex-grow: 1; 
+  padding: 0 12px;
+}
+
+.premium-sidenav mat-nav-list a,
+.premium-sidenav mat-nav-list button {
+  border-radius: 10px;
+  margin-bottom: 4px;
+  color: #64748b;
+  transition: all 0.2s ease;
+  height: 48px;
+}
+
+.premium-sidenav mat-nav-list mat-icon {
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.menu-text {
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 24px; 
+  display: block;
+}
+
+/* Hover genérico */
+.premium-sidenav mat-nav-list a:hover:not(.active-menu-item),
+.action-btn:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+.premium-sidenav mat-nav-list a:hover:not(.active-menu-item) mat-icon,
+.action-btn:hover mat-icon {
+  color: #4f46e5; 
+}
+
+/* ITEM ACTIVO */
+.active-menu-item {
+  background-color: #eef2ff !important;
+  color: #4f46e5 !important;
+}
+
+.active-menu-item mat-icon {
+  color: #4f46e5 !important;
+}
+
+/* --- FOOTER (BOTONES DE ACCIÓN) --- */
+.sidenav-footer {
+  padding: 12px;
+  padding-bottom: 24px;
+}
+.sidenav-footer mat-divider {
+  margin: 0 12px 12px 12px;
+  border-color: #e2e8f0;
+}
+
+/* Botón de Logout con detalle rojo al pasar el mouse */
+.logout-btn:hover {
+  background-color: #fef2f2 !important;
+  color: #dc2626 !important;
+}
+.logout-btn:hover mat-icon {
+  color: #dc2626 !important;
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+.main-content {
+  padding: 0;
+  background-color: transparent; 
 }

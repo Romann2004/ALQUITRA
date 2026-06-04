@@ -1,16 +1,19 @@
-<div class="container">
+<div class="premium-container">
   
-  <div class="page-header">
-    <div class="header-icon">
-      <mat-icon>groups</mat-icon>
+  <div class="premium-header">
+    <div class="premium-header-left">
+      <div class="premium-icon-box clientes">
+        <mat-icon>groups</mat-icon>
+      </div>
+      <div class="premium-title">
+        <h1>Gestión de Clientes</h1>
+        <p>Administrá el directorio y la información de contacto.</p>
+      </div>
     </div>
-    <mat-card-header>
-      <mat-card-title>Gestión de Clientes</mat-card-title>
-    </mat-card-header>
   </div>
 
-  <mat-card class="form-card" style="margin-bottom: 20px; padding: 20px;">
-    <mat-card-header>
+  <mat-card class="premium-card">
+    <mat-card-header style="margin-bottom: 10px;">
       <mat-card-title>{{ modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente' }}</mat-card-title>
     </mat-card-header>
     
@@ -53,8 +56,9 @@
       </form>
     </mat-card-content>
   </mat-card>
-  <div *ngIf="listClientes && listClientes.length >= 0; else cargando">
-    <table mat-table [dataSource]="listClientes" class="mat-elevation-z8" style="width: 100%;">
+
+  <div *ngIf="listClientes && listClientes.length >= 0; else cargando" class="premium-table-wrapper">
+    <table mat-table [dataSource]="listClientes">
       
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef> ID </th>
@@ -64,7 +68,7 @@
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef> Nombre </th>
         <td mat-cell *matCellDef="let element">
-          <span (dblclick)="element.editNombre = true" *ngIf="!element.editNombre">
+          <span (dblclick)="element.editNombre = true" *ngIf="!element.editNombre" class="dato-texto">
             {{element.nombre}}
           </span>
           <input *ngIf="element.editNombre"
@@ -78,7 +82,7 @@
       <ng-container matColumnDef="dni">
         <th mat-header-cell *matHeaderCellDef> DNI </th>
         <td mat-cell *matCellDef="let element">
-          <span (dblclick)="element.editDni = true" *ngIf="!element.editDni">
+          <span (dblclick)="element.editDni = true" *ngIf="!element.editDni" class="dato-texto">
             {{element.dni}}
           </span>
           <input *ngIf="element.editDni"
@@ -92,7 +96,7 @@
       <ng-container matColumnDef="telefono">
         <th mat-header-cell *matHeaderCellDef> Teléfono </th>
         <td mat-cell *matCellDef="let element">
-          <span (dblclick)="element.editTelefono = true" *ngIf="!element.editTelefono">
+          <span (dblclick)="element.editTelefono = true" *ngIf="!element.editTelefono" class="dato-texto">
             {{element.telefono}}
           </span>
           <input *ngIf="element.editTelefono"
@@ -106,7 +110,7 @@
       <ng-container matColumnDef="email">
         <th mat-header-cell *matHeaderCellDef> Email </th>
         <td mat-cell *matCellDef="let element">
-          <span (dblclick)="element.editEmail = true" *ngIf="!element.editEmail">
+          <span (dblclick)="element.editEmail = true" *ngIf="!element.editEmail" class="dato-texto">
             {{element.email}}
           </span>
           <input *ngIf="element.editEmail"
@@ -120,10 +124,10 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-icon-button color="blue" (click)="editarCliente(element)">
+          <button mat-icon-button color="primary" (click)="editarCliente(element)" title="Editar">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="eliminarCliente(element.id)">
+          <button mat-icon-button color="warn" (click)="eliminarCliente(element.id)" title="Eliminar">
             <mat-icon>delete</mat-icon>
           </button>
         </td>
@@ -133,7 +137,9 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
   </div>
+  
   <ng-template #cargando>
-    <p>Conectando con el servidor o no hay clientes registrados...</p>
+    <p style="color: #64748b; text-align: center; margin-top: 40px;">Conectando con el servidor o no hay clientes registrados...</p>
   </ng-template>
+
 </div>

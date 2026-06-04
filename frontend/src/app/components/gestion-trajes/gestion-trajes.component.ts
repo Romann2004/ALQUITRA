@@ -119,7 +119,10 @@ export class GestionTrajesComponent implements OnInit {
     } else {
       this.trajeService.crearTraje(datosTraje).subscribe({
         next: () => this.finalizarOperacion('Traje creado con éxito'),
-        error: (err) => console.error(err),
+        error: (err) => {
+          console.error('Error al crear', err);
+          alert('Hubo un error al guardar los cambios.');
+        }
       });
     }
   }
@@ -127,10 +130,13 @@ export class GestionTrajesComponent implements OnInit {
     if (confirm('¿Estás seguro de que quieres eliminar este traje?')) {
       this.trajeService.eliminarTraje(id).subscribe({
         next: () => {
-          this.cargarTrajes(); // Acá refrescamos la tablas
-          // Msje de éxito opcional
+          this.cargarTrajes(); 
         },
-        error: (err) => alert('Eror al eliminar: ' + err.message),
+        error: (err) => {
+          // Intentamos leer el mensaje enviado desde el backend, si falla mostramos uno genérico
+          const mensajeBackend = err.error?.mensaje || 'Ocurrió un error inesperado al eliminar';
+          alert('No se pudo eliminar: ' + mensajeBackend);
+        }
       });
     }
   }

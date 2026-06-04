@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { Traje } from '../models/Traje';
+import Reserva from '../models/Reserva';
 import { Log } from '../models/Log';
-import { EstadoTraje } from '../models/Enums';
+import { EstadoTraje, EstadoReserva } from '../models/Enums';
 import { Op } from 'sequelize';
 
 export const crearTraje = async (req: Request, res: Response) => {
@@ -145,6 +146,23 @@ export const eliminarTraje = async (req: Request, res: Response) => {
 
         if (!traje) return res.status(404).json({ mensaje: 'No existe el traje' });
 
+        // Lógica para verificar si el traje tiene reservas activas (pendientes o retirados)
+        const reservasActivas = await Reserva.count({
+            where: {
+                trajeId: id,
+                estado: {
+                    [Op.in]: [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO]
+                }
+            }
+        });
+
+        // Si el contador es mayor a 0, impedimos el borrado
+        if (reservasActivas > 0) {
+            return res.status(400).json({ 
+                ok: false, 
+                mensaje: 'No se puede eliminar: El traje tiene reservas pendientes o está alquilado.' 
+            });
+        }
         const codigoCopiado = traje.codigoEtiqueta;
         await traje.destroy(); // Borra de postgre
 

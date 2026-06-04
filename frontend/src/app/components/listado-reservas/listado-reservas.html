@@ -1,74 +1,102 @@
-<div class="container">
-  <mat-form-field appearance="outline" style="width: 100%;">
-    <mat-label>Buscar Reserva</mat-label>
-    <input matInput (keyup)="aplicarFiltro($event)" placeholder="Ej. Juan Pérez o Traje Azul">
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field> 
+<div class="premium-container">
 
-  <mat-toolbar color="primary">
-    <span>Listado de Reservas</span>
-    <span class="example-spacer"></span>
-    <button mat-raised-button color="accent" (click)="agregarReserva()">Nueva Reserva</button>
-  </mat-toolbar>
+  <div class="premium-header">
+    <div class="premium-header-left">
+      <div class="premium-icon-box reservas">
+        <mat-icon>calendar_month</mat-icon>
+      </div>
+      <div class="premium-title">
+        <h1>Gestión de Reservas</h1>
+        <p>Control de alquileres, entregas y devoluciones.</p>
+      </div>
+    </div>
+    
+    <button mat-flat-button color="accent" style="padding: 0 24px; border-radius: 8px; height: 44px;" (click)="agregarReserva()">
+      <mat-icon>add</mat-icon> Nueva Reserva
+    </button>
+  </div>
 
-  <table mat-table [dataSource]="dataSource" matSort #miTabla class="mat-elevation-z8">
+  <mat-card class="premium-card">
+    <mat-card-content style="padding: 16px 24px 0 24px !important;">
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>Buscar Reserva</mat-label>
+        <input matInput (keyup)="aplicarFiltro($event)" placeholder="Ej. Juan Pérez o Traje Azul">
+        <mat-icon matSuffix style="color: #94a3b8;">search</mat-icon>
+      </mat-form-field> 
+    </mat-card-content>
+  </mat-card>
 
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="id"> Nro. </th>
-      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-    </ng-container>
+  <div class="premium-table-wrapper">
+    <table mat-table [dataSource]="dataSource" matSort #miTabla>
 
-    <ng-container matColumnDef="cliente">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="cliente"> Cliente </th>
-      <td mat-cell *matCellDef="let element">
-        {{element.Cliente?.nombre}} 
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="id"> Nro. </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="traje">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="traje"> Traje </th>
-      <td mat-cell *matCellDef="let element">
-        {{element.Traje?.categoria}} (Talle {{element.Traje?.talle}}) 
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="fechaRetiro">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaRetiro"> Fecha Retiro </th>
-      <td mat-cell *matCellDef="let element">
-        {{element.fechaRetiro | date:'dd/MM/yyyy'}}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="estado"> Estado </th>
-        <td mat-cell *matCellDef="let element"> 
-            <span class="badge" [ngClass]="element.estado.toLowerCase()">
-              {{element.estado}}
-            </span>
+      <ng-container matColumnDef="cliente">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="cliente"> Cliente </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.Cliente?.nombre}} 
         </td>
-    </ng-container>
+      </ng-container>
 
-    <ng-container matColumnDef="fechaDevolucion">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaDevolucion"> Fecha Devolución </th>
-      <td mat-cell *matCellDef="let element">
-        {{element.fechaDevolucion | date:'dd/MM/yyyy'}}
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="traje">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="traje"> Traje </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.Traje?.categoria}} (Talle {{element.Traje?.talle}}) 
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="senia">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="senia"> Seña </th>
-      <td mat-cell *matCellDef="let element"> ${{element.senia | number:'1.2-2'}} </td>
-    </ng-container>
+      <ng-container matColumnDef="fechaRetiro">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaRetiro"> Fecha Retiro </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.fechaRetiro | date:'dd/MM/yyyy':'UTC'}}
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="acciones">
-      <th mat-header-cell *matHeaderCellDef> Acciones </th>
-      <td mat-cell *matCellDef="let element">
-        <mat-icon color="primary" style="cursor: pointer;" (click)="editarReserva(element)">edit</mat-icon>
-        <mat-icon color="warn" style="cursor: pointer;" (click)="eliminarReserva(element.id)" title="Eliminar">delete</mat-icon>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="estado"> Estado </th>
+          <td mat-cell *matCellDef="let element"> 
+              <span class="badge" [ngClass]="element.estado.toLowerCase()" style="padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase;">
+                {{element.estado}}
+              </span>
+          </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
+      <ng-container matColumnDef="fechaDevolucion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaDevolucion"> Fecha Devolución </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.fechaDevolucion | date:'dd/MM/yyyy':'UTC'}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="senia">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="senia"> Seña </th>
+        <td mat-cell *matCellDef="let element"> {{element.senia | currency:'ARS':'$'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="primary" (click)="editarReserva(element)" title="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminarReserva(element.id)" title="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="8" style="padding: 20px; text-align: center; color: #64748b;">
+          No se encontraron reservas.
+        </td>
+      </tr>
+    </table>
+  </div>
+  
 </div>

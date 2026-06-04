@@ -29,6 +29,8 @@ import { GestionClientes } from './components/gestion-clientes/gestion-clientes'
 import { ListadoReservas } from './components/listado-reservas/listado-reservas';
 import { authInterceptor } from './helpers/auth-interceptor';
 import { FormReserva } from './components/form-reserva/form-reserva';
+import { MatSortModule } from '@angular/material/sort';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 @NgModule({
   declarations: [

@@ -7,6 +7,7 @@ interface ClienteAttributes {
     dni: string;
     telefono: string;
     email: string;
+    activo: boolean;
 }
 
 const Cliente = sequelize.define<Model<ClienteAttributes>>('Cliente', {
@@ -26,6 +27,11 @@ const Cliente = sequelize.define<Model<ClienteAttributes>>('Cliente', {
     email: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    activo: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        allowNull: false
     }
 }, {
     tableName: 'clientes',

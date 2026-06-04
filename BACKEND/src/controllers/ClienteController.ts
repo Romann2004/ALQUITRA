@@ -1,22 +1,63 @@
 import { Request, Response } from 'express';
 import Cliente from '../models/Cliente';
 import { Log } from '../models/Log';
+import { Op } from 'sequelize';
 
 export const getClientes = async (req: Request, res: Response) => {
-    const listClientes = await Cliente.findAll();
-    res.json(listClientes);
+    try {
+        // Solo traemos los registros que tengan activo: true
+        const listClientes = await Cliente.findAll({
+            where: { activo: true}
+        });
+        res.json(listClientes);
+    } catch (error) {
+      res.status(500).json({ msg: 'Error al obtener los clientes', error });  
+    }
 };
 
 export const getClienteById = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const cliente = await Cliente.findByPk(Number(id));
-    res.json(cliente);
+    try {
+        const cliente: any = await Cliente.findByPk(Number(id));
+        if (!cliente || !cliente.activo) { // Si está desactivado, para el front no existe
+            return res.status(404).json({ msg: 'Cliente no encontrado' });
+        }
+        res.json(cliente);
+    } catch (error) {
+        res.status(500).json({ msg: 'Error al obtener el cliente', error });
+    }
 };
 
 export const postCliente = async (req: Request, res: Response) => {
-    const { body } = req;
+    let { nombre, dni, email, telefono } = req.body;
+    // const { body } = req;
     try {
-        const cliente: any = await Cliente.create(body);
+        // 1. LIMPIEZA DE ESPACIOS Y SUBSTRINGS
+        nombre = nombre?.trim();
+        dni = dni?.trim();
+        email = email?.trim();
+
+        // 2. DETECTOR DE DUPLICADOS (DNI o Email repetido)
+        const clienteExistente = await Cliente.findOne({
+            where: {
+                [Op.or]: [{ dni }, { email }]
+            }
+        });
+
+        if (clienteExistente) {
+            return res.status(400).json({
+                msg: 'Ya existe un cliente registrado con ese DNI o Email.'
+            });
+        }
+
+        // 3. GUARDADO REFORZADO
+        const cliente: any = await Cliente.create({
+            nombre,
+            dni,
+            email,
+            telefono,
+            activo: true // Forzamos que nazca activo
+        });
 
         await Log.create({
             accion: 'CREAR_CLIENTE',

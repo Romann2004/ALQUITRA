@@ -10,6 +10,7 @@ export interface Reserva {
     fechaRetiro: Date;
     fechaDevolucion: Date;
     senia: number;
+    cantidad?: number;
     estado: EstadoReserva;
     clienteId: number;
     trajeId: number;

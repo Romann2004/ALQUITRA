@@ -15,6 +15,17 @@ interface RespuestaApiIndividual {
     traje: Traje;
 }
 
+interface RespuestaDisponibilidadTraje {
+    ok: boolean;
+    msg?: string;
+    traje: Traje;
+    reservas: Array<{
+        fechaRetiro: string;
+        fechaDevolucion: string;
+        cantidad: number;
+    }>;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -38,8 +49,8 @@ export class TrajeService {
         return this.http.get<RespuestaApiTrajes>(this.apiUrl, { params });
     }
 
-    obtenerDisponibilidadTraje(id: number): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${id}/disponibilidad`);
+    obtenerDisponibilidadTraje(id: number): Observable<RespuestaDisponibilidadTraje> {
+        return this.http.get<RespuestaDisponibilidadTraje>(`${this.apiUrl}/${id}/disponibilidad`);
     }
 
     //El POST también devuelve un objeto envuelto { ok, msg, traje }

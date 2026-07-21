@@ -150,6 +150,10 @@ mat-form-field {
   background-color: #d32f2f !important;
 }
 
+.snack-centered.mat-mdc-snack-bar-container {
+  margin-top: 32vh !important;
+}
+
 
 /* ==========================================================================
    SISTEMA DE TRANSICIONES FLUIDAS PARA INTERCAMBIO DE TEMAS

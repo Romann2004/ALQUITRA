@@ -1,25 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import {
-  MatCard,
-  MatCardModule,
-  MatCardHeader,
-  MatCardTitle,
-  MatCardContent,
-} from '@angular/material/card';
-import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
-import { MatSelect, MatOption } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { Traje } from '../../models/traje.model';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { TalleTraje, Traje } from '../../models/traje.model';
 import { TrajeService } from '../../services/traje.service';
-import { ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+
+interface MedidaTalle {
+  talle: TalleTraje;
+  pecho: string;
+  cintura: string;
+  cadera: string;
+  largo: string;
+}
 
 @Component({
   selector: 'app-gestion-trajes',
@@ -29,137 +22,260 @@ import { AuthService } from '../../services/auth.service';
 })
 
 export class GestionTrajesComponent implements OnInit {
+  @ViewChild('trajeDialog') trajeDialog!: TemplateRef<any>;
+  @ViewChild('disponibilidadDialog') disponibilidadDialog!: TemplateRef<any>;
+
   trajes: Traje[] = [];
   trajeForm: FormGroup;
-  filtroForm: FormGroup;
-  dataSource = new MatTableDataSource<any>();
+  dataSource = new MatTableDataSource<Traje>([]);
   columnasVisibles: string[] = [
     'codigo',
     'categoria',
     'talle',
     'color',
+    'cantidad',
     'precio',
-    'estado',
+    'disponibilidad',
     'acciones',
   ];
+  modoEdicion = false;
+  trajeIdEnEdicion: number | null = null;
+  nuevaCategoria = '';
+  nuevoColor = '';
+  categoriasDisponibles = ['Smokings', 'Gala', 'Casual'];
+  coloresDisponibles = ['Negro', 'Azul', 'Azul Marino', 'Gris', 'Blanco', 'Bordeaux'];
+  tallesDisponibles = Object.values(TalleTraje);
+  tablaMedidas: MedidaTalle[] = [
+    { talle: TalleTraje.XS, pecho: '84-88', cintura: '68-72', cadera: '84-88', largo: '68-70' },
+    { talle: TalleTraje.S, pecho: '88-92', cintura: '72-76', cadera: '88-92', largo: '70-72' },
+    { talle: TalleTraje.M, pecho: '92-98', cintura: '76-82', cadera: '92-98', largo: '72-74' },
+    { talle: TalleTraje.L, pecho: '98-104', cintura: '82-88', cadera: '98-104', largo: '74-76' },
+    { talle: TalleTraje.XL, pecho: '104-110', cintura: '88-96', cadera: '104-110', largo: '76-78' },
+    { talle: TalleTraje.XXL, pecho: '110-118', cintura: '96-104', cadera: '110-118', largo: '78-80' },
+  ];
+  trajeSeleccionado: Traje | null = null;
+  reservasDisponibilidad: Array<{ fechaRetiro: string; fechaDevolucion: string; cantidad: number }> = [];
 
   constructor(
     private fb: FormBuilder,
     private trajeService: TrajeService,
-    private cdr: ChangeDetectorRef,
-    private authService: AuthService,
-    private router: Router
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
     this.trajeForm = this.fb.group({
       codigoEtiqueta: ['', Validators.required],
       categoria: ['', Validators.required],
       talle: ['', Validators.required],
       color: ['', Validators.required],
+      cantidad: [1, [Validators.required, Validators.min(1)]],
       precioAlquilerBase: ['', [Validators.required, Validators.min(1)]],
-      estado: ['Disponible'],
-    });
-    this.filtroForm = this.fb.group({
-      codigo: [''],
-      talle: [''],
-      color: [''],
-      categoria: [''],
-      estado: [''],
     });
   }
 
   ngOnInit(): void {
-    // Cargar trajes del backend cuando se cargue el componente
+    this.configurarFiltro();
     this.cargarTrajes();
   }
 
   cargarTrajes() {
-    // Extraemos los valores del formulario de búsqueda
-    const filtros = this.filtroForm ? this.filtroForm.value : null;
-
-    this.trajeService.getTrajes(filtros).subscribe({
+    this.trajeService.getTrajes().subscribe({
       next: (res) => {
-        this.trajes = res.trajes;
+        this.trajes = (res.trajes || []).map((traje) => ({
+          ...traje,
+          cantidad: Number(traje.cantidad ?? 1),
+        }));
         this.dataSource.data = this.trajes;
-        this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error al cargar', err),
+      error: (err) => console.error('Error al cargar trajes', err),
     });
   }
 
-  // Función para poder limpiar la búsqueda
-  limpiarFiltros() {
-    this.filtroForm.reset();
-    this.cargarTrajes();
+  configurarFiltro() {
+    this.dataSource.filterPredicate = (data: Traje, filter: string): boolean => {
+      const filtro = filter.trim().toLowerCase();
+
+      return [
+        data.codigoEtiqueta,
+        data.categoria,
+        data.talle,
+        data.color,
+        data.estado,
+        data.cantidad?.toString(),
+        data.precioAlquilerBase?.toString(),
+      ]
+        .filter(Boolean)
+        .some((valor) => String(valor).toLowerCase().includes(filtro));
+    };
   }
 
-  trajeIdEnEdicion: number | null = null;
-
-  prepararEdicion(traje: Traje) {
-    this.trajeIdEnEdicion = traje.id!; //Guardamos el id que estamos editando
-    //Seteamos los valores en el formulario para que el usuario pueda editarlos
-    this.trajeForm.patchValue(traje); // Rellena el formulario con los datos de la fila
+  aplicarFiltro(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
+  abrirFormularioTraje(traje?: Traje) {
+    this.resetearFormulario();
+
+    if (traje) {
+      this.modoEdicion = true;
+      this.trajeIdEnEdicion = traje.id ?? null;
+      this.agregarValorSiNoExiste('categoria', String(traje.categoria));
+      this.agregarValorSiNoExiste('color', String(traje.color));
+      this.trajeForm.patchValue({
+        codigoEtiqueta: traje.codigoEtiqueta,
+        categoria: traje.categoria,
+        talle: traje.talle,
+        color: traje.color,
+        cantidad: Number(traje.cantidad ?? 1),
+        precioAlquilerBase: Number(traje.precioAlquilerBase),
+      });
+    }
+
+    this.dialog.open(this.trajeDialog, {
+      width: '920px',
+      maxWidth: '96vw',
+      backdropClass: 'blur-backdrop',
+      autoFocus: false,
+    });
+  }
+
   guardarTraje() {
-    if (this.trajeForm.invalid) return;
-    const datosTraje = this.trajeForm.value;
+    if (this.trajeForm.invalid) {
+      this.trajeForm.markAllAsTouched();
+      this.mostrarMensaje('Revisá los campos del formulario.', true);
+      return;
+    }
+
+    const datosTraje = {
+      ...this.trajeForm.getRawValue(),
+      cantidad: Number(this.trajeForm.get('cantidad')?.value ?? 1),
+      precioAlquilerBase: Number(this.trajeForm.get('precioAlquilerBase')?.value ?? 0),
+    };
+
     if (this.trajeIdEnEdicion) {
       this.trajeService.actualizarTraje(this.trajeIdEnEdicion, datosTraje).subscribe({
         next: () => {
-          alert(
-            'Cambios guardados correctamente en el servidor. Por favor, recargue la página para visualizar los cambios en la tabla.',
-          );
-          this.trajeIdEnEdicion = null;
-          this.trajeForm.reset();
+          this.mostrarMensaje('Traje actualizado con éxito');
+          this.cerrarFormulario();
+          this.cargarTrajes();
         },
         error: (err) => {
           console.error('Error al actualizar', err);
-          alert('Hubo un error al guardar los cambios.');
+          this.mostrarMensaje(err.error?.mensaje || err.error?.msg || 'Hubo un error al guardar los cambios.', true);
         },
       });
     } else {
       this.trajeService.crearTraje(datosTraje).subscribe({
-        next: () => this.finalizarOperacion('Traje creado con éxito'),
+        next: () => {
+          this.mostrarMensaje('Traje creado con éxito');
+          this.cerrarFormulario();
+          this.cargarTrajes();
+        },
         error: (err) => {
           console.error('Error al crear', err);
-          alert('Hubo un error al guardar los cambios.');
-        }
+          this.mostrarMensaje(err.error?.mensaje || err.error?.msg || 'Hubo un error al guardar los cambios.', true);
+        },
       });
     }
   }
+
   eliminarTraje(id: number) {
     if (confirm('¿Estás seguro de que quieres eliminar este traje?')) {
       this.trajeService.eliminarTraje(id).subscribe({
         next: () => {
-          this.cargarTrajes(); 
+          this.mostrarMensaje('Traje eliminado con éxito');
+          this.cargarTrajes();
         },
         error: (err) => {
-          // Intentamos leer el mensaje enviado desde el backend, si falla mostramos uno genérico
-          const mensajeBackend = err.error?.mensaje || 'Ocurrió un error inesperado al eliminar';
-          alert('No se pudo eliminar: ' + mensajeBackend);
-        }
+          const mensajeBackend = err.error?.mensaje || err.error?.msg || 'Ocurrió un error inesperado al eliminar';
+          this.mostrarMensaje(mensajeBackend, true);
+        },
       });
     }
   }
+
   finalizarOperacion(mensaje: string) {
-    alert(mensaje);
+    this.mostrarMensaje(mensaje);
     this.cargarTrajes();
-    this.trajeForm.reset();
-    this.trajeIdEnEdicion = null; // Limpia el modo edición
+    this.cerrarFormulario();
   }
-  cerrarSesion() {
-    this.authService.logout(); // Esto borra el token del SessionStorage
-    this.router.navigate(['/login']); //Redirige al login
+
+  cerrarFormulario() {
+    this.dialog.closeAll();
+    this.resetearFormulario();
   }
-  abrirCalendarioDisponibilidad(traje: any) {
-    // Llamamos al servicio para traer las fechas
+
+  resetearFormulario() {
+    this.trajeForm.reset({
+      codigoEtiqueta: '',
+      categoria: '',
+      talle: '',
+      color: '',
+      cantidad: 1,
+      precioAlquilerBase: '',
+    });
+    this.modoEdicion = false;
+    this.trajeIdEnEdicion = null;
+    this.nuevaCategoria = '';
+    this.nuevoColor = '';
+  }
+
+  agregarCategoria() {
+    const valor = this.nuevaCategoria.trim();
+    if (!valor) return;
+    this.agregarValorSiNoExiste('categoria', valor);
+    this.trajeForm.get('categoria')?.setValue(valor);
+    this.nuevaCategoria = '';
+  }
+
+  agregarColor() {
+    const valor = this.nuevoColor.trim();
+    if (!valor) return;
+    this.agregarValorSiNoExiste('color', valor);
+    this.trajeForm.get('color')?.setValue(valor);
+    this.nuevoColor = '';
+  }
+
+  agregarValorSiNoExiste(tipo: 'categoria' | 'color', valor: string) {
+    const lista = tipo === 'categoria' ? this.categoriasDisponibles : this.coloresDisponibles;
+    const existe = lista.some((item) => item.toLowerCase() === valor.toLowerCase());
+    if (existe) return;
+
+    if (tipo === 'categoria') {
+      this.categoriasDisponibles = [...this.categoriasDisponibles, valor];
+    } else {
+      this.coloresDisponibles = [...this.coloresDisponibles, valor];
+    }
+  }
+
+  verDisponibilidad(traje: Traje) {
+    if (!traje.id) return;
+
     this.trajeService.obtenerDisponibilidadTraje(traje.id).subscribe({
       next: (res) => {
-        console.log('Reservas para el calendario:', res.reservas);
-        // ACÁ hay que programar la apertura del MatDialog con el Calendario
-        // pasándole res.reservas como data al modal.    
-        alert(`Abriendo calendario para el traje ${traje.codigoEtiqueta}... (Mirá la consola)`);
+        this.trajeSeleccionado = res.traje || traje;
+        this.reservasDisponibilidad = res.reservas || [];
+
+        this.dialog.open(this.disponibilidadDialog, {
+          width: '760px',
+          maxWidth: '96vw',
+          backdropClass: 'blur-backdrop',
+          autoFocus: false,
+        });
       },
-      error: (err) => console.error('Error al cargar calendario', err)
+      error: (err) => {
+        console.error('Error al cargar disponibilidad', err);
+        this.mostrarMensaje(err.error?.msg || 'Error al cargar la disponibilidad del traje', true);
+      },
     });
-  }    
+  }
+
+  mostrarMensaje(mensaje: string, esError: boolean = false) {
+    this.snackBar.open(mensaje, 'Cerrar', {
+      duration: 3500,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: ['snack-centered', esError ? 'snack-error' : 'snack-exito'],
+    });
+  }
 }

@@ -222,7 +222,7 @@ export class GestionClientes implements OnInit {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
-      panelClass: esError ? ['snackbar-error'] : ['snackbar-exito']
+      panelClass: ['snack-centered', esError ? 'snack-error' : 'snack-exito']
     });
   }
 }

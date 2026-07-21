@@ -44,10 +44,18 @@ export class ListadoReservas implements OnInit {
           switch (property) {
             case 'cliente': return item.Cliente?.nombre?.toLowerCase() || '';
             case 'traje':
-              // Obtenemos la categoría y el talle
+              // Ordenamos por categoría y por talle usando el orden real de talles
               const categoria = item.Traje?.categoria?.toLowerCase() || '';
-              const talleNum = Number(item.Traje?.talle) || 0;
-              const talleStr = String(talleNum).padStart(3, '0');
+              const talleOrden: Record<string, number> = {
+                XS: 1,
+                S: 2,
+                M: 3,
+                L: 4,
+                XL: 5,
+                XXL: 6,
+              };
+              const talleKey = String(item.Traje?.talle || '').toUpperCase();
+              const talleStr = String(talleOrden[talleKey] || 0).padStart(3, '0');
 
               // Retornamos la combinación. Ej: "smoking-048" o "smoking-052"
               return `${categoria}-${talleStr}`;
@@ -72,7 +80,7 @@ export class ListadoReservas implements OnInit {
           const clienteApellido = data.Cliente?.apellido?.toLowerCase() || '';
 
           // Datos del Traje
-          const trajeTalle = data.Traje?.talle?.toString() || ''; // Filtra por ej: "48", "50", "L"
+          const trajeTalle = data.Traje?.talle?.toString() || ''; // Filtra por ej: "XS", "M", "XL"
           const trajeCategoria = data.Traje?.categoria?.toLowerCase() || ''; // Filtra por ej: "Saco", "Pantalon", "Smoking"
 
           // Procesamiento de Fechas (Convertimos las fechas a texto legible tipo "DD/MM/YYYY")

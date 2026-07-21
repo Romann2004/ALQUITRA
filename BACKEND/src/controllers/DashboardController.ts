@@ -14,7 +14,7 @@ try {
             Traje.count({ 
                 where: { 
                     estado: {
-                        [Op.in]: [EstadoTraje.ALQUILADO, EstadoTraje.RESERVADO]
+                        [Op.in]: [EstadoTraje.BAJA]
                     } 
                 } 
             }) 

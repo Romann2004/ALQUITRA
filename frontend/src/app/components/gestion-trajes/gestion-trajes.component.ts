@@ -150,4 +150,16 @@ export class GestionTrajesComponent implements OnInit {
     this.authService.logout(); // Esto borra el token del SessionStorage
     this.router.navigate(['/login']); //Redirige al login
   }
+  abrirCalendarioDisponibilidad(traje: any) {
+    // Llamamos al servicio para traer las fechas
+    this.trajeService.obtenerDisponibilidadTraje(traje.id).subscribe({
+      next: (res) => {
+        console.log('Reservas para el calendario:', res.reservas);
+        // ACÁ hay que programar la apertura del MatDialog con el Calendario
+        // pasándole res.reservas como data al modal.    
+        alert(`Abriendo calendario para el traje ${traje.codigoEtiqueta}... (Mirá la consola)`);
+      },
+      error: (err) => console.error('Error al cargar calendario', err)
+    });
+  }    
 }

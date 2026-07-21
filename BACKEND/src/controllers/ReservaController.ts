@@ -7,7 +7,8 @@ import Cliente from "../models/Cliente";
 import { EstadoReserva, EstadoTraje } from "../models/Enums";
 
 export const postReserva = async (req: Request, res: Response) => {
-  const { fechaRetiro, fechaDevolucion, senia, clienteId, trajeId } = req.body;
+  const { fechaRetiro, fechaDevolucion, senia, clienteId, trajeId, cantidad } = req.body;
+  const cantidadReservada = cantidad ? Number(cantidad) : 1; // Por defecto 1
 
   try {
     // 1. Validaciones
@@ -17,7 +18,7 @@ export const postReserva = async (req: Request, res: Response) => {
     const errorFechas = validarFechas(fechaRetiro, fechaDevolucion, true);
     if (errorFechas) return res.status(400).json({ msg: errorFechas });
 
-    const errorSuperposicion = await validarSuperposicion(trajeId, fechaRetiro, fechaDevolucion);
+    const errorSuperposicion = await validarSuperposicionGrupal(trajeId, fechaRetiro, fechaDevolucion, cantidadReservada);
     if (errorSuperposicion) return res.status(400).json({ msg: errorSuperposicion });
 
     // 2. Creación
@@ -27,14 +28,15 @@ export const postReserva = async (req: Request, res: Response) => {
       senia,
       clienteId,
       trajeId,
+      cantidad: cantidadReservada, // Guardamos la cantidad
       estado: EstadoReserva.PENDIENTE,
     });
 
-    // 3. Lógica de negocio: Si la reserva se crea, el traje pasa a "RESERVADO"
-    const trajeReservado = await Traje.findByPk(trajeId);
-    if (trajeReservado) {
-      await trajeReservado.update({ estado: EstadoTraje.RESERVADO });
-    }
+    // // 3. Lógica de negocio: Si la reserva se crea, el traje pasa a "RESERVADO"
+    // const trajeReservado = await Traje.findByPk(trajeId);
+    // if (trajeReservado) {
+    //   await trajeReservado.update({ estado: EstadoTraje.RESERVADO });
+    // }
 
     await registrarLog(
       "CREAR_RESERVA",
@@ -65,14 +67,14 @@ export const getReservas = async (req: Request, res: Response) => {
 
 export const updateReserva = async (req: Request, res: Response) => {
   const id = req.params.id as string;
-  // Añadimos 'estado' a la desestructuración
-  const { fechaRetiro, fechaDevolucion, senia, trajeId, estado } = req.body;
+  const { fechaRetiro, fechaDevolucion, senia, trajeId, estado, cantidad } = req.body;
 
   try {
     const reserva = (await Reserva.findByPk(id)) as any;
     if (!reserva) return res.status(404).json({ msg: "No existe esa reserva" });
 
     const oldTrajeId = reserva.get('trajeId') as number;
+    const cantidadFinal = cantidad ? Number(cantidad) : reserva.get('cantidad');
 
     // 1. Validaciones extraídas
     const errorSenia = validarSenia(senia);
@@ -82,33 +84,34 @@ export const updateReserva = async (req: Request, res: Response) => {
       const errorFechas = validarFechas(fechaRetiro, fechaDevolucion, false);
       if (errorFechas) return res.status(400).json({ msg: errorFechas });
 
-      const errorSuperposicion = await validarSuperposicion(
+      const errorSuperposicion = await validarSuperposicionGrupal(
         trajeId || oldTrajeId, 
         fechaRetiro, 
-        fechaDevolucion, 
+        fechaDevolucion,
+        cantidadFinal,
         id
       );
       if (errorSuperposicion) return res.status(400).json({ msg: errorSuperposicion });
     }
 
     // 2. Actualización de la Reserva en la BD
-    await reserva.update(req.body);
+    await reserva.update({ ...req.body, cantidad: cantidadFinal });
 
-    // 3. --- LÓGICA DE NEGOCIO: Sincronización de Trajes ---
-    // Si en el formulario se cambió el traje por uno distinto, liberamos el viejo
-    if (trajeId && Number(trajeId) !== Number(oldTrajeId)) {
-      const trajeViejo = await Traje.findByPk(oldTrajeId);
-      if (trajeViejo) {
-        await trajeViejo.update({ estado: EstadoTraje.DISPONIBLE });
-      }
-    }
+    // // 3. --- LÓGICA DE NEGOCIO: Sincronización de Trajes ---
+    // // Si en el formulario se cambió el traje por uno distinto, liberamos el viejo
+    // if (trajeId && Number(trajeId) !== Number(oldTrajeId)) {
+    //   const trajeViejo = await Traje.findByPk(oldTrajeId);
+    //   if (trajeViejo) {
+    //     await trajeViejo.update({ estado: EstadoTraje.DISPONIBLE });
+    //   }
+    // }
 
-    // Sincronizamos el traje actual con el estado final de la reserva
-    const estadoFinal = estado || reserva.get('estado');
-    const trajeActualId = trajeId || oldTrajeId;
+    // // Sincronizamos el traje actual con el estado final de la reserva
+    // const estadoFinal = estado || reserva.get('estado');
+    // const trajeActualId = trajeId || oldTrajeId;
     
-    await sincronizarEstadoTraje(Number(trajeActualId), estadoFinal);
-    // ------------------------------------------------------
+    // await sincronizarEstadoTraje(Number(trajeActualId), estadoFinal);
+    // // ------------------------------------------------------
 
     await registrarLog("ACTUALIZAR_RESERVA", Number(id), "Se actualizó la reserva");
 
@@ -133,8 +136,8 @@ export const updateEstadoReserva = async (req: Request, res: Response) => {
     // Actualizamos la reserva
     await reserva.update({ estado });
 
-    // --- Usamos nuestra nueva función reutilizable ---
-    await sincronizarEstadoTraje(reserva.get('trajeId') as number, estado);
+    // // --- Usamos nuestra nueva función reutilizable ---
+    // await sincronizarEstadoTraje(reserva.get('trajeId') as number, estado);
 
     await registrarLog(
       "ACTUALIZAR_ESTADO_RESERVA",
@@ -198,25 +201,70 @@ const validarFechas = (fechaRetiro: string, fechaDevolucion: string, esNuevaRese
   return null;
 };
 
-const validarSuperposicion = async (trajeId: number, fechaRetiro: string, fechaDevolucion: string, reservaIdExcluida?: string | number): Promise<string | null> => {
+const validarSuperposicionGrupal = async (
+  trajeId: number,
+  fechaRetiro: string,
+  fechaDevolucion: string,
+  cantidadDeseada: number,
+  reservaIdExcluida?: string | number
+): Promise<string | null> => {
+
+  // Obtenemos el stock total real del grupo de trajes
+  const traje: any = await Traje.findByPk(trajeId);
+  if (!traje || traje.activo) return "El traje no existe o está dado de baja.";
+  const stockTotal = traje.cantidad;
+
+  // Buscamos todas las reservas activas de este traje que choquen con estas fechas
   const whereClause: any = {
     trajeId,
     estado: {
       [Op.notIn]: [EstadoReserva.CANCELADO, EstadoReserva.COMPLETADO],
     },
+    activo: true, // Respetamos el borrado lógico
     fechaRetiro: { [Op.lt]: fechaDevolucion },
     fechaDevolucion: { [Op.gt]: fechaRetiro },
   };
-
+  
   // Si estamos editando, omitimos la reserva actual en la búsqueda
   if (reservaIdExcluida) {
     whereClause.id = { [Op.ne]: reservaIdExcluida };
   }
 
-  const reservaExistente = await Reserva.findOne({ where: whereClause });
+  const reservasSuperpuestas = await Reserva.findAll({ where: whereClause });
   
-  if (reservaExistente) return "El traje ya está reservado para esas fechas.";
-  return null;
+  // Validación rápida: Si ni siquiera hay stock base, no podemos reservar
+  if (cantidadDeseada > stockTotal) {
+    return `Stock insuficiente. El inventario total es de ${stockTotal} unidades.`;
+  }
+
+  // Verificamos día por día la ocupación
+  // Convertimos a Date (UTC para evitar desfases horarios)
+  let inicio = new Date(fechaRetiro);
+  let fin = new Date(fechaDevolucion);
+
+  for (let d = new Date(inicio); d < fin; d.setDate(d.getDate() + 1)) {
+    let ocupadosHoy = 0;
+
+    // Sumamos cuántas unidades están retenidas justo este día
+    for (const res of reservasSuperpuestas) {
+      const resInicio = new Date((res as any).fechaRetiro);
+      const resFin = new Date((res as any).fechaDevolucion);
+      
+      if (d >= resInicio && d < resFin) {
+        ocupadosHoy += (res as any).cantidad;
+      }
+    }
+    
+    // Verificamos si en este día específico colapsa el stock
+    if (ocupadosHoy + cantidadDeseada > stockTotal) {
+      // Formateamos la fecha al estilo DD/MM/YYYY para que el error sea legible
+      const fechaColapso = d.toISOString().split('T')[0];
+      const disponibles = stockTotal - ocupadosHoy;
+      return `Stock insuficiente para la fecha ${fechaColapso}. Solo quedan ${disponibles} unidades disponibles.`;
+    }
+  }
+
+  return null; // Todo bien, no hay superposición
 };
 
 const validarEstadoEnum = (estado: string): string | null => {
@@ -235,15 +283,15 @@ const registrarLog = async (accion: string, id: number, detalle: string) => {
   });
 };
 
-const sincronizarEstadoTraje = async (trajeId: number, estadoReserva: string) => {
-  const traje = await Traje.findByPk(trajeId);
-  if (!traje) return;
+// const sincronizarEstadoTraje = async (trajeId: number, estadoReserva: string) => {
+//   const traje = await Traje.findByPk(trajeId);
+//   if (!traje) return;
 
-  if (estadoReserva === "RETIRADO") {
-    await traje.update({ estado: EstadoTraje.ALQUILADO });
-  } else if (estadoReserva === "COMPLETADO" || estadoReserva === "CANCELADO") {
-    await traje.update({ estado: EstadoTraje.DISPONIBLE });
-  } else if (estadoReserva === "PENDIENTE") {
-    await traje.update({ estado: EstadoTraje.RESERVADO });
-  }
-};
+//   if (estadoReserva === "RETIRADO") {
+//     await traje.update({ estado: EstadoTraje.ALQUILADO });
+//   } else if (estadoReserva === "COMPLETADO" || estadoReserva === "CANCELADO") {
+//     await traje.update({ estado: EstadoTraje.DISPONIBLE });
+//   } else if (estadoReserva === "PENDIENTE") {
+//     await traje.update({ estado: EstadoTraje.RESERVADO });
+//   }
+// };

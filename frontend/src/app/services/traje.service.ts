@@ -23,7 +23,7 @@ export class TrajeService {
 
     constructor(private http: HttpClient) { }
 
-    // CAMBIO 1: El GET ahora espera el objeto con la propiedad 'trajes'
+    //El GET espera el objeto con la propiedad 'trajes'
     getTrajes(filtros?: any): Observable<RespuestaApiTrajes> {
         let params = new HttpParams();
 
@@ -38,7 +38,11 @@ export class TrajeService {
         return this.http.get<RespuestaApiTrajes>(this.apiUrl, { params });
     }
 
-    // CAMBIO 2: El POST también devuelve un objeto envuelto { ok, msg, traje }
+    obtenerDisponibilidadTraje(id: number): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/${id}/disponibilidad`);
+    }
+
+    //El POST también devuelve un objeto envuelto { ok, msg, traje }
     crearTraje(nuevoTraje: Traje): Observable<RespuestaApiIndividual> {
         return this.http.post<RespuestaApiIndividual>(this.apiUrl, nuevoTraje);
     }

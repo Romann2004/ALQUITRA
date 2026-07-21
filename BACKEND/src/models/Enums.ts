@@ -1,9 +1,15 @@
 export enum EstadoTraje {
     DISPONIBLE = 'Disponible',
-    RESERVADO = 'Reservado',
-    ALQUILADO = 'Alquilado',
-    MANTENIMIENTO = 'En Mantenimiento',
     BAJA = 'Baja'
+}
+
+export enum TalleTraje {
+    XS = 'XS',
+    S = 'S',
+    M = 'M',
+    L = 'L',
+    XL = 'XL',
+    XXL = 'XXL'
 }
 
 export enum EstadoReserva {
@@ -11,4 +17,4 @@ export enum EstadoReserva {
     RETIRADO = 'RETIRADO',
     COMPLETADO = 'COMPLETADO',
     CANCELADO = 'CANCELADO'
-}
+} 

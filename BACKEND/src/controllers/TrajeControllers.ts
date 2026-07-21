@@ -92,6 +92,29 @@ export const obtenerTrajes = async (req: Request, res: Response) => {
     }
 };
 
+export const obtenerDisponibilidadTraje = async (req: Request, res: Response) => {
+    const {id} = req.params;
+    try {
+        const reservas = await Reserva.findAll({
+            where: {
+                trajeId: id,    
+                // Solo traemos reservas activas que ocupen lugar
+                estado: {
+                    [Op.in]: [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO]
+                },
+                activo: true // Filtro del borrado lógico                
+            },
+            // Solo mandamos al front los datos que necesita el calendario
+            attributes: ['fechaRetiro', 'fechaDevolucion', 'cantidad']
+        });
+
+        res.json({ok: true, reservas});
+    } catch (error) {
+        console.error('Error al obtener disponibilidad:', error);
+        res.status(500).json({ ok: false, msg: 'Error al obtener la disponibilidad del traje' });
+    }
+}
+
 export const actualizarTraje = async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id);

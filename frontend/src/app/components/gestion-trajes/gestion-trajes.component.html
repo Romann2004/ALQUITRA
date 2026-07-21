@@ -136,11 +136,16 @@
       </ng-container>
 
       <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <th mat-header-cell *matHeaderCellDef> Stock / Ocupación </th>
         <td mat-cell *matCellDef="let t">
-          <span class="status-badge" [class.disponible]="t.estado === 'Disponible'" style="padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;">
-            {{t.estado}}
-          </span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="status-badge disponible" style="font-size: 14px; background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;">
+              {{t.cantidad}} u.
+            </span>
+            <button mat-icon-button color="primary" (click)="abrirCalendarioDisponibilidad(t)" title="Ver fechas reservadas">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </div>          
         </td>
       </ng-container>
 

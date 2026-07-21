@@ -1,80 +1,33 @@
-/* --- NUEVA CLASE PARA EL FORMULARIO --- */
-.cliente-form {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  align-items: flex-start; /* Mantiene los inputs alineados arriba */
-  margin-top: 15px;
-}
 
-/* Modificamos los inputs para que no crezcan de más y mantengan el bloque limpio */
-.cliente-form mat-form-field {
-  flex: 1 1 auto; /* Permite que se adapten al espacio disponible */
-  min-width: 180px; /* Evita que se aplasten en pantallas pequeñas */
-}
-
-/* --- ESTILOS DE BOTONES CORREGIDOS --- */
-.form-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  /* Centra el botón exactamente con el alto del recuadro del input (56px) */
-  height: 56px; 
-  /* Le quitamos el width: 100% que tenías antes para que no baje a la siguiente línea */
-}
-
-.btn-accion {
-  padding: 4px 20px;
-  font-size: 15px;
-  letter-spacing: 0.5px;
-  border-radius: 6px;
-  height: 40px; /* Alto definido para igualar proporciones */
-}
-
-.btn-accion mat-icon {
-  margin-right: 6px;
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
-}
-
-.btn-cancelar {
-  border-radius: 6px;
-  padding: 4px 16px;
-  height: 40px;
-}
-
-/* Contenedor de la celda para que sea posicionable */
+/* --- CLASES COMPATIBLES CON TU TABLA DE CLIENTES --- */
 td.mat-cell {
   position: relative;
   padding: 0 8px !important;
 }
 
-/* Estilo del texto cuando no se está editando */
 .dato-texto {
   cursor: pointer;
   display: block;
   padding: 10px 5px;
   border-radius: 4px;
   transition: background-color 0.2s;
-  min-height: 20px; /* Para poder clickear celdas vacías */
+  min-height: 20px;
 }
 
 .dato-texto:hover {
-  background-color: rgba(63, 81, 181, 0.05); /* Un azul muy suave */
-  color: #3f51b5; /* El color de Angular Material */
+  background-color: rgba(63, 81, 181, 0.05);
+  color: #3f51b5;
 }
 
-/* Estilo del input cuando se activa el doble clic */
 .edit-input {
   width: 100%;
   padding: 8px 4px;
   font-family: inherit;
   font-size: 14px;
-  border: 2px solid #3f51b5; /* Borde del color principal */
+  border: 2px solid #3f51b5;
   border-radius: 4px;
   outline: none;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  box-sizing: border-box; /* Vital para que no se agrande la celda */
+  box-sizing: border-box;
 }

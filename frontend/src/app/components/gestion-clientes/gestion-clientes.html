@@ -12,13 +12,10 @@
       </div>
     </div>
     
-    <!-- NUEVO: Botón Rosa unificado que abre el Modal (color 'accent' es el rosa en tu tema) -->
     <button mat-flat-button color="accent" style="padding: 0 24px; border-radius: 8px; height: 44px;" (click)="agregarCliente()">
       <mat-icon>add</mat-icon> Nuevo Cliente
     </button>
   </div>
-
-  <!-- El formulario empotrado <mat-card> se ha eliminado por completo de aquí -->
 
   <div *ngIf="listClientes && listClientes.length >= 0; else cargando" class="premium-table-wrapper">
     <table mat-table [dataSource]="listClientes">
@@ -106,49 +103,99 @@
   </ng-template>
 
 <ng-template #clienteDialog>
-  <div class="modal-wrapper">
-    <div class="modal-header">
-      <div>
-        <h2 class="modal-title" style="margin: 0;">{{ modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente' }}</h2>
-        <p class="modal-subtitle" style="margin: 0; font-size: 0.85rem; color: #64748b;">
-          {{ modoEdicion ? 'Actualizá los datos del cliente seleccionado.' : 'Cargá los datos del nuevo cliente.' }}
-        </p>
-      </div>
-      <button mat-icon-button mat-dialog-close class="close-btn">
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
+  <h2 mat-dialog-title>{{ modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente' }}</h2>
 
-    <div class="modal-body" [formGroup]="clienteForm" style="padding: 10px 0;">
-      <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 8px;">
-        <mat-label>Nombre</mat-label>
-        <input matInput formControlName="nombre" placeholder="Ej. Juan Pérez">
-      </mat-form-field>
+  <mat-dialog-content [formGroup]="clienteForm">
+    
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre completo</mat-label>
+      <input matInput formControlName="nombre" placeholder="Ej. Juan Pérez">
+      <mat-icon matSuffix style="color: #94a3b8;">person</mat-icon>
+      
+      <!-- MENSAJES DE ERROR PARA NOMBRE -->
+      <mat-error *ngIf="clienteForm.get('nombre')?.hasError('required')">
+        El nombre completo es obligatorio.
+      </mat-error>
+      <mat-error *ngIf="clienteForm.get('nombre')?.hasError('minlength')">
+        El nombre debe tener al menos 3 letras.
+      </mat-error>
+      <mat-error *ngIf="clienteForm.get('nombre')?.hasError('pattern')">
+        El nombre solo puede contener letras y espacios.
+      </mat-error>
+    </mat-form-field>
 
-      <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 8px;">
-        <mat-label>DNI</mat-label>
-        <input matInput formControlName="dni" type="number">
-      </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>DNI (Documento)</mat-label>
+      <input matInput 
+             formControlName="dni" 
+             type="text" 
+             placeholder="Ej. 35383229"
+             (keypress)="filtrarTeclas($event)">
+      <mat-icon matSuffix style="color: #94a3b8;">badge</mat-icon>
+      
+      <!-- Corregido el anidamiento estructural de los errores -->
+      <mat-error *ngIf="clienteForm.get('dni')?.hasError('required')">
+        El DNI es un campo obligatorio.
+      </mat-error>
+      <mat-error *ngIf="clienteForm.get('dni')?.hasError('pattern')">
+        El DNI debe contener solo números.
+      </mat-error>
+      <mat-error *ngIf="clienteForm.get('dni')?.hasError('minlength') || clienteForm.get('dni')?.hasError('maxlength')">
+        El DNI debe tener entre 6 y 9 dígitos.
+      </mat-error>
+    </mat-form-field>
 
-      <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 8px;">
-        <mat-label>Teléfono</mat-label>
-        <input matInput formControlName="telefono">
-      </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Teléfono de contacto</mat-label>
+      <!-- Cambiado a type="text" e interceptado con filtrarTeclas para bloquear letras en vivo -->
+      <input matInput 
+             formControlName="telefono" 
+             type="text" 
+             placeholder="Ej. 3462 201816"
+             (keypress)="filtrarTeclas($event)">
+      <mat-icon matSuffix style="color: #94a3b8;">phone</mat-icon>
+      
+      <!-- MENSAJES DE ERROR DINÁMICOS PARA TELÉFONO -->
+      <mat-error *ngIf="clienteForm.get('telefono')?.hasError('required')">
+        El teléfono es un campo obligatorio.
+      </mat-error>
+      <mat-error *ngIf="clienteForm.get('telefono')?.hasError('pattern')">
+        El teléfono debe contener solo números.
+      </mat-error>
+      <mat-error *ngIf="clienteForm.get('telefono')?.hasError('minlength') || clienteForm.get('telefono')?.hasError('maxlength')">
+        El teléfono debe tener entre 6 y 10 dígitos.
+      </mat-error>
+      <mat-error *ngIf="clienteForm.get('telefono')?.hasError('telefonoRepetido')">
+        Este número de teléfono ya pertenece a otro cliente registrado.
+      </mat-error>
+    </mat-form-field>
 
-      <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 8px;">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" type="email">
-      </mat-form-field>
-    </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Correo electrónico</mat-label>
+      <input matInput formControlName="email" type="email" placeholder="Ej. juan@gmail.com">
+      <mat-icon matSuffix style="color: #94a3b8;">mail</mat-icon>
+      
+      <!-- MENSAJES DE ERROR PARA EMAIL -->
+      <mat-error *ngIf="clienteForm.get('email')?.hasError('required')">
+        El correo electrónico es obligatorio.
+      </mat-error>
+      <mat-error *ngIf="clienteForm.get('email')?.hasError('email')">
+        Por favor, ingresa un formato de correo válido (ejemplo@correo.com).
+      </mat-error>
+    </mat-form-field>
 
-    <div class="modal-actions" style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
-      <button mat-button mat-dialog-close (click)="cancelarEdicion()">Cancelar</button>
-      <button mat-raised-button color="primary" [disabled]="clienteForm.invalid" (click)="guardarCliente()">
-        <mat-icon style="margin-right: 4px;">{{ modoEdicion ? 'sync' : 'save' }}</mat-icon>
-        {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
-      </button>
-    </div>
-  </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close (click)="cancelarEdicion()">Cancelar</button>
+    <button mat-raised-button 
+            color="primary" 
+            [disabled]="clienteForm.invalid" 
+            (click)="guardarCliente()">
+      <mat-icon>{{ modoEdicion ? 'sync' : 'save' }}</mat-icon>
+      {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+    </button>
+  </mat-dialog-actions>
 </ng-template>
 
 </div>

@@ -1,9 +1,9 @@
 // frontend/src/app/components/gestion-clientes/gestion-clientes.ts
 import { Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms'; 
 import { Cliente } from '../../services/cliente';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog'; // NUEVO: Importamos MatDialog
+import { MatDialog } from '@angular/material/dialog'; 
 
 @Component({
   selector: 'app-gestion-clientes',
@@ -12,7 +12,6 @@ import { MatDialog } from '@angular/material/dialog'; // NUEVO: Importamos MatDi
   styleUrl: './gestion-clientes.css',
 })
 export class GestionClientes implements OnInit {
-  // NUEVO: Capturamos la referencia de la plantilla HTML del modal
   @ViewChild('clienteDialog') clienteDialog!: TemplateRef<any>;
 
   listClientes: any[] = [];
@@ -28,13 +27,33 @@ export class GestionClientes implements OnInit {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private _snackBar: MatSnackBar,
-    private dialog: MatDialog // NUEVO: Inyectamos el gestor de modales
+    private dialog: MatDialog 
   ) { 
     this.clienteForm = this.fb.group({
-      nombre: ['', Validators.required],
-      dni: ['', Validators.required],
-      telefono: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]]
+      // MODIFICADO: Obligatorio y sólo letras/espacios (mínimo 3 caracteres para ser un nombre real)
+      nombre: ['', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$') 
+      ]],
+      dni: ['', [
+        Validators.required, 
+        Validators.minLength(6), 
+        Validators.maxLength(9),
+        Validators.pattern('^[0-9]+$') 
+      ]],
+      telefono: ['', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(10),
+        Validators.pattern('^[0-9]+$'),
+        this.telefonoDuplicadoValidador.bind(this) 
+      ]],
+      // REFORZADO: Obligatorio y con formato de correo electrónico estricto
+      email: ['', [
+        Validators.required, 
+        Validators.email
+      ]]
     });
   }
 
@@ -42,10 +61,35 @@ export class GestionClientes implements OnInit {
     this.obtenerClientes();
   }
 
+  filtrarTeclas(event: KeyboardEvent): boolean {
+    const reg = /^[0-9]$/;
+    return reg.test(event.key);
+  }
+
+  telefonoDuplicadoValidador(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    
+    const telefonoIngresado = control.value.toString().trim();
+
+    const existe = this.listClientes.some(cliente => {
+      if (this.modoEdicion && cliente.id === this.clienteIdActual) {
+        return false;
+      }
+      return cliente.telefono?.toString().trim() === telefonoIngresado;
+    });
+
+    return existe ? { telefonoRepetido: true } : null;
+  }
+
   obtenerClientes() {
     this._cliente.getClientes().subscribe({
       next: (data) => {
         this.listClientes = data;
+        
+        // CORRECCIÓN 1: Una vez que llegan los clientes del servidor, forzamos al campo
+        // de teléfono a re-validarse para que detecte si hay duplicados existentes.
+        this.clienteForm.get('telefono')?.updateValueAndValidity();
+        
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error al cargar clientes', err)
@@ -62,6 +106,7 @@ export class GestionClientes implements OnInit {
       this._cliente.patchCliente(cliente.id, body).subscribe({
         next: () => {
           this.mostrarMensaje('¡Cambio Guardado!', false);
+          this.obtenerClientes(); // Recargamos para actualizar la lista en memoria
         },
         error: (err) => {
           const msg = err.error?.msg || 'Error al guardar el cambio';
@@ -72,20 +117,22 @@ export class GestionClientes implements OnInit {
     }
   }
 
-  // NUEVO MÉTODO: Abre el modal vacío para crear un cliente
   agregarCliente() {
     this.modoEdicion = false;
     this.clienteIdActual = null;
     this.clienteForm.reset();
     
+    // CORRECCIÓN 2: Al resetear el formulario para un nuevo cliente, nos aseguramos
+    // de limpiar errores previos y recalcular su estado inicial de validez.
+    this.clienteForm.get('telefono')?.updateValueAndValidity();
+
     this.dialog.open(this.clienteDialog, {
       width: '450px',
-      backdropClass: 'blur-backdrop', // <-- APLICAMOS EL DESENFOQUE REUTILIZABLE
+      backdropClass: 'blur-backdrop', 
       autoFocus: false
     });
   }
 
-  // MODIFICADO: Ahora reutiliza la edición abriendo el modal con los datos cargados
   editarCliente(cliente: any) {
     this.modoEdicion = true;
     this.clienteIdActual = cliente.id;
@@ -96,9 +143,13 @@ export class GestionClientes implements OnInit {
       email: cliente.email
     });
 
+    // CORRECCIÓN 3: Al cargar los datos viejos en modo edición, obligamos a Angular
+    // a re-evaluar si este teléfono cargado pertenece o no al cliente actual.
+    this.clienteForm.get('telefono')?.updateValueAndValidity();
+
     this.dialog.open(this.clienteDialog, {
       width: '450px',
-      backdropClass: 'blur-backdrop', // <-- APLICAMOS EL DESENFOQUE EN LA EDICIÓN TAMBIÉN
+      backdropClass: 'blur-backdrop', 
       autoFocus: false
     });
   }
@@ -115,7 +166,7 @@ export class GestionClientes implements OnInit {
       this._cliente.putCliente(this.clienteIdActual, clienteData).subscribe({
         next: () => {
           this.mostrarMensaje('Cliente actualizado exitosamente', false);
-          this.dialog.closeAll(); // Cierra el modal al finalizar con éxito
+          this.dialog.closeAll(); 
           this.resetearFormulario();
           this.obtenerClientes();
         },
@@ -128,7 +179,7 @@ export class GestionClientes implements OnInit {
       this._cliente.postCliente(clienteData).subscribe({
         next: () => {
           this.mostrarMensaje('Cliente creado exitosamente', false);
-          this.dialog.closeAll(); // Cierra el modal al finalizar con éxito
+          this.dialog.closeAll(); 
           this.resetearFormulario();
           this.obtenerClientes();
         },

@@ -1,7 +1,8 @@
 // frontend/src/app/app.ts
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ViewChild, TemplateRef } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog'; // 1. Importamos el servicio de modales
 
 @Component({
   selector: 'app-root',
@@ -10,24 +11,26 @@ import { Router } from '@angular/router';
   styleUrl: './app.css'
 })
 export class App implements OnInit {
+  // 2. Capturamos la referencia del modal de confirmación
+  @ViewChild('logoutDialog') logoutDialog!: TemplateRef<any>;
+
   mostrarMenu: boolean = false;
-  isDarkMode: boolean = false; // Propiedad para controlar el estado del modo oscuro
+  isDarkMode: boolean = false; 
   protected readonly title = signal('frontend');
   
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog // 3. Inyectamos el servicio en el constructor
   ) {}
 
   ngOnInit() {
-    // 1. Verificar preferencia de tema guardada en el navegador
     const temaGuardado = localStorage.getItem('theme');
     if (temaGuardado === 'dark') {
       this.isDarkMode = true;
       this.aplicarClaseTema();
     }
 
-    // 2. Suscripción al estado de autenticación existente
     this.authService.isLoggedIn$.subscribe(res => {
       this.mostrarMenu = res;
 
@@ -39,13 +42,11 @@ export class App implements OnInit {
     });
   }
 
-  // Alterna el estado del interruptor
   toggleDarkMode() {
     this.isDarkMode = !this.isDarkMode;
     this.aplicarClaseTema();
   }
 
-  // Añade o remueve la clase en el elemento HTML raíz (:root)
   private aplicarClaseTema() {
     if (this.isDarkMode) {
       document.documentElement.classList.add('dark-theme');
@@ -56,7 +57,18 @@ export class App implements OnInit {
     }
   }
 
+  // 4. MODIFICADO: Ahora el botón del menú abre primero el diálogo de confirmación
   logout() {
-    this.authService.logout();
+    this.dialog.open(this.logoutDialog, {
+      width: '400px',
+      backdropClass: 'blur-backdrop', // <-- Reutilizamos el desenfoque global robusto
+      autoFocus: false
+    });
+  }
+
+  // 5. NUEVO MÉTODO: Se ejecuta solo si el usuario presiona "Salir" en el modal
+  confirmarLogout() {
+    this.dialog.closeAll(); // Cerramos el modal flotante
+    this.authService.logout(); // Limpiamos la sesión definitivamente a través del servicio
   }
 }

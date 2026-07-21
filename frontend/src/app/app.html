@@ -63,3 +63,20 @@
     <router-outlet></router-outlet>
   </div>
 </ng-template>
+
+<ng-template #logoutDialog>
+  <h2 mat-dialog-title>¿Cerrar Sesión?</h2>
+  
+  <mat-dialog-content>
+    <p style="margin: 0; color: #64748b;">¿Estás seguro de que deseas salir del sistema? Deberás ingresar tus credenciales nuevamente para acceder.</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <!-- Si cancela, simplemente cierra el modal -->
+    <button mat-button mat-dialog-close>Cancelar</button>
+    <!-- Si confirma, ejecuta el cierre definitivo (usamos la clase logout-btn de tu CSS para el detalle rojo) -->
+    <button mat-flat-button color="warn" style="border-radius: 8px;" (click)="confirmarLogout()">
+      <mat-icon>logout</mat-icon> Salir
+    </button>
+  </mat-dialog-actions>
+</ng-template>

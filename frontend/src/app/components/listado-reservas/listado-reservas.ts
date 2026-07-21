@@ -111,12 +111,13 @@ export class ListadoReservas implements OnInit {
   agregarReserva() {
     this.dialog.open(FormReserva, { 
       width: '500px', 
+      backdropClass: 'blur-backdrop',
       data: null // Esto le dice al formulario que NO estamos editando
     }).afterClosed().subscribe(() => this.obtenerReservas());
   }
 
   editarReserva(reserva: any) {
-    const dialogRef = this.dialog.open(FormReserva, {width: '500px', data: reserva });
+    const dialogRef = this.dialog.open(FormReserva, {width: '500px', backdropClass: 'blur-backdrop', data: reserva });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result)  {

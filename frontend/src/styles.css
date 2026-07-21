@@ -17,6 +17,16 @@ body {
   background-color: #f8fafc; /* Fondo gris súper claro */
 }
 
+/* frontend/src/styles.css */
+
+/* Apuntamos de forma directa a la estructura exacta visible en el inspector */
+.cdk-overlay-backdrop.cdk-overlay-backdrop-noop-animation.blur-backdrop {
+  background-color: rgba(15, 23, 42, 0.35) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  opacity: 1 !important;
+}
+
 /* Forzar tipografía en componentes de Material Design */
 .mat-mdc-button, .mat-mdc-unelevated-button, .mat-mdc-raised-button, 
 .mat-mdc-outlined-button, .mat-mdc-form-field, input, .mat-mdc-select, 

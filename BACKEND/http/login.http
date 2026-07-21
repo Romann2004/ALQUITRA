@@ -6,7 +6,7 @@
 GET http://localhost:3000/api/trajes?codigo=SMOK-003
 
 ### Registro de Usuario (Ejecutar una sola vez p/usuario de prueba)
-POST {{baseUrl}}/login
+POST {{baseUrl}}/register
 Content-Type: application/json
 
 {

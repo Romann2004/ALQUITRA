@@ -39,7 +39,7 @@ async function bootstrap() {
         await connectMongo();
 
         //Sincronizar tablas
-        await sequelize.sync({ force: false });
+        //await sequelize.sync({ force: true });
         console.log("Tablas sincronizadas con la DB.");
         console.log('Modelos sincronizados con la DB')
 

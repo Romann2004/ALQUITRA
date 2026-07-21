@@ -1,7 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+// frontend/src/app/components/gestion-clientes/gestion-clientes.ts
+import { Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Cliente } from '../../services/cliente';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog'; // NUEVO: Importamos MatDialog
 
 @Component({
   selector: 'app-gestion-clientes',
@@ -10,6 +12,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './gestion-clientes.css',
 })
 export class GestionClientes implements OnInit {
+  // NUEVO: Capturamos la referencia de la plantilla HTML del modal
+  @ViewChild('clienteDialog') clienteDialog!: TemplateRef<any>;
+
   listClientes: any[] = [];
   displayedColumns: string[] = ['id', 'nombre', 'dni', 'telefono', 'email', 'acciones'];
 
@@ -21,10 +26,10 @@ export class GestionClientes implements OnInit {
   constructor(
     private _cliente: Cliente,
     private cdr: ChangeDetectorRef,
-    private fb: FormBuilder ,
-    private _snackBar: MatSnackBar
+    private fb: FormBuilder,
+    private _snackBar: MatSnackBar,
+    private dialog: MatDialog // NUEVO: Inyectamos el gestor de modales
   ) { 
-    // Inicializamos el formulario con validaciones
     this.clienteForm = this.fb.group({
       nombre: ['', Validators.required],
       dni: ['', Validators.required],
@@ -48,7 +53,6 @@ export class GestionClientes implements OnInit {
   }
 
   guardarCambio(cliente: any, campo: string) {
-    // Identificamos el nombre de la variable que controla el input (ej: editNombre)
     const fieldName = 'edit' + campo.charAt(0).toUpperCase() + campo.slice(1);
 
     if (cliente[fieldName] === true) {
@@ -58,18 +62,46 @@ export class GestionClientes implements OnInit {
       this._cliente.patchCliente(cliente.id, body).subscribe({
         next: () => {
           this.mostrarMensaje('¡Cambio Guardado!', false);
-          },
+        },
         error: (err) => {
-          // Capturamos el 400 del back si modificó el DNI/Email por uno duplicado
           const msg = err.error?.msg || 'Error al guardar el cambio';
           this.mostrarMensaje(msg, true);
-          this.obtenerClientes(); // Si falla, volvemos al valor anterior
+          this.obtenerClientes();
         }
       });
     }
   }
 
-  // --- FUNCIONES DEL FORMULARIO ---
+  // NUEVO MÉTODO: Abre el modal vacío para crear un cliente
+  agregarCliente() {
+    this.modoEdicion = false;
+    this.clienteIdActual = null;
+    this.clienteForm.reset();
+    
+    this.dialog.open(this.clienteDialog, {
+      width: '450px',
+      backdropClass: 'blur-backdrop', // <-- APLICAMOS EL DESENFOQUE REUTILIZABLE
+      autoFocus: false
+    });
+  }
+
+  // MODIFICADO: Ahora reutiliza la edición abriendo el modal con los datos cargados
+  editarCliente(cliente: any) {
+    this.modoEdicion = true;
+    this.clienteIdActual = cliente.id;
+    this.clienteForm.patchValue({
+      nombre: cliente.nombre,
+      dni: cliente.dni,
+      telefono: cliente.telefono,
+      email: cliente.email
+    });
+
+    this.dialog.open(this.clienteDialog, {
+      width: '450px',
+      backdropClass: 'blur-backdrop', // <-- APLICAMOS EL DESENFOQUE EN LA EDICIÓN TAMBIÉN
+      autoFocus: false
+    });
+  }
 
   guardarCliente() {
     if (this.clienteForm.invalid) {
@@ -80,29 +112,27 @@ export class GestionClientes implements OnInit {
     const clienteData = this.clienteForm.value;
 
     if (this.modoEdicion && this.clienteIdActual) {
-      // --- MODO EDICIÓN (PUT) ---
       this._cliente.putCliente(this.clienteIdActual, clienteData).subscribe({
         next: () => {
           this.mostrarMensaje('Cliente actualizado exitosamente', false);
+          this.dialog.closeAll(); // Cierra el modal al finalizar con éxito
           this.resetearFormulario();
           this.obtenerClientes();
         },
         error: (err) => {
-          // Capturamos el error por si duplicó DNI o Email de otro cliente
           const msg = err.error?.msg || 'Error al actualizar el cliente';
           this.mostrarMensaje(msg, true);
         }
       });
     } else {
-      // --- MODO CREACIÓN (POST) ---
       this._cliente.postCliente(clienteData).subscribe({
         next: () => {
           this.mostrarMensaje('Cliente creado exitosamente', false);
+          this.dialog.closeAll(); // Cierra el modal al finalizar con éxito
           this.resetearFormulario();
           this.obtenerClientes();
         },
         error: (err) => {
-          // Capturamos el error del backend si el DNI o Email ya existen
           const msg = err.error?.msg || 'Error al crear el cliente';
           this.mostrarMensaje(msg, true);
         }
@@ -110,19 +140,9 @@ export class GestionClientes implements OnInit {
     }
   }
 
-  editarCliente(cliente: any) {
-    this.modoEdicion = true;
-    this.clienteIdActual = cliente.id;
-    this.clienteForm.patchValue({
-      nombre: cliente.nombre,
-      dni: cliente.dni,
-      telefono: cliente.telefono,
-      email: cliente.email
-    });
-  }
-
   cancelarEdicion() {
     this.resetearFormulario();
+    this.dialog.closeAll();
   }
 
   resetearFormulario() {
@@ -131,30 +151,27 @@ export class GestionClientes implements OnInit {
     this.clienteIdActual = null;
   }
 
-  // --- FUNCIÓN DE ELIMINAR ---
-
   eliminarCliente(id: number) {
     if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
       this._cliente.deleteCliente(id).subscribe({
         next: () => {
           this.mostrarMensaje('Cliente eliminado exitosamente', false);
-          this.obtenerClientes(); // Recarga la lista (ya no vendrá porque activo será false)
+          this.obtenerClientes();
         },
         error: (err) => {
-          const msg = err.error?.msg ||'Error al eliminar cliente';
+          const msg = err.error?.msg || 'Error al eliminar cliente';
           this.mostrarMensaje(msg, true);
         }
       });
     }
   }
 
-  // FUNCIÓN AUXILIAR (Para no repetir código del SnackBar)
   mostrarMensaje(mensaje: string, esError: boolean = false) {
     this._snackBar.open(mensaje, 'Cerrar', {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
-      panelClass: esError ? ['snackbar-error'] : ['snackbar-exito'] // Reutiliza nuestras clases CSS existentes
-    })
+      panelClass: esError ? ['snackbar-error'] : ['snackbar-exito']
+    });
   }
 }

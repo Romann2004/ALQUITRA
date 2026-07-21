@@ -220,7 +220,7 @@ const validarSuperposicionGrupal = async (
     estado: {
       [Op.notIn]: [EstadoReserva.CANCELADO, EstadoReserva.COMPLETADO],
     },
-    activo: true, // Respetamos el borrado lógico
+    //activo: true,  Respetamos el borrado lógico
     fechaRetiro: { [Op.lt]: fechaDevolucion },
     fechaDevolucion: { [Op.gt]: fechaRetiro },
   };

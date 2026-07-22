@@ -1,60 +1,82 @@
 <h2 mat-dialog-title>{{ data ? 'Editar Reserva' : 'Nueva Reserva' }}</h2>
 
-<mat-dialog-content [formGroup]="form">
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Cliente</mat-label>
-    <mat-select formControlName="clienteId" [compareWith]="compararObjetos">
-      <mat-option *ngFor="let c of listClientes" [value]="c.id">
-        {{c.nombre}} {{c.apellido}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+<mat-dialog-content [formGroup]="form" class="reservation-dialog-content">
+  <div class="reservation-form-grid">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Cliente</mat-label>
+      <mat-select formControlName="clienteId" [compareWith]="compararObjetos">
+        <mat-option *ngFor="let c of listClientes" [value]="c.id">
+          {{c.nombre}} {{c.apellido}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('clienteId')?.hasError('required')">
+        Debés seleccionar un cliente.
+      </mat-error>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Traje</mat-label>
-    <mat-select formControlName="trajeId" [compareWith]="compararObjetos">
-      <mat-option *ngFor="let t of listTrajes" [value]="t.id">
-        {{t.categoria}} - Talle {{t.talle}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Traje</mat-label>
+      <mat-select formControlName="trajeId" [compareWith]="compararObjetos">
+        <mat-option *ngFor="let t of listTrajes" [value]="t.id">
+          {{t.categoria}} - Talle {{t.talle}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('trajeId')?.hasError('required')">
+        Debés seleccionar un traje.
+      </mat-error>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Fecha de Retiro</mat-label>
-    <input matInput [matDatepicker]="pickerRetiro" formControlName="fechaRetiro" [min]="fechaMinima">
-    <mat-datepicker-toggle matSuffix [for]="pickerRetiro"></mat-datepicker-toggle>
-    <mat-datepicker #pickerRetiro></mat-datepicker>
-  </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Unidades</mat-label>
+      <input matInput type="number" formControlName="cantidad" min="1">
+      <mat-error *ngIf="form.get('cantidad')?.hasError('min')">
+        Debe alquilar al menos 1 unidad.
+      </mat-error>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Fecha de Devolución</mat-label>
-    <input matInput [matDatepicker]="pickerDev" formControlName="fechaDevolucion" [min]="form.get('fechaRetiro')?.value || fechaMinima">
-    <mat-datepicker-toggle matSuffix [for]="pickerDev"></mat-datepicker-toggle>
-    <mat-datepicker #pickerDev></mat-datepicker>
-    <mat-error *ngIf="form.hasError('fechaInvalida')">La devolución debe ser posterior al retiro.</mat-error>
-  </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="estado">
+        <mat-option value="PENDIENTE">PENDIENTE</mat-option>
+        <mat-option value="RETIRADO">RETIRADO</mat-option>
+        <mat-option value="COMPLETADO">COMPLETADO</mat-option>
+        <mat-option value="CANCELADO">CANCELADO</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Seña</mat-label>
-    <input matInput type="number" formControlName="senia">
-    <mat-error *ngIf="form.get('senia')?.hasError('min')">
-      La seña debe ser un valor positivo.
-    </mat-error>
-  </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha de Retiro</mat-label>
+      <input matInput [matDatepicker]="pickerRetiro" formControlName="fechaRetiro" [min]="fechaMinima">
+      <mat-datepicker-toggle matSuffix [for]="pickerRetiro"></mat-datepicker-toggle>
+      <mat-datepicker #pickerRetiro></mat-datepicker>
+      <mat-error *ngIf="form.get('fechaRetiro')?.hasError('required')">
+        Seleccioná la fecha de retiro.
+      </mat-error>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Estado</mat-label>
-    <mat-select formControlName="estado">      
-      <mat-option value="PENDIENTE">PENDIENTE</mat-option>
-      <mat-option value="RETIRADO">RETIRADO</mat-option>
-      <mat-option value="COMPLETADO">COMPLETADO</mat-option>
-      <mat-option value="CANCELADO">CANCELADO</mat-option>
-    </mat-select>
-    <mat-hint *ngIf="!this.data">Las nuevas reservas se crean siempre como PENDIENTE.</mat-hint>
-  </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha de Devolución</mat-label>
+      <input matInput [matDatepicker]="pickerDev" formControlName="fechaDevolucion" [min]="form.get('fechaRetiro')?.value || fechaMinima">
+      <mat-datepicker-toggle matSuffix [for]="pickerDev"></mat-datepicker-toggle>
+      <mat-datepicker #pickerDev></mat-datepicker>
+      <mat-error *ngIf="form.get('fechaDevolucion')?.hasError('required')">
+        Seleccioná la fecha de devolución.
+      </mat-error>
+      <mat-error *ngIf="form.hasError('fechaInvalida')">La devolución debe ser posterior al retiro.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Seña Abonada</mat-label>
+      <span matPrefix>$&nbsp;</span>
+      <input matInput type="number" formControlName="senia" min="0">
+      <mat-error *ngIf="form.get('senia')?.hasError('min')">
+        La seña debe ser un valor positivo o cero.
+      </mat-error>
+    </mat-form-field>
+  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancelar</button>
-  <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+  <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="guardar()">Guardar</button>
 </mat-dialog-actions>

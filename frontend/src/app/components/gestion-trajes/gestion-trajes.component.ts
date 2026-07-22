@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { TalleTraje, Traje } from '../../models/traje.model';
 import { TrajeService } from '../../services/traje.service';
+import { AlertService } from '../../services/alert.service';
 
 interface MedidaTalle {
   talle: TalleTraje | string;
@@ -66,7 +67,7 @@ export class GestionTrajesComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private trajeService: TrajeService,
-    private snackBar: MatSnackBar,
+    private alertService: AlertService,
     private dialog: MatDialog
   ) {
     this.trajeForm = this.fb.group({
@@ -185,17 +186,22 @@ export class GestionTrajesComponent implements OnInit {
   }
 
   eliminarTraje(id: number) {
-    if (confirm('¿Estás seguro de que quieres eliminar este traje?')) {
-      this.trajeService.eliminarTraje(id).subscribe({
-        next: () => {
-          this.mostrarMensaje('Traje eliminado con éxito');
-          this.cargarTrajes();
-        },
-        error: (err) => {
-          this.mostrarMensaje(err.error?.mensaje || err.error?.msg || 'Ocurrió un error al eliminar', true);
-        },
-      });
-    }
+    this.alertService.confirmarAccion(
+      '¿Eliminar traje?', 
+      'Esta acción no se puede deshacer.'
+    ).then((confirmado) => {
+      if (confirmado) {
+        this.trajeService.eliminarTraje(id).subscribe({
+          next: () => {
+            this.mostrarMensaje('Traje eliminado con éxito');
+            this.cargarTrajes();
+          },
+          error: (err) => {
+            this.mostrarMensaje(err.error?.mensaje || err.error?.msg || 'Ocurrió un error al eliminar', true);
+          }
+       });
+      }
+    });
   }
 
   finalizarOperacion(mensaje: string) {
@@ -295,11 +301,10 @@ export class GestionTrajesComponent implements OnInit {
   }
 
   mostrarMensaje(mensaje: string, esError: boolean = false) {
-    this.snackBar.open(mensaje, 'Cerrar', {
-      duration: 3500,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      panelClass: ['snack-centered', esError ? 'snack-error' : 'snack-exito'],
-    });
+    if (esError) {
+      this.alertService.mostrarError(mensaje);
+    } else {
+    this.alertService.mostrarExito(mensaje);
+    }
   }
 }

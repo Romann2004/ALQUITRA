@@ -2,7 +2,7 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms'; 
 import { Cliente } from '../../services/cliente';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { AlertService } from '../../services/alert.service';
 import { MatDialog } from '@angular/material/dialog'; 
 
 @Component({
@@ -26,11 +26,10 @@ export class GestionClientes implements OnInit {
     private _cliente: Cliente,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
-    private _snackBar: MatSnackBar,
+    private alertService: AlertService,
     private dialog: MatDialog 
   ) { 
     this.clienteForm = this.fb.group({
-      // MODIFICADO: Obligatorio y sólo letras/espacios (mínimo 3 caracteres para ser un nombre real)
       nombre: ['', [
         Validators.required,
         Validators.minLength(3),
@@ -49,7 +48,6 @@ export class GestionClientes implements OnInit {
         Validators.pattern('^[0-9]+$'),
         this.telefonoDuplicadoValidador.bind(this) 
       ]],
-      // REFORZADO: Obligatorio y con formato de correo electrónico estricto
       email: ['', [
         Validators.required, 
         Validators.email
@@ -121,9 +119,7 @@ export class GestionClientes implements OnInit {
     this.modoEdicion = false;
     this.clienteIdActual = null;
     this.clienteForm.reset();
-    
-    // CORRECCIÓN 2: Al resetear el formulario para un nuevo cliente, nos aseguramos
-    // de limpiar errores previos y recalcular su estado inicial de validez.
+  
     this.clienteForm.get('telefono')?.updateValueAndValidity();
 
     this.dialog.open(this.clienteDialog, {
@@ -143,8 +139,6 @@ export class GestionClientes implements OnInit {
       email: cliente.email
     });
 
-    // CORRECCIÓN 3: Al cargar los datos viejos en modo edición, obligamos a Angular
-    // a re-evaluar si este teléfono cargado pertenece o no al cliente actual.
     this.clienteForm.get('telefono')?.updateValueAndValidity();
 
     this.dialog.open(this.clienteDialog, {
@@ -203,7 +197,12 @@ export class GestionClientes implements OnInit {
   }
 
   eliminarCliente(id: number) {
-    if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+    this.alertService.confirmarAccion(
+      'Eliminar cliente',
+      '¿Estás seguro de que deseas eliminar este cliente?'
+    ).then((confirmado) => {
+      if (!confirmado) return;
+
       this._cliente.deleteCliente(id).subscribe({
         next: () => {
           this.mostrarMensaje('Cliente eliminado exitosamente', false);
@@ -214,15 +213,15 @@ export class GestionClientes implements OnInit {
           this.mostrarMensaje(msg, true);
         }
       });
-    }
+    });
   }
 
   mostrarMensaje(mensaje: string, esError: boolean = false) {
-    this._snackBar.open(mensaje, 'Cerrar', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      panelClass: ['snack-centered', esError ? 'snack-error' : 'snack-exito']
-    });
+    if (esError) {
+      this.alertService.mostrarError(mensaje);
+      return;
+    }
+
+    this.alertService.mostrarExito(mensaje);
   }
 }

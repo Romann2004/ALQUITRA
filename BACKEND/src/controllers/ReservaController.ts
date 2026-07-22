@@ -169,12 +169,11 @@ const validarSenia = (senia?: number): string | null => {
 };
 
 const validarFechas = (fechaRetiro: string, fechaDevolucion: string, esNuevaReserva: boolean): string | null => {
-  const retiro = new Date(fechaRetiro);
-  const devolucion = new Date(fechaDevolucion);
+  const retiro = normalizarFechaSoloDia(fechaRetiro);
+  const devolucion = normalizarFechaSoloDia(fechaDevolucion);
 
   if (esNuevaReserva) {
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0); 
+    const hoy = normalizarFechaSoloDia(new Date());
     if (retiro < hoy) return "La fecha de retiro no puede ser anterior a hoy.";
   }
 
@@ -225,16 +224,16 @@ const validarSuperposicionGrupal = async (
 
   // Verificamos día por día la ocupación
   // Convertimos a Date (UTC para evitar desfases horarios)
-  let inicio = new Date(fechaRetiro);
-  let fin = new Date(fechaDevolucion);
+  let inicio = normalizarFechaSoloDia(fechaRetiro);
+  let fin = normalizarFechaSoloDia(fechaDevolucion);
 
   for (let d = new Date(inicio); d < fin; d.setDate(d.getDate() + 1)) {
     let ocupadosHoy = 0;
 
     // Sumamos cuántas unidades están retenidas justo este día
     for (const res of reservasSuperpuestas) {
-      const resInicio = new Date((res as any).fechaRetiro);
-      const resFin = new Date((res as any).fechaDevolucion);
+      const resInicio = normalizarFechaSoloDia((res as any).fechaRetiro);
+      const resFin = normalizarFechaSoloDia((res as any).fechaDevolucion);
       
       if (d >= resInicio && d < resFin) {
         ocupadosHoy += (res as any).cantidad;
@@ -251,6 +250,15 @@ const validarSuperposicionGrupal = async (
   }
 
   return null; // Todo bien, no hay superposición
+};
+
+const normalizarFechaSoloDia = (fecha: string | Date): Date => {
+  if (fecha instanceof Date) {
+    return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+  }
+
+  const [anio, mes, dia] = fecha.slice(0, 10).split('-').map(Number);
+  return new Date(anio, mes - 1, dia);
 };
 
 const validarEstadoEnum = (estado: string): string | null => {

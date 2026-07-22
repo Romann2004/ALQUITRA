@@ -47,6 +47,13 @@
           {{element.Traje?.categoria}} (Talle {{element.Traje?.talle}}) 
         </td>
       </ng-container>
+      
+      <ng-container matColumnDef="unidades">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="unidades"> Unid. </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.cantidadReservada}}
+        </td>
+      </ng-container>
 
       <ng-container matColumnDef="fechaRetiro">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaRetiro"> Fecha Retiro </th>

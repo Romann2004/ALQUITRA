@@ -5,6 +5,7 @@ import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { FormReserva } from '../form-reserva/form-reserva';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-listado-reservas',
@@ -19,7 +20,7 @@ export class ListadoReservas implements OnInit {
   @ViewChild('miTabla') table!: MatTable<any>;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private _reservaService: ReservaService, public dialog: MatDialog, private cdr: ChangeDetectorRef) {
+  constructor(private _reservaService: ReservaService, public dialog: MatDialog, private cdr: ChangeDetectorRef, private alertService: AlertService) {
     this.dataSource = new MatTableDataSource<Reserva>();
   }
 
@@ -118,14 +119,20 @@ export class ListadoReservas implements OnInit {
 
   agregarReserva() {
     this.dialog.open(FormReserva, { 
-      width: '500px', 
+      width: '880px',
+      maxWidth: '96vw', 
       backdropClass: 'blur-backdrop',
       data: null // Esto le dice al formulario que NO estamos editando
     }).afterClosed().subscribe(() => this.obtenerReservas());
   }
 
   editarReserva(reserva: any) {
-    const dialogRef = this.dialog.open(FormReserva, {width: '500px', backdropClass: 'blur-backdrop', data: reserva });
+    const dialogRef = this.dialog.open(FormReserva, {
+      width: '880px',
+      maxWidth: '96vw',
+      backdropClass: 'blur-backdrop',
+      data: reserva
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result)  {
@@ -158,15 +165,21 @@ export class ListadoReservas implements OnInit {
   }
 
   eliminarReserva(id: number) {
-    // Confirmación simple para evitar errores
-    if (confirm('¿Estás seguro que queres eliminar esta reserva?')) {
+    this.alertService.confirmarAccion(
+      'Eliminar reserva',
+      '¿Estás seguro que queres eliminar esta reserva?'
+    ).then((confirmado) => {
+      if (!confirmado) return;
+
       this._reservaService.deleteReserva(id).subscribe(() => {
         // Si todo sale bien, recargamos la lista
+        this.alertService.mostrarExito('Reserva eliminada exitosamente');
         this.obtenerReservas();
       }, error => {
         console.log('Error al eliminar:', error);
+        this.alertService.mostrarError(error?.error?.msg || 'Error al eliminar la reserva');
       });
-    }
+    });
   }
 
   aplicarFiltro(event: Event) {
@@ -174,6 +187,3 @@ export class ListadoReservas implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 }
-
-
-

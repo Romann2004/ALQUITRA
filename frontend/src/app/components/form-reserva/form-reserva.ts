@@ -1,10 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReservaService } from '../../services/reserva.service';
 import { TrajeService } from '../../services/traje.service';
 import { Cliente } from '../../services/cliente';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-form-reserva',
@@ -14,24 +14,25 @@ import { Cliente } from '../../services/cliente';
 })
 
 export class FormReserva implements OnInit {
-  form: FormGroup;
+  form!: FormGroup;
+  fechaMinima!: Date;
   listClientes: any[] = [];
   listTrajes: any[] = [];
-
-  fechaMinima = new Date(); // Esto hace referencia al día y hora actual
   
   constructor(
-    private _snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private _reservaService: ReservaService,
     private _clienteService: Cliente,
     private _trajeService: TrajeService,
+    private alertService: AlertService,
     public dialogRef: MatDialogRef<FormReserva>,
     @Inject(MAT_DIALOG_DATA) public data: any // Aquí llega la reserva si es editar
   ) {
     this.form = this.fb.group({
       clienteId: ['', Validators.required],
       trajeId: ['', Validators.required],
+      cantidad: [1, [Validators.required, Validators.min(1)]],
       fechaRetiro: ['', Validators.required],
       fechaDevolucion: ['', Validators.required],
       senia: [0, [Validators.required, Validators.min(0)]],
@@ -40,15 +41,20 @@ export class FormReserva implements OnInit {
   }
 
   ngOnInit() {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    this.fechaMinima = hoy;
     // Cargamos listas y al terminar intentamos parchear
     this._clienteService.getClientes().subscribe(res => {
       this.listClientes = Array.isArray(res) ? res : (res.clientes || []);
       this.verificarParcheo();
+      this.cdr.detectChanges();
     });
 
     this._trajeService.getTrajes().subscribe(res => {
       this.listTrajes = Array.isArray(res) ? res : (res.trajes || []);
       this.verificarParcheo();
+      this.cdr.detectChanges();
     });
 
     if (!this.data) {
@@ -63,8 +69,8 @@ export class FormReserva implements OnInit {
   fechasValidas(group: FormGroup) {
     const retiro = group.get('fechaRetiro')?.value;
     const devolucion = group.get('fechaDevolucion')?.value;
-
-    if (retiro && devolucion && new Date(devolucion) <= new Date(retiro)) {
+    
+    if (retiro && devolucion && devolucion < retiro) {
       return { fechaInvalida: true };
     }
     return null;
@@ -89,6 +95,8 @@ export class FormReserva implements OnInit {
         senia: this.data.senia,
         estado: this.data.estado
       });
+
+      this.cdr.detectChanges();
     }  
   }
 
@@ -96,7 +104,7 @@ export class FormReserva implements OnInit {
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      alert("Revisá los campos, hay errores de validación.");
+      this.alertService.mostrarError('Revisá los campos, hay errores de validación.');
       return;
     }
 
@@ -134,12 +142,12 @@ export class FormReserva implements OnInit {
 
   // Función auxiliar para no repetir código del SnackBar
   mostrarMensaje(mensaje: string, esError: boolean = false) {
-    this._snackBar.open(mensaje, 'Cerrar', {
-      duration: 5000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-      panelClass: esError ? ['error-snackbar'] : ['success-snackbar']
-    });
+    if (esError) {
+      this.alertService.mostrarError(mensaje);
+      return;
+    }
+
+    this.alertService.mostrarExito(mensaje);
   }
 
   compararObjetos(o1: any, o2: any): boolean {

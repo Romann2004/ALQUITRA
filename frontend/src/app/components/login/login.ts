@@ -2,10 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +16,7 @@ export class Login {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private alertService: AlertService,
     private router: Router
   ) {
     this.LoginForm = this.fb.group({
@@ -34,13 +32,13 @@ export class Login {
       next: (res) => {
         console.log('Respuesta del servidor:', res);
         if (res.ok) {
-          alert('¡Bienvenido!');
+          this.alertService.mostrarExito('¡Bienvenido!');
           sessionStorage.setItem('token', res.token); // Guarda el token en SessionStorage
           this.router.navigate(['/dashboard']); //Navega al panel inicial
         }
       },
       error: (err) => {
-        alert('Error: ' + err.error.msg); // Muestra el mensaje de error del backend  
+        this.alertService.mostrarError(err.error?.msg || 'Error al iniciar sesión');
       }
     });
   }

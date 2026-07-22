@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,7 +7,7 @@ import { TalleTraje, Traje } from '../../models/traje.model';
 import { TrajeService } from '../../services/traje.service';
 
 interface MedidaTalle {
-  talle: TalleTraje;
+  talle: TalleTraje | string;
   pecho: string;
   cintura: string;
   cadera: string;
@@ -20,7 +20,6 @@ interface MedidaTalle {
   templateUrl: './gestion-trajes.component.html',
   styleUrls: ['./gestion-trajes.component.css']
 })
-
 export class GestionTrajesComponent implements OnInit {
   @ViewChild('trajeDialog') trajeDialog!: TemplateRef<any>;
   @ViewChild('disponibilidadDialog') disponibilidadDialog!: TemplateRef<any>;
@@ -28,6 +27,7 @@ export class GestionTrajesComponent implements OnInit {
   trajes: Traje[] = [];
   trajeForm: FormGroup;
   dataSource = new MatTableDataSource<Traje>([]);
+  
   columnasVisibles: string[] = [
     'codigo',
     'categoria',
@@ -38,21 +38,28 @@ export class GestionTrajesComponent implements OnInit {
     'disponibilidad',
     'acciones',
   ];
+  
   modoEdicion = false;
   trajeIdEnEdicion: number | null = null;
+  
+  // Variables para inputs dinámicos
   nuevaCategoria = '';
   nuevoColor = '';
+  
+  // Arreglos de selección
   categoriasDisponibles = ['Smokings', 'Gala', 'Casual'];
   coloresDisponibles = ['Negro', 'Azul', 'Azul Marino', 'Gris', 'Blanco', 'Bordeaux'];
   tallesDisponibles = Object.values(TalleTraje);
+  
   tablaMedidas: MedidaTalle[] = [
-    { talle: TalleTraje.XS, pecho: '84-88', cintura: '68-72', cadera: '84-88', largo: '68-70' },
-    { talle: TalleTraje.S, pecho: '88-92', cintura: '72-76', cadera: '88-92', largo: '70-72' },
-    { talle: TalleTraje.M, pecho: '92-98', cintura: '76-82', cadera: '92-98', largo: '72-74' },
-    { talle: TalleTraje.L, pecho: '98-104', cintura: '82-88', cadera: '98-104', largo: '74-76' },
-    { talle: TalleTraje.XL, pecho: '104-110', cintura: '88-96', cadera: '104-110', largo: '76-78' },
-    { talle: TalleTraje.XXL, pecho: '110-118', cintura: '96-104', cadera: '110-118', largo: '78-80' },
+    { talle: 'XS', pecho: '84-88', cintura: '68-72', cadera: '84-88', largo: '68-70' },
+    { talle: 'S', pecho: '88-92', cintura: '72-76', cadera: '88-92', largo: '70-72' },
+    { talle: 'M', pecho: '92-98', cintura: '76-82', cadera: '92-98', largo: '72-74' },
+    { talle: 'L', pecho: '98-104', cintura: '82-88', cadera: '98-104', largo: '74-76' },
+    { talle: 'XL', pecho: '104-110', cintura: '88-96', cadera: '104-110', largo: '76-78' },
+    { talle: 'XXL', pecho: '110-118', cintura: '96-104', cadera: '110-118', largo: '78-80' },
   ];
+  
   trajeSeleccionado: Traje | null = null;
   reservasDisponibilidad: Array<{ fechaRetiro: string; fechaDevolucion: string; cantidad: number }> = [];
 
@@ -80,7 +87,7 @@ export class GestionTrajesComponent implements OnInit {
   cargarTrajes() {
     this.trajeService.getTrajes().subscribe({
       next: (res) => {
-        this.trajes = (res.trajes || []).map((traje) => ({
+        this.trajes = (res.trajes || []).map((traje: any) => ({
           ...traje,
           cantidad: Number(traje.cantidad ?? 1),
         }));
@@ -93,7 +100,6 @@ export class GestionTrajesComponent implements OnInit {
   configurarFiltro() {
     this.dataSource.filterPredicate = (data: Traje, filter: string): boolean => {
       const filtro = filter.trim().toLowerCase();
-
       return [
         data.codigoEtiqueta,
         data.categoria,
@@ -119,8 +125,11 @@ export class GestionTrajesComponent implements OnInit {
     if (traje) {
       this.modoEdicion = true;
       this.trajeIdEnEdicion = traje.id ?? null;
+      
+      // Aseguramos que la categoría y el color del traje a editar existan en los combos
       this.agregarValorSiNoExiste('categoria', String(traje.categoria));
       this.agregarValorSiNoExiste('color', String(traje.color));
+      
       this.trajeForm.patchValue({
         codigoEtiqueta: traje.codigoEtiqueta,
         categoria: traje.categoria,
@@ -134,6 +143,7 @@ export class GestionTrajesComponent implements OnInit {
     this.dialog.open(this.trajeDialog, {
       width: '920px',
       maxWidth: '96vw',
+      maxHeight: '90vh',
       backdropClass: 'blur-backdrop',
       autoFocus: false,
     });
@@ -150,30 +160,25 @@ export class GestionTrajesComponent implements OnInit {
       ...this.trajeForm.getRawValue(),
       cantidad: Number(this.trajeForm.get('cantidad')?.value ?? 1),
       precioAlquilerBase: Number(this.trajeForm.get('precioAlquilerBase')?.value ?? 0),
+      estado: 'Disponible', // Lógica de estado inicial
     };
 
     if (this.trajeIdEnEdicion) {
       this.trajeService.actualizarTraje(this.trajeIdEnEdicion, datosTraje).subscribe({
         next: () => {
-          this.mostrarMensaje('Traje actualizado con éxito');
-          this.cerrarFormulario();
-          this.cargarTrajes();
+          this.finalizarOperacion('Traje actualizado con éxito');
         },
         error: (err) => {
-          console.error('Error al actualizar', err);
-          this.mostrarMensaje(err.error?.mensaje || err.error?.msg || 'Hubo un error al guardar los cambios.', true);
+          this.mostrarMensaje(err.error?.mensaje || err.error?.msg || 'Hubo un error al actualizar.', true);
         },
       });
     } else {
       this.trajeService.crearTraje(datosTraje).subscribe({
         next: () => {
-          this.mostrarMensaje('Traje creado con éxito');
-          this.cerrarFormulario();
-          this.cargarTrajes();
+          this.finalizarOperacion('Traje creado con éxito');
         },
         error: (err) => {
-          console.error('Error al crear', err);
-          this.mostrarMensaje(err.error?.mensaje || err.error?.msg || 'Hubo un error al guardar los cambios.', true);
+          this.mostrarMensaje(err.error?.mensaje || err.error?.msg || 'Hubo un error al guardar.', true);
         },
       });
     }
@@ -187,8 +192,7 @@ export class GestionTrajesComponent implements OnInit {
           this.cargarTrajes();
         },
         error: (err) => {
-          const mensajeBackend = err.error?.mensaje || err.error?.msg || 'Ocurrió un error inesperado al eliminar';
-          this.mostrarMensaje(mensajeBackend, true);
+          this.mostrarMensaje(err.error?.mensaje || err.error?.msg || 'Ocurrió un error al eliminar', true);
         },
       });
     }
@@ -220,33 +224,53 @@ export class GestionTrajesComponent implements OnInit {
     this.nuevoColor = '';
   }
 
+  // ==========================================
+  // FUNCIONES DE AGREGADO DINÁMICO
+  // ==========================================
+
   agregarCategoria() {
     const valor = this.nuevaCategoria.trim();
     if (!valor) return;
+    
     this.agregarValorSiNoExiste('categoria', valor);
+    
+    // Forzamos la actualización del control del formulario para que refleje el nuevo valor
     this.trajeForm.get('categoria')?.setValue(valor);
+    this.trajeForm.get('categoria')?.updateValueAndValidity();
+    
     this.nuevaCategoria = '';
   }
 
   agregarColor() {
     const valor = this.nuevoColor.trim();
     if (!valor) return;
+    
     this.agregarValorSiNoExiste('color', valor);
+    
+    // Forzamos la actualización del control del formulario para que refleje el nuevo valor
     this.trajeForm.get('color')?.setValue(valor);
+    this.trajeForm.get('color')?.updateValueAndValidity();
+    
     this.nuevoColor = '';
   }
 
   agregarValorSiNoExiste(tipo: 'categoria' | 'color', valor: string) {
     const lista = tipo === 'categoria' ? this.categoriasDisponibles : this.coloresDisponibles;
     const existe = lista.some((item) => item.toLowerCase() === valor.toLowerCase());
+    
     if (existe) return;
 
     if (tipo === 'categoria') {
+      // Inmutabilidad para forzar la renderización del select en la vista
       this.categoriasDisponibles = [...this.categoriasDisponibles, valor];
     } else {
       this.coloresDisponibles = [...this.coloresDisponibles, valor];
     }
   }
+
+  // ==========================================
+  // DISPONIBILIDAD
+  // ==========================================
 
   verDisponibilidad(traje: Traje) {
     if (!traje.id) return;
@@ -259,12 +283,12 @@ export class GestionTrajesComponent implements OnInit {
         this.dialog.open(this.disponibilidadDialog, {
           width: '760px',
           maxWidth: '96vw',
+          maxHeight: '90vh',
           backdropClass: 'blur-backdrop',
           autoFocus: false,
         });
       },
       error: (err) => {
-        console.error('Error al cargar disponibilidad', err);
         this.mostrarMensaje(err.error?.msg || 'Error al cargar la disponibilidad del traje', true);
       },
     });

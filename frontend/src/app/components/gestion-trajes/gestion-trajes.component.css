@@ -47,18 +47,22 @@ table {
 }
 
 .traje-dialog-content {
-  padding-top: 8px;
+  padding-top: 0;
+  max-height: calc(90vh - 132px);
+  overflow-y: auto;
+  padding-right: 6px;
 }
 
 .traje-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 8px 12px;
 }
 
+/* --- Modificaciones de alineación --- */
 .combo-row {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-start; /* Alinea los elementos en la parte superior */
   gap: 12px;
 }
 
@@ -66,36 +70,25 @@ table {
   flex: 1;
 }
 
-.size-table-wrapper {
-  grid-column: 1 / -1;
-  padding: 8px 0 2px;
+.combo-action-button {
+  margin-top: 4px; /* Empuja el botón ligeramente para alinear con el borde del input */
+  height: 50px; /* Misma altura que un input outline por defecto */
+  white-space: nowrap;
+}
+/* ------------------------------------ */
+
+.price-prefix {
+  margin-left: 8px;
+  margin-right: 4px;
 }
 
 .subsection-title {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #475569;
-  margin-bottom: 8px;
-}
-
-.measure-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-
-.measure-table th,
-.measure-table td {
-  border-bottom: 1px solid #e2e8f0;
-  padding: 8px 10px;
-  text-align: left;
-}
-
-.measure-table th {
-  color: #475569;
-  background: #f8fafc;
+  margin-bottom: 4px;
 }
 
 .availability-summary {
@@ -141,5 +134,12 @@ table {
 
   .combo-row {
     flex-direction: column;
+    align-items: stretch;
+    margin-top: 0;
+  }
+
+  .combo-action-button {
+    margin-top: 0;
+    min-height: 44px;
   }
 }

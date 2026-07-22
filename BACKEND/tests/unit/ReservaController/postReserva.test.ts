@@ -21,9 +21,10 @@ const fechaFutura = (diasDesdeHoy: number) => {
 };
 
 describe('postReserva', () => {
-    let findOneSpy: jest.SpyInstance;
     let createSpy: jest.SpyInstance;
     let trajeFindByPkSpy: jest.SpyInstance;
+    let reservasFindAllSpy: jest.SpyInstance;
+    let reservasCountSpy: jest.SpyInstance;
     let logCreateSpy: jest.SpyInstance;
 
     beforeEach(() => {
@@ -37,7 +38,7 @@ describe('postReserva', () => {
     // --- CASO 1: Seña inválida ---
     // Debe cortar antes de tocar la base de datos.
     test('debería responder 400 si la seña es inválida', async () => {
-        findOneSpy = jest.spyOn(Reserva, 'findOne');
+        reservasFindAllSpy = jest.spyOn(Reserva, 'findAll');
 
         const req = {
             body: {
@@ -52,9 +53,9 @@ describe('postReserva', () => {
 
         await postReserva(req, res);
 
-        expect(findOneSpy).not.toHaveBeenCalled();
+        expect(reservasFindAllSpy).not.toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.json).toHaveBeenCalledWith({ msg: 'La seña no puede ser mayor a 500.' });
+        expect(res.json).toHaveBeenCalledWith({ msg: 'La seña no puede ser negativa.' });
     });
 
     // --- CASO 2: Fechas inválidas ---
@@ -82,7 +83,17 @@ describe('postReserva', () => {
     // Si ya existe una reserva activa para ese traje en fechas que se
     // solapan, no debe crearse la nueva.
     test('debería responder 400 si el traje ya está reservado para esas fechas', async () => {
-        findOneSpy = jest.spyOn(Reserva, 'findOne').mockResolvedValue({ id: 99 } as any);
+        trajeFindByPkSpy = jest.spyOn(Traje, 'findByPk').mockResolvedValue({
+            cantidad: 1,
+            estado: EstadoTraje.DISPONIBLE,
+        } as any);
+        reservasFindAllSpy = jest.spyOn(Reserva, 'findAll').mockResolvedValue([
+            {
+                fechaRetiro: fechaFutura(5),
+                fechaDevolucion: fechaFutura(10),
+                cantidad: 1,
+            },
+        ] as any);
         createSpy = jest.spyOn(Reserva, 'create');
 
         const req = {
@@ -104,15 +115,20 @@ describe('postReserva', () => {
     });
 
     // --- CASO 4: Creación exitosa ---
-    // Debe crear la reserva en PENDIENTE, pasar el traje a RESERVADO y
+    // Debe crear la reserva en PENDIENTE, marcar el traje como ALQUILADO y
     // registrar el log.
-    test('debería crear la reserva y marcar el traje como RESERVADO', async () => {
-        findOneSpy = jest.spyOn(Reserva, 'findOne').mockResolvedValue(null);
+    test('debería crear la reserva y marcar el traje como ALQUILADO', async () => {
+        reservasFindAllSpy = jest.spyOn(Reserva, 'findAll').mockResolvedValue([] as any);
         createSpy = jest.spyOn(Reserva, 'create').mockResolvedValue(
             { id: 1, clienteId: 1, trajeId: 1, estado: EstadoReserva.PENDIENTE } as any
         );
         const trajeUpdateMock = jest.fn().mockResolvedValue(true);
-        trajeFindByPkSpy = jest.spyOn(Traje, 'findByPk').mockResolvedValue({ update: trajeUpdateMock } as any);
+        trajeFindByPkSpy = jest.spyOn(Traje, 'findByPk').mockResolvedValue({
+            cantidad: 1,
+            estado: EstadoTraje.DISPONIBLE,
+            update: trajeUpdateMock,
+        } as any);
+        reservasCountSpy = jest.spyOn(Reserva, 'count').mockResolvedValue(1 as any);
 
         const req = {
             body: {
@@ -131,7 +147,8 @@ describe('postReserva', () => {
             expect.objectContaining({ senia: 100, clienteId: 1, trajeId: 1, estado: EstadoReserva.PENDIENTE })
         );
         expect(trajeFindByPkSpy).toHaveBeenCalledWith(1);
-        expect(trajeUpdateMock).toHaveBeenCalledWith({ estado: EstadoTraje.RESERVADO });
+        expect(reservasCountSpy).toHaveBeenCalled();
+        expect(trajeUpdateMock).toHaveBeenCalledWith({ estado: EstadoTraje.ALQUILADO });
         expect(logCreateSpy).toHaveBeenCalledWith(expect.objectContaining({ accion: 'CREAR_RESERVA' }));
         expect(res.json).toHaveBeenCalledWith(
             expect.objectContaining({ msg: 'Reserva creada con éxito' })
@@ -140,7 +157,8 @@ describe('postReserva', () => {
 
     // --- CASO 5: Error interno ---
     test('debería responder 500 si ocurre un error inesperado', async () => {
-        findOneSpy = jest.spyOn(Reserva, 'findOne').mockResolvedValue(null);
+        reservasFindAllSpy = jest.spyOn(Reserva, 'findAll').mockResolvedValue([] as any);
+        trajeFindByPkSpy = jest.spyOn(Traje, 'findByPk').mockResolvedValue({ cantidad: 1, estado: EstadoTraje.DISPONIBLE } as any);
         createSpy = jest.spyOn(Reserva, 'create').mockRejectedValue(new Error('DB caída'));
 
         const req = {

@@ -32,11 +32,7 @@ export const postReserva = async (req: Request, res: Response) => {
       estado: EstadoReserva.PENDIENTE,
     });
 
-    // // 3. Lógica de negocio: Si la reserva se crea, el traje pasa a "RESERVADO"
-    // const trajeReservado = await Traje.findByPk(trajeId);
-    // if (trajeReservado) {
-    //   await trajeReservado.update({ estado: EstadoTraje.RESERVADO });
-    // }
+    await sincronizarEstadoTraje(Number(trajeId));
 
     await registrarLog(
       "CREAR_RESERVA",
@@ -97,21 +93,11 @@ export const updateReserva = async (req: Request, res: Response) => {
     // 2. Actualización de la Reserva en la BD
     await reserva.update({ ...req.body, cantidad: cantidadFinal });
 
-    // // 3. --- LÓGICA DE NEGOCIO: Sincronización de Trajes ---
-    // // Si en el formulario se cambió el traje por uno distinto, liberamos el viejo
-    // if (trajeId && Number(trajeId) !== Number(oldTrajeId)) {
-    //   const trajeViejo = await Traje.findByPk(oldTrajeId);
-    //   if (trajeViejo) {
-    //     await trajeViejo.update({ estado: EstadoTraje.DISPONIBLE });
-    //   }
-    // }
+    if (trajeId && Number(trajeId) !== Number(oldTrajeId)) {
+      await sincronizarEstadoTraje(Number(oldTrajeId));
+    }
 
-    // // Sincronizamos el traje actual con el estado final de la reserva
-    // const estadoFinal = estado || reserva.get('estado');
-    // const trajeActualId = trajeId || oldTrajeId;
-    
-    // await sincronizarEstadoTraje(Number(trajeActualId), estadoFinal);
-    // // ------------------------------------------------------
+    await sincronizarEstadoTraje(Number(trajeId || oldTrajeId));
 
     await registrarLog("ACTUALIZAR_RESERVA", Number(id), "Se actualizó la reserva");
 
@@ -136,8 +122,7 @@ export const updateEstadoReserva = async (req: Request, res: Response) => {
     // Actualizamos la reserva
     await reserva.update({ estado });
 
-    // // --- Usamos nuestra nueva función reutilizable ---
-    // await sincronizarEstadoTraje(reserva.get('trajeId') as number, estado);
+    await sincronizarEstadoTraje(reserva.get('trajeId') as number);
 
     await registrarLog(
       "ACTUALIZAR_ESTADO_RESERVA",
@@ -160,13 +145,11 @@ export const deleteReserva = async (req: Request, res: Response) => {
     const trajeId = reserva.get('trajeId') as number;
 
     if (estadoReserva === "RETIRADO" || estadoReserva === "PENDIENTE") {
-      const traje = await Traje.findByPk(trajeId);
-      if (traje) {
-        await traje.update({ estado: EstadoTraje.DISPONIBLE });
-      }
+      await sincronizarEstadoTraje(trajeId);
     }
 
     await reserva.destroy();
+    await sincronizarEstadoTraje(trajeId);
     await registrarLog("ELIMINAR_RESERVA", Number(id), "Se eliminó la reserva");
     res.json({ msg: "Reserva eliminada con éxito" });
   } catch (error) {
@@ -211,7 +194,10 @@ const validarSuperposicionGrupal = async (
 
   // Obtenemos el stock total real del grupo de trajes
   const traje: any = await Traje.findByPk(trajeId);
-  if (!traje || traje.activo) return "El traje no existe o está dado de baja.";
+  if (!traje) return "El traje no existe.";
+  if (traje.estado === EstadoTraje.BAJA || traje.estado === EstadoTraje.MANTENIMIENTO) {
+    return "El traje está dado de baja o en mantenimiento.";
+  }
   const stockTotal = traje.cantidad;
 
   // Buscamos todas las reservas activas de este traje que choquen con estas fechas
@@ -283,6 +269,31 @@ const registrarLog = async (accion: string, id: number, detalle: string) => {
   });
 };
 
+const sincronizarEstadoTraje = async (trajeId: number) => {
+  const traje = await Traje.findByPk(trajeId);
+  if (!traje) return;
+
+  const reservasActivas = await Reserva.count({
+    where: {
+      trajeId,
+      estado: {
+        [Op.in]: [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO]
+      }
+    }
+  });
+
+  if (reservasActivas > 0) {
+    if (traje.estado !== EstadoTraje.BAJA && traje.estado !== EstadoTraje.MANTENIMIENTO) {
+      await traje.update({ estado: EstadoTraje.ALQUILADO });
+    }
+    return;
+  }
+
+  if (traje.estado === EstadoTraje.ALQUILADO) {
+    await traje.update({ estado: EstadoTraje.DISPONIBLE });
+  }
+};
+
 // const sincronizarEstadoTraje = async (trajeId: number, estadoReserva: string) => {
 //   const traje = await Traje.findByPk(trajeId);
 //   if (!traje) return;
@@ -292,6 +303,6 @@ const registrarLog = async (accion: string, id: number, detalle: string) => {
 //   } else if (estadoReserva === "COMPLETADO" || estadoReserva === "CANCELADO") {
 //     await traje.update({ estado: EstadoTraje.DISPONIBLE });
 //   } else if (estadoReserva === "PENDIENTE") {
-//     await traje.update({ estado: EstadoTraje.RESERVADO });
+//     await traje.update({ estado: EstadoTraje.ALQUILADO });
 //   }
 // };

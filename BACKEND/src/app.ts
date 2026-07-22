@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { DataTypes } from 'sequelize';
 import { sequelize,connectMongo } from './config/db';
 import TrajeRoutes from './routes/TrajeRoutes';
 import authRoutes from './routes/AuthRoutes';
@@ -38,8 +39,10 @@ async function bootstrap() {
         // Conectar a MongoDB
         await connectMongo();
 
-        //Sincronizar tablas
-        //await sequelize.sync({ force: true });
+        await asegurarColumnasEsquema();
+
+        //Sincronizar tablas sin perder datos para aplicar cambios de modelo
+        await sequelize.sync({ alter: true });
         console.log("Tablas sincronizadas con la DB.");
         console.log('Modelos sincronizados con la DB')
 
@@ -50,6 +53,25 @@ async function bootstrap() {
     } catch (error) {
         console.log('Error al iniciar el servidor:', error);
         process.exit(1);
+    }
+}
+
+async function asegurarColumnasEsquema() {
+    const queryInterface = sequelize.getQueryInterface();
+
+    await asegurarColumnaCantidad(queryInterface, 'reservas');
+    await asegurarColumnaCantidad(queryInterface, 'trajes');
+}
+
+async function asegurarColumnaCantidad(queryInterface: any, tableName: string) {
+    const table = await queryInterface.describeTable(tableName);
+
+    if (!table.cantidad) {
+        await queryInterface.addColumn(tableName, 'cantidad', {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 1,
+        });
     }
 }
 

@@ -9,6 +9,7 @@ interface TrajeAttributes {
     talle: string;
     color: string;
     categoria: string;
+  cantidad: number;
     precioAlquilerBase: number;
     estado: EstadoTraje;
 }
@@ -23,6 +24,7 @@ export class Traje extends Model<TrajeAttributes, TrajeCreationAttributes> imple
     public talle!: string;
     public color!: string;
     public categoria!: string;
+    public cantidad!: number;
     public precioAlquilerBase!: number;
     public estado!: EstadoTraje;
 
@@ -53,6 +55,11 @@ Traje.init(
     },
     categoria: {
       type: DataTypes.STRING(50),
+    },
+    cantidad: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 1,
     },
     precioAlquilerBase: {
       type: DataTypes.DECIMAL(10, 2),

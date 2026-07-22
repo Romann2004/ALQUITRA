@@ -14,7 +14,7 @@ try {
             Traje.count({ 
                 where: { 
                     estado: {
-                        [Op.in]: [EstadoTraje.BAJA]
+                        [Op.in]: [EstadoTraje.ALQUILADO]
                     } 
                 } 
             }) 
@@ -48,7 +48,7 @@ try {
             ]
         });
 
-        // --- SOLUCIÓN BULLETPROOF PARA POSTGRESQL (GROUP BY) ---
+        // --- SOLUCIÓN PARA POSTGRESQL (GROUP BY) ---
         // 1. Conseguimos los IDs agrupados de forma pura y limpia
         const topReservas = await Reserva.findAll({
             attributes: [
@@ -100,7 +100,7 @@ try {
             historico: {
                 categorias: Object.keys(historicoMap),
                 datos: Object.values(historicoMap),
-                rawReservas: reservasRecientes // <-- ¡ESTA ES LA LÍNEA QUE FALTA AGREGAR!
+                rawReservas: reservasRecientes 
             },
             ultimasReservas,
             clientesFieles

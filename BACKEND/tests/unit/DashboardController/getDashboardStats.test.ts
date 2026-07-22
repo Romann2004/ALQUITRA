@@ -33,7 +33,7 @@ describe('getDashboardStats', () => {
         trajeCountSpy = jest.spyOn(Traje, 'count')
             .mockResolvedValueOnce(10) // total
             .mockResolvedValueOnce(4)  // disponibles
-            .mockResolvedValueOnce(3); // alquilados (ALQUILADO + RESERVADO)
+            .mockResolvedValueOnce(3); // alquilados (ALQUILADO)
 
         // Dos reservas retiradas "hoy" para poder verificar de forma
         // determinística el conteo del mes actual en el histórico,

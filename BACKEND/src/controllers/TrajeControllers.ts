@@ -8,7 +8,8 @@ import { Op } from 'sequelize';
 export const crearTraje = async (req: Request, res: Response) => {
     try {
         // Extraemos los datos que vienen del frontend o Postman
-        const { codigoEtiqueta, talle, color, categoria, precioAlquilerBase } = req.body;
+        const { codigoEtiqueta, talle, color, categoria, cantidad, precioAlquilerBase } = req.body;
+        const cantidadNormalizada = Number(cantidad ?? 1);
 
         // Creamos el registro en PostgreSQL usando Sequelize
         const nuevoTraje = await Traje.create({
@@ -16,6 +17,7 @@ export const crearTraje = async (req: Request, res: Response) => {
             talle,
             color,
             categoria,
+            cantidad: cantidadNormalizada,
             precioAlquilerBase,
             estado: EstadoTraje.DISPONIBLE // Por defecto nace disponible
         });
@@ -93,38 +95,44 @@ export const obtenerTrajes = async (req: Request, res: Response) => {
 };
 
 export const obtenerDisponibilidadTraje = async (req: Request, res: Response) => {
-    const {id} = req.params;
-    try {
-        const reservas = await Reserva.findAll({
-            where: {
-                trajeId: id,    
-                // Solo traemos reservas activas que ocupen lugar
-                estado: {
-                    [Op.in]: [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO]
-                },
-                activo: true // Filtro del borrado lógico                
-            },
-            // Solo mandamos al front los datos que necesita el calendario
-            attributes: ['fechaRetiro', 'fechaDevolucion', 'cantidad']
-        });
+  const rawId = req.params.id;
+  const id = Array.isArray(rawId) ? rawId[0] : rawId;
 
-        res.json({ok: true, reservas});
-    } catch (error) {
-        console.error('Error al obtener disponibilidad:', error);
-        res.status(500).json({ ok: false, msg: 'Error al obtener la disponibilidad del traje' });
+  try {
+    const traje = await Traje.findByPk(Number(id));
+    if (!traje) {
+      return res.status(404).json({ ok: false, msg: 'Traje no encontrado' });
     }
-}
+
+    const reservas = await Reserva.findAll({
+      where: {
+        trajeId: Number(id),
+        estado: {
+          [Op.in]: [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO],
+        },
+      },
+      attributes: ['fechaRetiro', 'fechaDevolucion', 'cantidad'],
+      order: [['fechaRetiro', 'ASC']],
+    });
+
+    res.json({ ok: true, traje, reservas });
+  } catch (error) {
+    console.error('Error al obtener disponibilidad:', error);
+    res.status(500).json({ ok: false, msg: 'Error al obtener la disponibilidad del traje' });
+  }
+};
 
 export const actualizarTraje = async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id);
-        const { codigoEtiqueta, talle, color, categoria, precioAlquilerBase } = req.body;
+        const { codigoEtiqueta, talle, color, categoria, cantidad, precioAlquilerBase } = req.body;
+        const cantidadNormalizada = Number(cantidad ?? 1);
 
         const traje = await Traje.findByPk(id);
         if (!traje) return res.status(404).json({ mensaje: 'Traje no encontrado' });
 
         // Actualizamos en Postgre
-        await traje.update ({ codigoEtiqueta, talle, color, categoria, precioAlquilerBase });
+        await traje.update ({ codigoEtiqueta, talle, color, categoria, cantidad: cantidadNormalizada, precioAlquilerBase });
 
         //Registramos el Log en Mongo
         await Log.create({
@@ -201,6 +209,5 @@ export const eliminarTraje = async (req: Request, res: Response) => {
         res.status(500).json({ ok: false, error: 'Error al eliminar' });
     }
 };
-             
 
-        
+

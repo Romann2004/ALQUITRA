@@ -28,6 +28,11 @@ const Reserva = sequelize.define('reserva', {
         defaultValue: EstadoReserva.PENDIENTE,
         allowNull: false
     },
+    cantidad: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+    },
     senia: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false

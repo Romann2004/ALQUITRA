@@ -22,7 +22,8 @@ const buildMockReserva = (data: Record<string, any>, updateMock = jest.fn().mock
 
 describe('updateReserva', () => {
     let findByPkSpy: jest.SpyInstance;
-    let findOneSpy: jest.SpyInstance;
+    let findAllSpy: jest.SpyInstance;
+    let countSpy: jest.SpyInstance;
     let trajeFindByPkSpy: jest.SpyInstance;
     let logCreateSpy: jest.SpyInstance;
 
@@ -88,7 +89,14 @@ describe('updateReserva', () => {
         findByPkSpy = jest.spyOn(Reserva, 'findByPk').mockResolvedValue(
             buildMockReserva({ trajeId: 1, estado: 'PENDIENTE' }) as any
         );
-        findOneSpy = jest.spyOn(Reserva, 'findOne').mockResolvedValue({ id: 55 } as any);
+        findAllSpy = jest.spyOn(Reserva, 'findAll').mockResolvedValue([
+            {
+                fechaRetiro: '2026-08-15',
+                fechaDevolucion: '2026-08-20',
+                cantidad: 1,
+            },
+        ] as any);
+        trajeFindByPkSpy = jest.spyOn(Traje, 'findByPk').mockResolvedValue({ cantidad: 1, estado: 'Disponible' } as any);
 
         const req = {
             params: { id: '1' },
@@ -111,7 +119,12 @@ describe('updateReserva', () => {
         findByPkSpy = jest.spyOn(Reserva, 'findByPk').mockResolvedValue(reservaMock as any);
 
         const trajeUpdateMock = jest.fn().mockResolvedValue(true);
-        trajeFindByPkSpy = jest.spyOn(Traje, 'findByPk').mockResolvedValue({ update: trajeUpdateMock } as any);
+        trajeFindByPkSpy = jest.spyOn(Traje, 'findByPk')
+            .mockResolvedValueOnce({ estado: EstadoTraje.ALQUILADO, update: trajeUpdateMock } as any)
+            .mockResolvedValueOnce({ estado: EstadoTraje.DISPONIBLE, update: trajeUpdateMock } as any);
+        countSpy = jest.spyOn(Reserva, 'count')
+            .mockResolvedValueOnce(0 as any)
+            .mockResolvedValueOnce(1 as any);
 
         const req = {
             params: { id: '1' },
@@ -142,7 +155,8 @@ describe('updateReserva', () => {
         findByPkSpy = jest.spyOn(Reserva, 'findByPk').mockResolvedValue(reservaMock as any);
 
         const trajeUpdateMock = jest.fn().mockResolvedValue(true);
-        trajeFindByPkSpy = jest.spyOn(Traje, 'findByPk').mockResolvedValue({ update: trajeUpdateMock } as any);
+        trajeFindByPkSpy = jest.spyOn(Traje, 'findByPk').mockResolvedValue({ estado: EstadoTraje.ALQUILADO, update: trajeUpdateMock } as any);
+        countSpy = jest.spyOn(Reserva, 'count').mockResolvedValue(1 as any);
 
         const req = { params: { id: '1' }, body: { senia: 50 } } as unknown as Request;
         const res = mockResponse();
@@ -152,7 +166,8 @@ describe('updateReserva', () => {
         // Solo debe llamarse una vez: la sincronización con el traje actual (id 3)
         expect(trajeFindByPkSpy).toHaveBeenCalledTimes(1);
         expect(trajeFindByPkSpy).toHaveBeenCalledWith(3);
-        expect(trajeUpdateMock).toHaveBeenCalledWith({ estado: EstadoTraje.RESERVADO });
+        expect(countSpy).toHaveBeenCalledTimes(1);
+        expect(trajeUpdateMock).toHaveBeenCalledWith({ estado: EstadoTraje.ALQUILADO });
     });
 
     // --- CASO 7: Error interno ---

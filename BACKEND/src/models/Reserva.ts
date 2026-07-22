@@ -36,6 +36,11 @@ const Reserva = sequelize.define('reserva', {
     senia: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
+    },
+    activo: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        allowNull: false
     }
 }, {
     tableName: 'reservas',

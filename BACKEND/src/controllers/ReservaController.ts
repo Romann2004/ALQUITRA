@@ -50,6 +50,7 @@ export const postReserva = async (req: Request, res: Response) => {
 export const getReservas = async (req: Request, res: Response) => {
   try {
     const reservas = await Reserva.findAll({
+      where: { activo: true }, // Solo traemos las reservas activas
       include: [
         { model: Cliente, attributes: ["nombre", "dni"] },
         { model: Traje, attributes: ["categoria", "talle", "color"] },
@@ -144,13 +145,13 @@ export const deleteReserva = async (req: Request, res: Response) => {
     const estadoReserva = reserva.get('estado') as string;
     const trajeId = reserva.get('trajeId') as number;
 
+    await reserva.update({ activo: false });
+
     if (estadoReserva === "RETIRADO" || estadoReserva === "PENDIENTE") {
       await sincronizarEstadoTraje(trajeId);
     }
 
-    await reserva.destroy();
-    await sincronizarEstadoTraje(trajeId);
-    await registrarLog("ELIMINAR_RESERVA", Number(id), "Se eliminó la reserva");
+    await registrarLog("ELIMINAR_RESERVA_LOGICA", Number(id), "Se eliminó la reserva (Borrado Lógico)");
     res.json({ msg: "Reserva eliminada con éxito" });
   } catch (error) {
     res.status(500).json({ msg: "Error al eliminar la reserva", error });
@@ -205,7 +206,7 @@ const validarSuperposicionGrupal = async (
     estado: {
       [Op.notIn]: [EstadoReserva.CANCELADO, EstadoReserva.COMPLETADO],
     },
-    //activo: true,  Respetamos el borrado lógico
+    activo: true, // Respetamos el borrado lógico
     fechaRetiro: { [Op.lt]: fechaDevolucion },
     fechaDevolucion: { [Op.gt]: fechaRetiro },
   };

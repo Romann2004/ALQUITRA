@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import Cliente from '../models/Cliente';
 import { Log } from '../models/Log';
 import { Op } from 'sequelize';
+import Reserva from '../models/Reserva';
+import { EstadoReserva } from '../models/Enums';
 
 export const getClientes = async (req: Request, res: Response) => {
     try {
@@ -192,6 +194,24 @@ export const deleteCliente = async (req: Request, res: Response) => {
         const cliente: any = await Cliente.findByPk(Number(id));
         if (!cliente) {
             return res.status(404).json({ msg: 'Cliente no encontrado' });
+        }
+
+        // Verificamos si tiene reservas activas antes de borrarlo
+        const reservasActivas = await Reserva.count({
+            where: {
+                clienteId: Number(id),
+                activo: true, // Que no estén borradas lógicamente
+                estado: {
+                    [Op.in]: [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO]
+                }
+            }
+        });
+
+        // Si el contador es mayor a 0, bloqueamos el borrado
+        if (reservasActivas > 0) {
+            return res.status(400).json({
+                msg: 'No se puede eliminar: El cliente tiene reservas pendientes o trajes sin devolver.'
+            });
         }
 
         // BORRADO LÓGICO

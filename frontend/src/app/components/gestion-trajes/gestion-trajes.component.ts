@@ -1,11 +1,13 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { TalleTraje, Traje } from '../../models/traje.model';
 import { TrajeService } from '../../services/traje.service';
 import { AlertService } from '../../services/alert.service';
+
 
 interface MedidaTalle {
   talle: TalleTraje | string;
@@ -24,6 +26,7 @@ interface MedidaTalle {
 export class GestionTrajesComponent implements OnInit {
   @ViewChild('trajeDialog') trajeDialog!: TemplateRef<any>;
   @ViewChild('disponibilidadDialog') disponibilidadDialog!: TemplateRef<any>;
+  @ViewChild(MatSort) sort!: MatSort;
 
   trajes: Traje[] = [];
   trajeForm: FormGroup;
@@ -93,6 +96,21 @@ export class GestionTrajesComponent implements OnInit {
           cantidad: Number(traje.cantidad ?? 1),
         }));
         this.dataSource.data = this.trajes;
+
+        // ORDENAMIENTO
+        this.dataSource.sort = this.sort;
+        this.dataSource.sortingDataAccessor = (item: any, property: string) => {
+          switch (property) {
+            case 'talle':
+              const talleOrden: Record<string, number> = { XS: 1, S: 2, M: 3, L: 4, XL: 5, XXL: 6 };
+              return talleOrden[String(item.talle).toUpperCase()] || 99;
+            case 'precio': return Number(item.precioAlquilerBase);
+            case 'cantidad': return Number(item.cantidad);
+            case 'codigo': return item.codigoEtiqueta?.toLowerCase() || '';
+            case 'disponibilidad': return item.estado?.toLowerCase() || '';
+            default: return item[property];
+          }
+        };
       },
       error: (err) => console.error('Error al cargar trajes', err),
     });

@@ -1,4 +1,3 @@
-<!-- frontend/src/app/components/gestion-clientes/gestion-clientes.html -->
 <div class="premium-container">
   
   <div class="premium-header">
@@ -17,16 +16,27 @@
     </button>
   </div>
 
-  <div *ngIf="listClientes && listClientes.length >= 0; else cargando" class="premium-table-wrapper">
-    <table mat-table [dataSource]="listClientes">
+  <!-- Buscador -->
+   <mat-card class="premium-card">
+    <mat-card-content style="padding: 16px 24px 0 24px !important;">
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>Buscar cliente</mat-label>
+        <input matInput (keyup)="aplicarFiltro($event)" placeholder="Ej. Juan Pérez, DNI o Email">
+        <mat-icon matSuffix style="color: #94a3b8;">search</mat-icon>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="dataSource && dataSource.data; else cargando" class="premium-table-wrapper">
+    <table mat-table [dataSource]="dataSource" matSort>
       
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="id"> ID </th>
         <td mat-cell *matCellDef="let element"> {{element.id}} </td>
       </ng-container>
 
       <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="nombre"> Nombre </th>
         <td mat-cell *matCellDef="let element">
           <span (dblclick)="element.editNombre = true" *ngIf="!element.editNombre" class="dato-texto">
             {{element.nombre}}
@@ -40,7 +50,7 @@
       </ng-container>
 
       <ng-container matColumnDef="dni">
-        <th mat-header-cell *matHeaderCellDef> DNI </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="dni"> DNI </th>
         <td mat-cell *matCellDef="let element">
           <span (dblclick)="element.editDni = true" *ngIf="!element.editDni" class="dato-texto">
             {{element.dni}}
@@ -54,7 +64,7 @@
       </ng-container>
 
       <ng-container matColumnDef="telefono">
-        <th mat-header-cell *matHeaderCellDef> Teléfono </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="telefono"> Teléfono </th>
         <td mat-cell *matCellDef="let element">
           <span (dblclick)="element.editTelefono = true" *ngIf="!element.editTelefono" class="dato-texto">
             {{element.telefono}}
@@ -68,7 +78,7 @@
       </ng-container>
 
       <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="email"> Email </th>
         <td mat-cell *matCellDef="let element">
           <span (dblclick)="element.editEmail = true" *ngIf="!element.editEmail" class="dato-texto">
             {{element.email}}
@@ -95,6 +105,13 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <!-- Fila dinámica cuando el buscador no encuentra resultados -->
+       <tr class="mat-row" *MatNoDataRow>
+        <td class="mat-cell" colspan="6" style="padding: 20px; text-align: center; color: #64748b;">
+          No se encontraron clientes que coincidan con la búsqueda.
+        </td>
+       </tr>
     </table>
   </div>
   

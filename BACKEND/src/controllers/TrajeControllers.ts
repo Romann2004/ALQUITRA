@@ -50,7 +50,9 @@ export const obtenerTrajes = async (req: Request, res: Response) => {
 
         // 2. Construimos el objeto de condiciones dinámicamente
         // Si el filtro no viene en la URL, Sequelize simplemente lo ignora
-        const whereConditions: any = {};
+        const whereConditions: any = {
+            estado: { [Op.ne]: EstadoTraje.BAJA } // Excluímos los trajes dados de baja
+        };
 
         if (codigo) {
             whereConditions.codigoEtiqueta = { [Op.iLike]: `%${codigo}%` };
@@ -187,26 +189,27 @@ export const eliminarTraje = async (req: Request, res: Response) => {
             }
         });
 
-        // Si el contador es mayor a 0, impedimos el borrado
+        // Si hay reservas pendientes, impedimos el borrado
         if (reservasActivas > 0) {
             return res.status(400).json({ 
                 ok: false, 
                 mensaje: 'No se puede eliminar: El traje tiene reservas pendientes o está alquilado.' 
             });
         }
-        const codigoCopiado = traje.codigoEtiqueta;
-        await traje.destroy(); // Borra de postgre
+
+        // BORRADO LÓGICO: Cambiamos el estado en lugar de usar destroy()
+        await traje.update({ estado: EstadoTraje.BAJA });
 
         //Registramos el log en mongo
         await Log.create({
-            accion: 'ELIMINAR_TRAJE',
-            descripcion: `Se eliminó el traje con ID: ${id}`,
+            accion: 'ELIMINAR_TRAJE_LÓGICO',
+            descripcion: `Se dio de baja el traje con ID: ${id}`,
             metadata: { trajeId: id }
         });
 
-        res.json({ ok: true, mensaje: 'Traje eliminado correctamente' });
+        res.json({ ok: true, mensaje: 'Traje dado de baja correctamente' });
     } catch (error) {
-        res.status(500).json({ ok: false, error: 'Error al eliminar' });
+        res.status(500).json({ ok: false, error: 'Error al dar de baja el traje' });
     }
 };
 

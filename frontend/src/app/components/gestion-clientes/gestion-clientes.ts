@@ -3,7 +3,9 @@ import { Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef } from '@a
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms'; 
 import { Cliente } from '../../services/cliente';
 import { AlertService } from '../../services/alert.service';
-import { MatDialog } from '@angular/material/dialog'; 
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort'; 
 
 @Component({
   selector: 'app-gestion-clientes',
@@ -13,8 +15,10 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class GestionClientes implements OnInit {
   @ViewChild('clienteDialog') clienteDialog!: TemplateRef<any>;
+  @ViewChild(MatSort) sort!: MatSort;
 
   listClientes: any[] = [];
+  dataSource = new MatTableDataSource<any>([]);
   displayedColumns: string[] = ['id', 'nombre', 'dni', 'telefono', 'email', 'acciones'];
 
   clienteForm: FormGroup;
@@ -83,11 +87,18 @@ export class GestionClientes implements OnInit {
     this._cliente.getClientes().subscribe({
       next: (data) => {
         this.listClientes = data;
+
+        this.dataSource.data = data;
+        this.dataSource.sort = this.sort;
+
+        this.dataSource.filterPredicate = (cliente: any, filter: string) => {
+          const dataStr = `${cliente.nombre} ${cliente.dni} ${cliente.email} ${cliente.telefono}`.toLowerCase();
+          return dataStr.includes(filter.trim().toLowerCase());
+        }
         
-        // CORRECCIÓN 1: Una vez que llegan los clientes del servidor, forzamos al campo
+        // CORRECCIÓN: Una vez que llegan los clientes del servidor, forzamos al campo
         // de teléfono a re-validarse para que detecte si hay duplicados existentes.
         this.clienteForm.get('telefono')?.updateValueAndValidity();
-        
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error al cargar clientes', err)
@@ -113,6 +124,11 @@ export class GestionClientes implements OnInit {
         }
       });
     }
+  }
+
+  aplicarFiltro(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   agregarCliente() {

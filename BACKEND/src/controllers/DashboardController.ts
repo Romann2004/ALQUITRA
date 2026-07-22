@@ -9,7 +9,11 @@ import { EstadoTraje } from '../models/Enums';
 export const getDashboardStats = async (req: Request, res: Response) => {
 try {
         const [total, disponibles, alquilados] = await Promise.all([
-            Traje.count(), 
+            Traje.count({ 
+                where: {
+                    estado: { [Op.ne]: EstadoTraje.BAJA } // Excluimos las Bajas del conteo total
+                }
+             }), 
             Traje.count({ where: { estado: EstadoTraje.DISPONIBLE } }), 
             Traje.count({ 
                 where: { 
@@ -27,6 +31,7 @@ try {
         // Histórico mensual para el gráfico
         const reservasRecientes = await Reserva.findAll({
             where: {
+                activo: true, // Solo reservas activas
                 fechaRetiro: {
                     [Op.gte]: inicioBusqueda.toISOString().split('T')[0]
                 }
@@ -40,6 +45,7 @@ try {
 
         // Últimos 4 alquileres con sus relaciones
         const ultimasReservas = await Reserva.findAll({
+            where: { activo: true },
             limit: 4,
             order: [['id', 'DESC']], 
             include: [
@@ -51,6 +57,7 @@ try {
         // --- SOLUCIÓN PARA POSTGRESQL (GROUP BY) ---
         // 1. Conseguimos los IDs agrupados de forma pura y limpia
         const topReservas = await Reserva.findAll({
+            where: { activo: true }, // Solo reservas activas
             attributes: [
                 'clienteId',
                 [sequelize.fn('COUNT', sequelize.col('id')), 'totalAlquileres']

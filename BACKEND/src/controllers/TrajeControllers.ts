@@ -11,6 +11,25 @@ export const crearTraje = async (req: Request, res: Response) => {
         const { codigoEtiqueta, talle, color, categoria, cantidad, precioAlquilerBase } = req.body;
         const cantidadNormalizada = Number(cantidad ?? 1);
 
+        // Detector de código duplicado
+        const trajeExistente: any = await Traje.findOne({
+            where: { codigoEtiqueta: codigoEtiqueta }
+        });
+
+        if (trajeExistente) {
+            // Si el código existe pero el traje fue ELIMINADO (Soft Delete)
+            if (trajeExistente.estado === 'Baja') {
+                return res.status(400).json({
+                    msg: `El código '${codigoEtiqueta}' ya pertenece a un traje que fue dado de baja del inventario. Por favor, utilizá un código nuevo.`
+                });
+            }
+
+            // Si el código existe y el traje está ACTIVO
+            return res.status(400).json({
+                msg: `El código '${codigoEtiqueta}' ya se encuentra registrado en un traje activo.`
+            });
+        }
+
         // Creamos el registro en PostgreSQL usando Sequelize
         const nuevoTraje = await Traje.create({
             codigoEtiqueta,
@@ -128,6 +147,25 @@ export const actualizarTraje = async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id);
         const { codigoEtiqueta, talle, color, categoria, cantidad, precioAlquilerBase } = req.body;
+
+        const trajeDuplicado: any = await Traje.findOne({
+            where: { 
+                codigoEtiqueta: codigoEtiqueta,
+                id: { [Op.ne]: Number(id) } // Excluimos el traje actual
+            }
+        });
+
+        if (trajeDuplicado) {
+            if (trajeDuplicado.estado === 'Baja') {
+                return res.status(400).json({
+                    msg: `El código '${codigoEtiqueta}' ya pertenece a un traje que fue dado de baja. No podés usarlo.`
+                });
+            }
+            return res.status(400).json({
+                msg: `El código '${codigoEtiqueta}' ya está siendo usado por otro traje activo.`
+            });
+        }
+
         const cantidadNormalizada = Number(cantidad ?? 1);
 
         const traje = await Traje.findByPk(id);

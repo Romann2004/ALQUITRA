@@ -168,7 +168,7 @@
       <input matInput 
              formControlName="telefono" 
              type="text" 
-             placeholder="Ej. 3462 201816"
+             placeholder="Ej. 3462201816"
              (keypress)="filtrarTeclas($event)">
       <mat-icon matSuffix style="color: #94a3b8;">phone</mat-icon>
       
@@ -181,9 +181,6 @@
       </mat-error>
       <mat-error *ngIf="clienteForm.get('telefono')?.hasError('minlength') || clienteForm.get('telefono')?.hasError('maxlength')">
         El teléfono debe tener entre 6 y 10 dígitos.
-      </mat-error>
-      <mat-error *ngIf="clienteForm.get('telefono')?.hasError('telefonoRepetido')">
-        Este número de teléfono ya pertenece a otro cliente registrado.
       </mat-error>
     </mat-form-field>
 

@@ -43,7 +43,7 @@ export const postCliente = async (req: Request, res: Response) => {
         }
         
         // DETECTOR DE DUPLICADOS (DNI o Email repetido)
-        const clienteExistente = await Cliente.findOne({
+        const clienteExistente: any = await Cliente.findOne({
             where: {
                 [Op.or]: [
                     { dni: dniClean },
@@ -53,10 +53,28 @@ export const postCliente = async (req: Request, res: Response) => {
         });
 
         if (clienteExistente) {
-            // Le especificamos al usuario cuál es el campo que ya está tomado
+            // Si existe pero estaba ELIMINADO (Soft Delete) -> Lo REACTIVAMOS
+            if (!clienteExistente.activo) {
+                await clienteExistente.update({
+                    nombre: nombreClean,
+                    dni: dniClean,
+                    email: emailClean,
+                    telefono: telefonoClean,
+                    activo: true // Lo revivimos
+                });
+                await Log.create({
+                    accion: 'REACTIVAR_CLIENTE',
+                    descripcion: `Se reactivó el cliente ${clienteExistente.nombre} que estaba dado de baja.`,
+                    metadata: { clienteId: clienteExistente.id }
+                });
+
+                return res.json({ msg: 'Cliente registrado con éxito', cliente: clienteExistente });
+            }
+
+            // Si existe y ESTÁ ACTIVO -> Tiramos el error normal
             const campoDuplicado = (clienteExistente as any).dni === dniClean ? 'DNI' : 'Email';
             return res.status(400).json({
-                msg: `El ${campoDuplicado} ingresado ya se encuentra registrado en el sistema.`
+                msg: `El ${campoDuplicado} ingresado ya se encuentra registrado en un cliente activo del sistema.`
             });
         }
 

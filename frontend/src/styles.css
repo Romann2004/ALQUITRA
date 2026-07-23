@@ -371,3 +371,83 @@ html.dark-theme .mat-mdc-option.mat-mdc-option-active {
   flex-direction: column !important;
   overflow-y: hidden !important; /* Desactiva la barra vertical innecesaria */
 }
+
+/* Fix para el texto invisible al dejar presionada una pestaña en modo oscuro */
+html.dark-theme .premium-sidenav mat-nav-list a:active,
+html.dark-theme .premium-sidenav mat-nav-list a:active mat-icon,
+html.dark-theme .premium-sidenav mat-nav-list a:active .menu-text,
+html.dark-theme .premium-sidenav mat-nav-list button:active,
+html.dark-theme .premium-sidenav mat-nav-list button:active mat-icon,
+html.dark-theme .premium-sidenav mat-nav-list button:active .menu-text {
+  color: #818cf8 !important; /* Mantenemos el color índigo claro brillante al presionar */
+  background-color: rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Fix para la pestaña seleccionada (Activa) en modo oscuro */
+html.dark-theme .active-menu-item {
+  background-color: rgba(99, 102, 241, 0.15) !important; /* Fondo índigo oscuro y sutil */
+}
+
+html.dark-theme .active-menu-item,
+html.dark-theme .active-menu-item mat-icon,
+html.dark-theme .active-menu-item .menu-text,
+html.dark-theme .active-menu-item span {
+  color: #818cf8 !important; /* Texto e ícono en índigo brillante para que resalte */
+}
+
+/* ==========================================================================
+   FIX: HOVER DE LA BARRA LATERAL EN MODO OSCURO
+   ========================================================================== */
+
+/* 1. Hover para las pestañas de navegación y el botón de Modo Oscuro */
+html.dark-theme .premium-sidenav mat-nav-list a:hover:not(.active-menu-item),
+html.dark-theme .action-btn:hover:not(.logout-btn) {
+  background-color: rgba(255, 255, 255, 0.08) !important; /* Fondo gris súper sutil y oscuro */
+}
+
+/* Forzar que el texto y el ícono sean blancos puros al pasar el mouse */
+html.dark-theme .premium-sidenav mat-nav-list a:hover:not(.active-menu-item),
+html.dark-theme .premium-sidenav mat-nav-list a:hover:not(.active-menu-item) mat-icon,
+html.dark-theme .premium-sidenav mat-nav-list a:hover:not(.active-menu-item) span,
+html.dark-theme .action-btn:hover:not(.logout-btn),
+html.dark-theme .action-btn:hover:not(.logout-btn) mat-icon,
+html.dark-theme .action-btn:hover:not(.logout-btn) span {
+  color: #ffffff !important; 
+}
+
+
+/* 2. Hover específico para el botón de Cerrar Sesión */
+html.dark-theme .logout-btn:hover {
+  background-color: rgba(239, 68, 68, 0.15) !important; /* Fondo rojizo oscuro/transparente */
+}
+
+/* Forzar que el texto y el ícono resalten en rojo */
+html.dark-theme .logout-btn:hover,
+html.dark-theme .logout-btn:hover mat-icon,
+html.dark-theme .logout-btn:hover span {
+  color: #ef4444 !important; 
+}
+
+/* ==========================================================================
+   FIX: ALERTAS SWEETALERT2 EN MODO OSCURO
+   ========================================================================== */
+
+/* Fondo general de la alerta (Toast o Modal grande) */
+html.dark-theme .swal2-popup {
+  background-color: #1e293b !important; /* Mismo fondo que las tarjetas del dashboard */
+  border: 1px solid #334155 !important;
+  color: #f8fafc !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Forzar que el título y el texto interno sean blancos */
+html.dark-theme .swal2-title,
+html.dark-theme .swal2-html-container {
+  color: #f8fafc !important;
+}
+
+/* Opcional: darle un tono más oscuro al fondo cuando te tira la alerta de confirmación (Excluyendo los Toasts) */
+html.dark-theme body:not(.swal2-toast-shown) .swal2-backdrop-show {
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(4px) !important;
+}

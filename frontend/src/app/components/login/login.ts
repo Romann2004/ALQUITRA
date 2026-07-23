@@ -25,16 +25,16 @@ export class Login {
     });
   }
 
+  isLoading: boolean = false;
+
   onLogin() {
     if (this.LoginForm.invalid) return;
 
     this.authService.login(this.LoginForm.value).subscribe({
       next: (res) => {
-        console.log('Respuesta del servidor:', res);
         if (res.ok) {
-          this.alertService.mostrarExito('¡Bienvenido!');
-          sessionStorage.setItem('token', res.token); // Guarda el token en SessionStorage
-          this.router.navigate(['/dashboard']); //Navega al panel inicial
+            this.alertService.mostrarExito('¡Bienvenido!');
+            this.router.navigate(['/dashboard']);
         }
       },
       error: (err) => {

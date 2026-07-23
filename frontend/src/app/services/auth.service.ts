@@ -21,6 +21,7 @@ export class AuthService {
         return this.http.post(`${this.apiUrl}/login`, user).pipe(
             tap((res: any) => {
                 if (res.ok && res.token) {
+                    // Guardamos los datos en silencio
                     // Guardamos el token en el almacenamiento de la sesión del navegador
                     sessionStorage.setItem('token', res.token);
                     sessionStorage.setItem('username', res.username); // Opcional, para mostrarlo en el menú

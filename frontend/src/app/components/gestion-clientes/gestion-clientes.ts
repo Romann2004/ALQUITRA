@@ -49,8 +49,7 @@ export class GestionClientes implements OnInit {
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(10),
-        Validators.pattern('^[0-9]+$'),
-        this.telefonoDuplicadoValidador.bind(this) 
+        Validators.pattern('^[0-9]+$')
       ]],
       email: ['', [
         Validators.required, 
@@ -66,21 +65,6 @@ export class GestionClientes implements OnInit {
   filtrarTeclas(event: KeyboardEvent): boolean {
     const reg = /^[0-9]$/;
     return reg.test(event.key);
-  }
-
-  telefonoDuplicadoValidador(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) return null;
-    
-    const telefonoIngresado = control.value.toString().trim();
-
-    const existe = this.listClientes.some(cliente => {
-      if (this.modoEdicion && cliente.id === this.clienteIdActual) {
-        return false;
-      }
-      return cliente.telefono?.toString().trim() === telefonoIngresado;
-    });
-
-    return existe ? { telefonoRepetido: true } : null;
   }
 
   obtenerClientes() {

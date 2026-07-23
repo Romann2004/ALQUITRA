@@ -36,11 +36,14 @@
         <div class="sidenav-footer">
           <mat-divider></mat-divider>
           <mat-nav-list>
-            <button mat-list-item (click)="toggleDarkMode()" class="action-btn mode-btn">
+            <a mat-list-item (click)="toggleDarkMode()" class="action-btn mode-btn">
               <mat-icon matListItemIcon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon> 
-              <span matListItemTitle class="menu-text">{{ isDarkMode ? 'Modo Claro' : 'Modo Oscuro' }}</span>
-            </button>
-            
+              <div matListItemTitle class="menu-text" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <span>Modo Oscuro</span>
+                <!-- El pointer-events: none evita que el toggle intercepte el clic, dejando que la fila entera sea clickeable -->
+                <mat-slide-toggle [checked]="isDarkMode" style="pointer-events: none;"></mat-slide-toggle>
+              </div>
+            </a>            
             <button mat-list-item (click)="logout()" class="action-btn logout-btn">
               <mat-icon matListItemIcon>logout</mat-icon> 
               <span matListItemTitle class="menu-text">Cerrar Sesión</span>

@@ -1,5 +1,5 @@
 <div class="premium-container">
-    
+
   <div class="premium-header">
     <div class="premium-header-left">
       <div class="premium-icon-box trajes">
@@ -32,7 +32,7 @@
 
   <div class="premium-table-wrapper">
     <table mat-table [dataSource]="dataSource" class="w-100" matSort>
-      
+
       <ng-container matColumnDef="codigo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="codigo"> Código </th>
         <td mat-cell *matCellDef="let t"> {{t.codigoEtiqueta}} </td>
@@ -62,30 +62,30 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header="precio"> Precio </th>
         <td mat-cell *matCellDef="let t"> {{t.precioAlquilerBase | currency:'ARS':'$'}} </td>
       </ng-container>
-
+      <!-- Columna Disponibilidad -->
       <ng-container matColumnDef="disponibilidad">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="disponibilidad"> Ver disponibilidad </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="disponibilidad"> Disponibilidad </th>
         <td mat-cell *matCellDef="let t">
           <div class="availability-cell">
-            <span class="status-badge" [ngClass]="(t.estado || '').toLowerCase().replace(' ', '-')">
-              {{t.estado}}
-            </span>
             <button mat-icon-button color="accent" (click)="verDisponibilidad(t)" title="Ver fechas reservadas">
               <mat-icon>visibility</mat-icon>
             </button>
-          </div>          
+          </div>
         </td>
       </ng-container>
 
+      <!-- Columna Acciones -->
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let t">
-          <button mat-icon-button color="accent" (click)="abrirFormularioTraje(t)" title="Editar">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" (click)="eliminarTraje(t.id)" title="Eliminar">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <div class="action-buttons-cell">
+            <button mat-icon-button color="primary" (click)="abrirFormularioTraje(t)" title="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="eliminarTraje(t.id)" title="Eliminar">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </td>
       </ng-container>
 
@@ -128,9 +128,11 @@
         <div class="combo-row">
           <mat-form-field appearance="outline" class="flex-field">
             <mat-label>Nueva categoría</mat-label>
-            <input matInput [(ngModel)]="nuevaCategoria" [ngModelOptions]="{standalone: true}" placeholder="Ej: Smoking premium">
+            <input matInput [(ngModel)]="nuevaCategoria" [ngModelOptions]="{standalone: true}"
+              placeholder="Ej: Smoking premium">
           </mat-form-field>
-          <button mat-stroked-button color="accent" type="button" class="combo-action-button" (click)="agregarCategoria()">Agregar</button>
+          <button mat-stroked-button color="accent" type="button" class="combo-action-button"
+            (click)="agregarCategoria()">Agregar</button>
         </div>
 
         <mat-form-field appearance="outline">
@@ -162,7 +164,8 @@
             <mat-label>Nuevo color</mat-label>
             <input matInput [(ngModel)]="nuevoColor" [ngModelOptions]="{standalone: true}" placeholder="Ej: Vino">
           </mat-form-field>
-          <button mat-stroked-button color="accent" type="button" class="combo-action-button" (click)="agregarColor()">Agregar</button>
+          <button mat-stroked-button color="accent" type="button" class="combo-action-button"
+            (click)="agregarColor()">Agregar</button>
         </div>
 
         <mat-form-field appearance="outline">

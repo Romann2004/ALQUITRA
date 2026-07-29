@@ -1,7 +1,5 @@
 export enum EstadoTraje {
     DISPONIBLE = 'Disponible',
-    ALQUILADO = 'Alquilado',
-    MANTENIMIENTO = 'En Mantenimiento',
     BAJA = 'Baja'
 }
 

@@ -36,7 +36,8 @@ export class GestionClientes implements OnInit {
     this.clienteForm = this.fb.group({
       nombre: ['', [
         Validators.required,
-        Validators.minLength(3),
+        Validators.minLength(5),
+        Validators.maxLength(25),
         Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$') 
       ]],
       dni: ['', [
@@ -64,6 +65,12 @@ export class GestionClientes implements OnInit {
 
   filtrarTeclas(event: KeyboardEvent): boolean {
     const reg = /^[0-9]$/;
+    return reg.test(event.key);
+  }
+
+  filtrarLetras(event: KeyboardEvent): boolean {
+    // Permite letras (mayúsculas y minúsculas), tildes, la ñ y espacios
+    const reg = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/;
     return reg.test(event.key);
   }
 
@@ -223,5 +230,21 @@ export class GestionClientes implements OnInit {
     }
 
     this.alertService.mostrarExito(mensaje);
+  }
+
+  cancelarEdicionDobleClick(element: any, campo: string) {
+    if (campo === 'dni') {
+      element.dni = element.originalDni; 
+      element.editDni = false; 
+    } else if (campo === 'telefono') {
+      element.telefono = element.originalTelefono; 
+      element.editTelefono = false; 
+    } else if (campo === 'nombre') {
+      element.nombre = element.originalNombre; 
+      element.editNombre = false; 
+    } else if (campo === 'email') {
+      element.email = element.originalEmail; 
+      element.editEmail = false; 
+    }
   }
 }

@@ -26,6 +26,10 @@
     </mat-card-content>
   </mat-card>
 
+  <div class="total-registros">
+    Total de reservas: <strong>{{ dataSource.data.length }}</strong>
+  </div>
+
   <div class="premium-table-wrapper">
     <table mat-table [dataSource]="dataSource" matSort #miTabla>
 

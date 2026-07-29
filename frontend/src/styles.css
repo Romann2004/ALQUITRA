@@ -451,3 +451,30 @@ html.dark-theme body:not(.swal2-toast-shown) .swal2-backdrop-show {
   background: rgba(15, 23, 42, 0.75) !important;
   backdrop-filter: blur(4px) !important;
 }
+
+/* ==========================================================================
+   CONTADOR DE REGISTROS EN TABLAS
+   ========================================================================== */
+.total-registros {
+  font-size: 0.875rem; /* Tamaño de letra sutil */
+  color: #64748b; /* Gris texto estándar */
+  text-align: right; /* Alineado a la derecha */
+  margin-top: -8px; /* Lo acerca un poco a la barra de búsqueda */
+  margin-bottom: 12px; /* Lo separa de la tabla */
+  font-weight: 500;
+  padding-right: 4px;
+}
+
+.total-registros strong {
+  color: #0f172a; /* Número más oscuro para que resalte */
+  font-weight: 700;
+}
+
+/* Adaptación para el Modo Oscuro */
+html.dark-theme .total-registros {
+  color: #94a3b8; /* Gris claro */
+}
+
+html.dark-theme .total-registros strong {
+  color: #f8fafc; /* Número en blanco brillante */
+}

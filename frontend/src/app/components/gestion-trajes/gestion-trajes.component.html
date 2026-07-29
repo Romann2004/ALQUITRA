@@ -26,6 +26,10 @@
     </mat-card-content>
   </mat-card>
 
+  <div class="total-registros">
+    Total de trajes en inventario: <strong>{{ dataSource.data.length }}</strong>
+  </div>
+
   <div class="premium-table-wrapper">
     <table mat-table [dataSource]="dataSource" class="w-100" matSort>
       

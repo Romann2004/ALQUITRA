@@ -19,8 +19,8 @@ POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-    "username": "Roman",
-    "password": "45654005"
+    "username": "Leonel",
+    "password": "46995121"
 }
 
 ### Login Fallido (Contraseña incorrecta)

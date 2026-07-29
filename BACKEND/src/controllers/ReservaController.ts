@@ -21,6 +21,11 @@ export const postReserva = async (req: Request, res: Response) => {
     const errorSuperposicion = await validarSuperposicionGrupal(trajeId, fechaRetiro, fechaDevolucion, cantidadReservada);
     if (errorSuperposicion) return res.status(400).json({ msg: errorSuperposicion });
 
+    const clienteExiste = await Cliente.findByPk(clienteId);
+    if (!clienteExiste || !clienteExiste.get('activo')) {
+      return res.status(400).json({msj:"El cliente no existe o está dado de baja."}); 
+    }
+
     // 2. Creación
     const nuevaReserva: any = await Reserva.create({
       fechaRetiro,

@@ -32,11 +32,11 @@ Content-Type: application/json
 }
 
 ### Prueba 4: Actualizar un campo de un traje (ID:1)
-PATCH {{baseUrl}}/1
+PATCH {{baseUrl}}/2
 Content-Type: application/json
 
 {
-  "color": "Azul"
+  "estado": "Disponible"
 }
 
 ### Prueba 5: Eliminar un traje (ID:8)

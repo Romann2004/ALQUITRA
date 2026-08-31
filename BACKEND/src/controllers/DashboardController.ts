@@ -4,7 +4,7 @@ import Reserva from '../models/Reserva';
 import Cliente from '../models/Cliente'; 
 import { Op } from 'sequelize';          
 import { sequelize } from '../config/db';
-import { EstadoTraje } from '../models/Enums'; 
+import { EstadoTraje, EstadoReserva } from '../models/Enums'; 
 
 export const getDashboardStats = async (req: Request, res: Response) => {
 try {
@@ -15,13 +15,12 @@ try {
                 }
              }), 
             Traje.count({ where: { estado: EstadoTraje.DISPONIBLE } }), 
-            Traje.count({ 
+            Reserva.sum('cantidad', {
                 where: { 
-                    estado: {
-                        [Op.in]: [EstadoTraje.ALQUILADO]
-                    } 
-                } 
-            }) 
+                    estado: EstadoReserva.RETIRADO,
+                    activo: true
+                }
+            }).then(val => Number(val) || 0)
         ]);
 
         const inicioBusqueda = new Date();

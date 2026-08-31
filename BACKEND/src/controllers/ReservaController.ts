@@ -200,8 +200,8 @@ const validarSuperposicionGrupal = async (
   // Obtenemos el stock total real del grupo de trajes
   const traje: any = await Traje.findByPk(trajeId);
   if (!traje) return "El traje no existe.";
-  if (traje.estado === EstadoTraje.BAJA || traje.estado === EstadoTraje.MANTENIMIENTO) {
-    return "El traje está dado de baja o en mantenimiento.";
+  if (traje.estado === EstadoTraje.BAJA) {
+    return "El traje está dado de baja.";
   }
   const stockTotal = traje.cantidad;
 
@@ -284,28 +284,9 @@ const registrarLog = async (accion: string, id: number, detalle: string) => {
 };
 
 const sincronizarEstadoTraje = async (trajeId: number) => {
-  const traje = await Traje.findByPk(trajeId);
-  if (!traje) return;
-
-  const reservasActivas = await Reserva.count({
-    where: {
-      trajeId,
-      estado: {
-        [Op.in]: [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO]
-      }
-    }
-  });
-
-  if (reservasActivas > 0) {
-    if (traje.estado !== EstadoTraje.BAJA && traje.estado !== EstadoTraje.MANTENIMIENTO) {
-      await traje.update({ estado: EstadoTraje.ALQUILADO });
-    }
-    return;
-  }
-
-  if (traje.estado === EstadoTraje.ALQUILADO) {
-    await traje.update({ estado: EstadoTraje.DISPONIBLE });
-  }
+  // Ya no se cambia el estado del traje en base a reservas. 
+  // Ahora la disponibilidad se maneja dinámicamente calculando 
+  // el stock total vs las reservas activas.
 };
 
 // const sincronizarEstadoTraje = async (trajeId: number, estadoReserva: string) => {

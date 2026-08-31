@@ -3,6 +3,7 @@ version: '3.8'
 services:
   postgres-db:
     image: postgres:17
+    restart: always
     container_name: postgres-alquiler
     environment:
       POSTGRES_USER: postgres

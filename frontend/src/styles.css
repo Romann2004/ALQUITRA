@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    ESTILOS GENERALES Y CONFIGURACIÓN DE ANGULAR MATERIAL (ALQUITRA)
    ========================================================================== */
 
@@ -477,4 +477,13 @@ html.dark-theme .total-registros {
 
 html.dark-theme .total-registros strong {
   color: #f8fafc; /* Número en blanco brillante */
+}
+
+/* FIX: Ocultar la sombra/recuadro gris indeseado del toggle de modo oscuro */
+.mode-btn mat-slide-toggle .mdc-switch__ripple,
+.mode-btn mat-slide-toggle .mdc-switch__state-layer,
+.mode-btn mat-slide-toggle .mat-ripple {
+  display: none !important;
+  opacity: 0 !important;
+  background: transparent !important;
 }

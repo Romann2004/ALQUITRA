@@ -67,7 +67,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Seña Abonada</mat-label>
-      <span matPrefix>$&nbsp;</span>
+      <span matPrefix style="margin-left: 8px;">$&nbsp;</span>
       <input matInput type="number" formControlName="senia" min="0">
       <mat-error *ngIf="form.get('senia')?.hasError('min')">
         La seña debe ser un valor positivo o cero.

@@ -4,6 +4,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { MatCalendarCellCssClasses } from '@angular/material/datepicker';
+import { Observable } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
 import { TalleTraje, Traje } from '../../models/traje.model';
 import { TrajeService } from '../../services/traje.service';
 import { AlertService } from '../../services/alert.service';
@@ -26,6 +29,7 @@ interface MedidaTalle {
 export class GestionTrajesComponent implements OnInit {
   @ViewChild('trajeDialog') trajeDialog!: TemplateRef<any>;
   @ViewChild('disponibilidadDialog') disponibilidadDialog!: TemplateRef<any>;
+  @ViewChild('medidasDialog') medidasDialog!: TemplateRef<any>;
   @ViewChild(MatSort) sort!: MatSort;
 
   trajes: Traje[] = [];
@@ -51,9 +55,12 @@ export class GestionTrajesComponent implements OnInit {
   nuevoColor = '';
   
   // Arreglos de selección
-  categoriasDisponibles = ['Smokings', 'Gala', 'Casual'];
-  coloresDisponibles = ['Negro', 'Azul', 'Azul Marino', 'Gris', 'Blanco', 'Bordeaux'];
+  categoriasDisponibles: string[] = [];
+  coloresDisponibles: string[] = [];
   tallesDisponibles = Object.values(TalleTraje);
+  
+  filteredCategorias!: Observable<string[]>;
+  filteredColores!: Observable<string[]>;
   
   tablaMedidas: MedidaTalle[] = [
     { talle: 'XS', pecho: '84-88', cintura: '68-72', cadera: '84-88', largo: '68-70' },
@@ -65,7 +72,15 @@ export class GestionTrajesComponent implements OnInit {
   ];
   
   trajeSeleccionado: Traje | null = null;
-  reservasDisponibilidad: Array<{ fechaRetiro: string; fechaDevolucion: string; cantidad: number }> = [];
+  reservasDisponibilidad: Array<{ 
+    fechaRetiro: string; 
+    fechaDevolucion: string; 
+    cantidad: number;
+    cliente?: { nombre: string };
+    Cliente?: { nombre: string };
+  }> = [];
+  
+  fechaActual = new Date();
 
   constructor(
     private fb: FormBuilder,
@@ -84,8 +99,62 @@ export class GestionTrajesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.inicializarListas();
     this.configurarFiltro();
     this.cargarTrajes();
+    this.configurarAutocompletado();
+    this.configurarGeneracionCodigo();
+  }
+
+  inicializarListas() {
+    const catGuardadas = JSON.parse(localStorage.getItem('categoriasTrajes') || '[]');
+    const colGuardados = JSON.parse(localStorage.getItem('coloresTrajes') || '[]');
+    
+    this.categoriasDisponibles = [...new Set(['Smokings', 'Gala', 'Casual', ...catGuardadas])];
+    this.coloresDisponibles = [...new Set(['Negro', 'Azul', 'Azul Marino', 'Gris', 'Blanco', 'Bordeaux', ...colGuardados])];
+  }
+
+  configurarAutocompletado() {
+    this.filteredCategorias = this.trajeForm.get('categoria')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value, this.categoriasDisponibles))
+    );
+    this.filteredColores = this.trajeForm.get('color')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value, this.coloresDisponibles))
+    );
+  }
+
+  private _filter(value: string, list: string[]): string[] {
+    const filterValue = value ? value.toLowerCase() : '';
+    return list.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+  configurarGeneracionCodigo() {
+    this.trajeForm.get('categoria')?.valueChanges.subscribe(categoria => {
+      // Solo autogenerar si no estamos en edición y el usuario eligió/escribió algo
+      if (!this.modoEdicion && categoria && categoria.length >= 3) {
+        const prefijo = categoria.substring(0, 4).toUpperCase();
+        // Buscar el número más alto en trajes con este prefijo
+        let maxNum = 0;
+        this.trajes.forEach(t => {
+          if (t.codigoEtiqueta && t.codigoEtiqueta.startsWith(prefijo + '-')) {
+            const numPart = t.codigoEtiqueta.split('-')[1];
+            if (numPart) {
+              const num = parseInt(numPart, 10);
+              if (!isNaN(num) && num > maxNum) {
+                maxNum = num;
+              }
+            }
+          }
+        });
+        const nextNum = (maxNum + 1).toString().padStart(3, '0');
+        const currentCode = this.trajeForm.get('codigoEtiqueta')?.value;
+        if (!currentCode || currentCode.startsWith(prefijo)) {
+            this.trajeForm.patchValue({ codigoEtiqueta: `${prefijo}-${nextNum}` }, { emitEvent: false });
+        }
+      }
+    });
   }
 
   cargarTrajes() {
@@ -145,10 +214,6 @@ export class GestionTrajesComponent implements OnInit {
       this.modoEdicion = true;
       this.trajeIdEnEdicion = traje.id ?? null;
       
-      // Aseguramos que la categoría y el color del traje a editar existan en los combos
-      this.agregarValorSiNoExiste('categoria', String(traje.categoria));
-      this.agregarValorSiNoExiste('color', String(traje.color));
-      
       this.trajeForm.patchValue({
         codigoEtiqueta: traje.codigoEtiqueta,
         categoria: traje.categoria,
@@ -174,6 +239,8 @@ export class GestionTrajesComponent implements OnInit {
       this.mostrarMensaje('Revisá los campos del formulario.', true);
       return;
     }
+
+    this.guardarValoresDinamicos();
 
     const datosTraje = {
       ...this.trajeForm.getRawValue(),
@@ -246,50 +313,51 @@ export class GestionTrajesComponent implements OnInit {
     this.trajeIdEnEdicion = null;
     this.nuevaCategoria = '';
     this.nuevoColor = '';
+    this.fechaActual = new Date();
   }
 
   // ==========================================
-  // FUNCIONES DE AGREGADO DINÁMICO
+  // CALENDARIO DATECLASS Y MEDIDAS
   // ==========================================
+  
+  dateClass() {
+    return (date: Date): MatCalendarCellCssClasses => {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
 
-  agregarCategoria() {
-    const valor = this.nuevaCategoria.trim();
-    if (!valor) return;
-    
-    this.agregarValorSiNoExiste('categoria', valor);
-    
-    // Forzamos la actualización del control del formulario para que refleje el nuevo valor
-    this.trajeForm.get('categoria')?.setValue(valor);
-    this.trajeForm.get('categoria')?.updateValueAndValidity();
-    
-    this.nuevaCategoria = '';
+      const isReserved = this.reservasDisponibilidad.some(r => {
+        // Al agregar T00:00:00 forzamos a que se interprete en la zona horaria local
+        const fInicio = new Date(r.fechaRetiro + 'T00:00:00');
+        const fFin = new Date(r.fechaDevolucion + 'T00:00:00');
+        fInicio.setHours(0, 0, 0, 0);
+        fFin.setHours(0, 0, 0, 0);
+        return d >= fInicio && d <= fFin;
+      });
+
+      return isReserved ? 'reserved-date' : '';
+    };
   }
-
-  agregarColor() {
-    const valor = this.nuevoColor.trim();
-    if (!valor) return;
+  
+  guardarValoresDinamicos() {
+    const cat = this.trajeForm.get('categoria')?.value;
+    const col = this.trajeForm.get('color')?.value;
     
-    this.agregarValorSiNoExiste('color', valor);
-    
-    // Forzamos la actualización del control del formulario para que refleje el nuevo valor
-    this.trajeForm.get('color')?.setValue(valor);
-    this.trajeForm.get('color')?.updateValueAndValidity();
-    
-    this.nuevoColor = '';
-  }
-
-  agregarValorSiNoExiste(tipo: 'categoria' | 'color', valor: string) {
-    const lista = tipo === 'categoria' ? this.categoriasDisponibles : this.coloresDisponibles;
-    const existe = lista.some((item) => item.toLowerCase() === valor.toLowerCase());
-    
-    if (existe) return;
-
-    if (tipo === 'categoria') {
-      // Inmutabilidad para forzar la renderización del select en la vista
-      this.categoriasDisponibles = [...this.categoriasDisponibles, valor];
-    } else {
-      this.coloresDisponibles = [...this.coloresDisponibles, valor];
+    if (cat && !this.categoriasDisponibles.some(c => c.toLowerCase() === cat.toLowerCase())) {
+      this.categoriasDisponibles.push(cat);
+      localStorage.setItem('categoriasTrajes', JSON.stringify(this.categoriasDisponibles.filter(c => !['Smokings', 'Gala', 'Casual'].includes(c))));
     }
+    if (col && !this.coloresDisponibles.some(c => c.toLowerCase() === col.toLowerCase())) {
+      this.coloresDisponibles.push(col);
+      localStorage.setItem('coloresTrajes', JSON.stringify(this.coloresDisponibles.filter(c => !['Negro', 'Azul', 'Azul Marino', 'Gris', 'Blanco', 'Bordeaux'].includes(c))));
+    }
+  }
+
+  abrirTablaMedidas() {
+    this.dialog.open(this.medidasDialog, {
+      width: '600px',
+      backdropClass: 'blur-backdrop',
+      autoFocus: false,
+    });
   }
 
   // ==========================================
@@ -305,7 +373,7 @@ export class GestionTrajesComponent implements OnInit {
         this.reservasDisponibilidad = res.reservas || [];
 
         this.dialog.open(this.disponibilidadDialog, {
-          width: '760px',
+          width: '800px',
           maxWidth: '96vw',
           maxHeight: '90vh',
           backdropClass: 'blur-backdrop',
@@ -315,6 +383,26 @@ export class GestionTrajesComponent implements OnInit {
       error: (err) => {
         this.mostrarMensaje(err.error?.msg || 'Error al cargar la disponibilidad del traje', true);
       },
+    });
+  }
+
+  getReservasDelMes(activeDate: Date | null) {
+    if (!activeDate || !this.reservasDisponibilidad) return [];
+    
+    const year = activeDate.getFullYear();
+    const month = activeDate.getMonth();
+    
+    return this.reservasDisponibilidad.filter(r => {
+      const fInicio = new Date(r.fechaRetiro + 'T00:00:00');
+      const fFin = new Date(r.fechaDevolucion + 'T00:00:00');
+      
+      // Chequear si la reserva toca el mes activo
+      const inicioEnMes = fInicio.getFullYear() === year && fInicio.getMonth() === month;
+      const finEnMes = fFin.getFullYear() === year && fFin.getMonth() === month;
+      const cruzaMes = fInicio.getFullYear() <= year && fInicio.getMonth() < month && 
+                       fFin.getFullYear() >= year && fFin.getMonth() > month;
+      
+      return inicioEnMes || finEnMes || cruzaMes;
     });
   }
 

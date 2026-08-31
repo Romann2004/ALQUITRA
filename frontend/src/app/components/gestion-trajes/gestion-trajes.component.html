@@ -64,7 +64,7 @@
       </ng-container>
       <!-- Columna Disponibilidad -->
       <ng-container matColumnDef="disponibilidad">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="disponibilidad"> Disponibilidad </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="disponibilidad"> DISPONIBILIDAD </th>
         <td mat-cell *matCellDef="let t">
           <div class="availability-cell">
             <button mat-icon-button color="accent" (click)="verDisponibilidad(t)" title="Ver fechas reservadas">
@@ -115,58 +115,47 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Categoría</mat-label>
-          <mat-select formControlName="categoria">
-            <mat-option *ngFor="let categoria of categoriasDisponibles" [value]="categoria">
+          <input type="text" matInput formControlName="categoria" [matAutocomplete]="autoCat" placeholder="Ej. Smoking">
+          <mat-autocomplete #autoCat="matAutocomplete">
+            <mat-option *ngFor="let categoria of filteredCategorias | async" [value]="categoria">
               {{ categoria }}
             </mat-option>
-          </mat-select>
+          </mat-autocomplete>
           <mat-error *ngIf="trajeForm.get('categoria')?.hasError('required')">
             La categoría es obligatoria.
           </mat-error>
         </mat-form-field>
 
-        <div class="combo-row">
-          <mat-form-field appearance="outline" class="flex-field">
-            <mat-label>Nueva categoría</mat-label>
-            <input matInput [(ngModel)]="nuevaCategoria" [ngModelOptions]="{standalone: true}"
-              placeholder="Ej: Smoking premium">
+        <div class="combo-row" style="display: flex; gap: 8px; align-items: start;">
+          <mat-form-field appearance="outline" style="flex: 1;">
+            <mat-label>Talle</mat-label>
+            <mat-select formControlName="talle">
+              <mat-option *ngFor="let talle of tallesDisponibles" [value]="talle">
+                {{ talle }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="trajeForm.get('talle')?.hasError('required')">
+              El talle es obligatorio.
+            </mat-error>
           </mat-form-field>
-          <button mat-stroked-button color="accent" type="button" class="combo-action-button"
-            (click)="agregarCategoria()">Agregar</button>
+          <button mat-icon-button color="accent" type="button" (click)="abrirTablaMedidas()"
+            title="Ver tabla de medidas" style="margin-top: 4px;">
+            <mat-icon>straighten</mat-icon>
+          </button>
         </div>
 
         <mat-form-field appearance="outline">
-          <mat-label>Talle</mat-label>
-          <mat-select formControlName="talle">
-            <mat-option *ngFor="let talle of tallesDisponibles" [value]="talle">
-              {{ talle }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="trajeForm.get('talle')?.hasError('required')">
-            El talle es obligatorio.
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
           <mat-label>Color</mat-label>
-          <mat-select formControlName="color">
-            <mat-option *ngFor="let color of coloresDisponibles" [value]="color">
+          <input type="text" matInput formControlName="color" [matAutocomplete]="autoCol" placeholder="Ej. Negro">
+          <mat-autocomplete #autoCol="matAutocomplete">
+            <mat-option *ngFor="let color of filteredColores | async" [value]="color">
               {{ color }}
             </mat-option>
-          </mat-select>
+          </mat-autocomplete>
           <mat-error *ngIf="trajeForm.get('color')?.hasError('required')">
             El color es obligatorio.
           </mat-error>
         </mat-form-field>
-
-        <div class="combo-row">
-          <mat-form-field appearance="outline" class="flex-field">
-            <mat-label>Nuevo color</mat-label>
-            <input matInput [(ngModel)]="nuevoColor" [ngModelOptions]="{standalone: true}" placeholder="Ej: Vino">
-          </mat-form-field>
-          <button mat-stroked-button color="accent" type="button" class="combo-action-button"
-            (click)="agregarColor()">Agregar</button>
-        </div>
 
         <mat-form-field appearance="outline">
           <mat-label>Cantidad</mat-label>
@@ -205,33 +194,80 @@
   <ng-template #disponibilidadDialog>
     <h2 mat-dialog-title>Disponibilidad de {{ trajeSeleccionado?.codigoEtiqueta }}</h2>
     <mat-dialog-content>
-      <div class="availability-summary">
-        <div>
-          <div class="subsection-title">Estado actual</div>
-          <span class="status-badge" [ngClass]="(trajeSeleccionado?.estado || '').toLowerCase().replace(' ', '-')">
-            {{ trajeSeleccionado?.estado }}
-          </span>
-        </div>
-        <div>
-          <div class="subsection-title">Cantidad total</div>
-          <div class="availability-count">{{ trajeSeleccionado?.cantidad || 0 }} unidades</div>
-        </div>
-      </div>
-
-      <div class="availability-list" *ngIf="reservasDisponibilidad.length > 0; else sinReservas">
-        <div class="availability-item" *ngFor="let reserva of reservasDisponibilidad">
+      <div class="availability-summary" style="grid-template-columns: 1fr;">
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 16px; border-radius: 8px;">
           <div>
-            <strong>{{ reserva.fechaRetiro | date:'dd/MM/yyyy':'UTC' }}</strong>
-            <span> a </span>
-            <strong>{{ reserva.fechaDevolucion | date:'dd/MM/yyyy':'UTC' }}</strong>
+            <div class="subsection-title">Cantidad total</div>
+            <div class="availability-count">{{ trajeSeleccionado?.cantidad || 0 }} unidades</div>
           </div>
-          <div class="availability-quantity">{{ reserva.cantidad }} unidades ocupadas</div>
         </div>
       </div>
 
-      <ng-template #sinReservas>
-        <p style="margin: 0; color: #64748b;">No hay reservas activas para este traje.</p>
-      </ng-template>
+      <div class="disponibilidad-layout">
+        <div class="calendar-wrapper">
+          <mat-calendar #calendar [dateClass]="dateClass()"></mat-calendar>
+        </div>
+
+        <div class="legend-wrapper" *ngIf="calendar">
+          <h3 class="legend-title">Alquileres del mes</h3>
+          
+          <ng-container *ngIf="getReservasDelMes(calendar.activeDate || fechaActual) as reservasMes">
+            <div class="legend-list" *ngIf="reservasMes.length > 0; else sinReservas">
+              <div class="legend-item" *ngFor="let r of reservasMes">
+                <div class="legend-client">
+                  <mat-icon class="legend-icon">person</mat-icon>
+                  {{ r.cliente?.nombre || r.Cliente?.nombre || 'Desconocido' }}
+                </div>
+                <div class="legend-details">
+                  <span class="legend-qty"><strong>{{ r.cantidad }}</strong> uni.</span>
+                  <span class="legend-dates">{{ r.fechaRetiro | date:'dd/MM' }} al {{ r.fechaDevolucion | date:'dd/MM' }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <ng-template #sinReservas>
+              <p class="no-reservations">No hay alquileres registrados en este mes.</p>
+            </ng-template>
+          </ng-container>
+        </div>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close type="button">Cerrar</button>
+    </mat-dialog-actions>
+  </ng-template>
+
+  <!-- DIALOG DE MEDIDAS -->
+  <ng-template #medidasDialog>
+    <h2 mat-dialog-title>Tabla de Medidas</h2>
+    <mat-dialog-content>
+      <table mat-table [dataSource]="tablaMedidas" class="w-100 table-medidas">
+        <ng-container matColumnDef="talle">
+          <th mat-header-cell *matHeaderCellDef> Talle </th>
+          <td mat-cell *matCellDef="let m"> <strong>{{m.talle}}</strong> </td>
+        </ng-container>
+        <ng-container matColumnDef="pecho">
+          <th mat-header-cell *matHeaderCellDef> Pecho (cm) </th>
+          <td mat-cell *matCellDef="let m"> {{m.pecho}} </td>
+        </ng-container>
+        <ng-container matColumnDef="cintura">
+          <th mat-header-cell *matHeaderCellDef> Cintura (cm) </th>
+          <td mat-cell *matCellDef="let m"> {{m.cintura}} </td>
+        </ng-container>
+        <ng-container matColumnDef="cadera">
+          <th mat-header-cell *matHeaderCellDef> Cadera (cm) </th>
+          <td mat-cell *matCellDef="let m"> {{m.cadera}} </td>
+        </ng-container>
+        <ng-container matColumnDef="largo">
+          <th mat-header-cell *matHeaderCellDef> Largo (cm) </th>
+          <td mat-cell *matCellDef="let m"> {{m.largo}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['talle','pecho','cintura','cadera','largo']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['talle','pecho','cintura','cadera','largo'];"></tr>
+      </table>
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">

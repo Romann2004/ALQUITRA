@@ -19,31 +19,107 @@ table {
   gap: 8px;
 }
 
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
+.action-buttons-cell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-.status-badge.disponible {
-  background-color: #c8e6c9;
-  color: #2e7d32;
+.calendar-wrapper {
+  flex: 0 0 320px;
 }
 
-.status-badge.alquilado {
-  background-color: #fee2e2;
-  color: #b91c1c;
+.disponibilidad-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-top: 12px;
 }
 
-.status-badge.en-mantenimiento {
-  background-color: #fef3c7;
-  color: #92400e;
+.legend-wrapper {
+  flex: 1;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  min-width: 300px;
 }
 
-.status-badge.baja {
-  background-color: #e2e8f0;
+.legend-title {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #334155;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+
+.legend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.legend-item {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.legend-client {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.legend-icon {
+  color: #64748b;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.legend-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
   color: #475569;
+  padding-left: 28px;
+}
+
+.legend-qty strong {
+  color: #0f172a;
+}
+
+.no-reservations {
+  color: #64748b;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 32px 0;
+  font-style: italic;
+}
+
+::ng-deep .reserved-date .mat-calendar-body-cell-content {
+  background-color: #ef4444 !important;
+  color: white !important;
+  border-radius: 50% !important;
+}
+
+.table-medidas {
+  margin-top: 10px;
+}
+.table-medidas th {
+  background-color: #f1f5f9;
 }
 
 .traje-dialog-content {
@@ -141,5 +217,14 @@ table {
   .combo-action-button {
     margin-top: 0;
     min-height: 44px;
+  }
+  
+  .disponibilidad-layout {
+    flex-direction: column;
+  }
+  
+  .calendar-wrapper {
+    flex: auto;
+    width: 100%;
   }
 }

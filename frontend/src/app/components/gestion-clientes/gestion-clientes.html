@@ -1,5 +1,5 @@
 <div class="premium-container">
-  
+
   <div class="premium-header">
     <div class="premium-header-left">
       <div class="premium-icon-box clientes">
@@ -10,14 +10,15 @@
         <p>Administrá el directorio y la información de contacto.</p>
       </div>
     </div>
-    
-    <button mat-flat-button color="accent" style="padding: 0 24px; border-radius: 8px; height: 44px;" (click)="agregarCliente()">
+
+    <button mat-flat-button color="accent" style="padding: 0 24px; border-radius: 8px; height: 44px;"
+      (click)="agregarCliente()">
       <mat-icon>add</mat-icon> Nuevo Cliente
     </button>
   </div>
 
   <!-- Buscador -->
-   <mat-card class="premium-card">
+  <mat-card class="premium-card">
     <mat-card-content style="padding: 16px 24px 0 24px !important;">
       <mat-form-field appearance="outline" style="width: 100%;">
         <mat-label>Buscar cliente</mat-label>
@@ -33,103 +34,51 @@
 
   <div *ngIf="dataSource && dataSource.data; else cargando" class="premium-table-wrapper">
     <table mat-table [dataSource]="dataSource" matSort>
-      
+
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="id"> ID </th>
         <td mat-cell *matCellDef="let element"> {{element.id}} </td>
       </ng-container>
 
       <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="nombre"> NOMBRE COMPLETO </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="nombre"> NOMBRE </th>
         <td mat-cell *matCellDef="let element">
-          <span (dblclick)="element.originalNombre = element.nombre; element.editNombre = true" *ngIf="!element.editNombre" class="dato-texto">
-            {{element.nombre}}
-          </span>
-          <input *ngIf="element.editNombre"
-                 [(ngModel)]="element.nombre"
-                 #nombreEdit="ngModel"
-                 required
-                 minlength="5"
-                 maxlength="25"
-                 (keypress)="filtrarLetras($event)"
-                 (keyup.enter)="nombreEdit.valid ? guardarCambio(element, 'nombre') : cancelarEdicionDobleClick(element, 'nombre')"
-                 (blur)="nombreEdit.valid ? guardarCambio(element, 'nombre') : cancelarEdicionDobleClick(element, 'nombre')"
-                 class="edit-input"
-                 [style.border-color]="nombreEdit.invalid ? '#ef4444' : ''"
-                 [style.outline-color]="nombreEdit.invalid ? '#ef4444' : ''">
+          <span class="dato-texto">{{element.nombre}}</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="dni">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="dni"> DNI </th>
         <td mat-cell *matCellDef="let element">
-          <span (dblclick)="element.originalDni = element.dni; element.editDni = true" *ngIf="!element.editDni" class="dato-texto">
-            {{element.dni}}
-          </span>
-          <input *ngIf="element.editDni"
-                 [(ngModel)]="element.dni"
-                 #dniEdit="ngModel"
-                 required
-                 minlength="6"
-                 maxlength="9"
-                 (keypress)="filtrarTeclas($event)"
-                 (keyup.enter)="dniEdit.valid ? guardarCambio(element, 'dni') : cancelarEdicionDobleClick(element, 'dni')"
-                 (blur)="dniEdit.valid ? guardarCambio(element, 'dni') : cancelarEdicionDobleClick(element, 'dni')"
-                 class="edit-input"
-                 [style.border-color]="dniEdit.invalid ? '#ef4444' : ''"
-                 [style.outline-color]="dniEdit.invalid ? '#ef4444' : ''">
+          <span class="dato-texto">{{element.dni}}</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="telefono">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="telefono"> Teléfono </th>
         <td mat-cell *matCellDef="let element">
-          <span (dblclick)="element.originalTelefono = element.telefono; element.editTelefono = true" *ngIf="!element.editTelefono" class="dato-texto">
-            {{element.telefono}}
-          </span>
-          <input *ngIf="element.editTelefono"
-                 [(ngModel)]="element.telefono"
-                 #telefonoEdit="ngModel"
-                 required
-                 minlength="6"
-                 maxlength="10"
-                 (keypress)="filtrarTeclas($event)"
-                 (keyup.enter)="telefonoEdit.valid ? guardarCambio(element, 'telefono') : cancelarEdicionDobleClick(element, 'telefono')"
-                 (blur)="telefonoEdit.valid ? guardarCambio(element, 'telefono') : cancelarEdicionDobleClick(element, 'telefono')"
-                 class="edit-input"
-                 [style.border-color]="telefonoEdit.invalid ? '#ef4444' : ''"
-                 [style.outline-color]="telefonoEdit.invalid ? '#ef4444' : ''">
+          <span class="dato-texto">{{element.telefono}}</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="email">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="email"> Email </th>
         <td mat-cell *matCellDef="let element">
-          <span (dblclick)="element.originalEmail = element.email; element.editEmail = true" *ngIf="!element.editEmail" class="dato-texto">
-            {{element.email}}
-          </span>
-          <input *ngIf="element.editEmail"
-                 [(ngModel)]="element.email"
-                 #emailEdit="ngModel"
-                 required
-                 email
-                 (keyup.enter)="emailEdit.valid ? guardarCambio(element, 'email') : cancelarEdicionDobleClick(element, 'email')"
-                 (blur)="emailEdit.valid ? guardarCambio(element, 'email') : cancelarEdicionDobleClick(element, 'email')"
-                 class="edit-input"
-                 [style.border-color]="emailEdit.invalid ? '#ef4444' : ''"
-                 [style.outline-color]="emailEdit.invalid ? '#ef4444' : ''">
+          <span class="dato-texto">{{element.email}}</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-icon-button color="primary" (click)="editarCliente(element)" title="Editar">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" (click)="eliminarCliente(element.id)" title="Eliminar">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <div class="action-buttons-cell">
+            <button mat-icon-button color="primary" (click)="editarCliente(element)" title="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="eliminarCliente(element.id)" title="Eliminar">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </td>
       </ng-container>
 
@@ -137,112 +86,105 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
       <!-- Fila dinámica cuando el buscador no encuentra resultados -->
-       <tr class="mat-row" *MatNoDataRow>
+      <tr class="mat-row" *MatNoDataRow>
         <td class="mat-cell" colspan="6" style="padding: 20px; text-align: center; color: #64748b;">
           No se encontraron clientes que coincidan con la búsqueda.
         </td>
-       </tr>
+      </tr>
     </table>
   </div>
-  
+
   <ng-template #cargando>
-    <p style="color: #64748b; text-align: center; margin-top: 40px;">Conectando con el servidor o no hay clientes registrados...</p>
+    <p style="color: #64748b; text-align: center; margin-top: 40px;">Conectando con el servidor o no hay clientes
+      registrados...</p>
   </ng-template>
 
-<ng-template #clienteDialog>
-  <h2 mat-dialog-title>{{ modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente' }}</h2>
+  <ng-template #clienteDialog>
+    <h2 mat-dialog-title>{{ modoEdicion ? 'Editar Cliente' : 'Nuevo Cliente' }}</h2>
 
-  <mat-dialog-content [formGroup]="clienteForm">
-    
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Nombre completo</mat-label>
-      <input matInput formControlName="nombre" placeholder="Ej. Juan Pérez">
-      <mat-icon matSuffix style="color: #94a3b8;">person</mat-icon>
-      
-      <!-- MENSAJES DE ERROR PARA NOMBRE -->
-      <mat-error *ngIf="clienteForm.get('nombre')?.hasError('required')">
-        El nombre completo es obligatorio.
-      </mat-error>
-      <mat-error *ngIf="clienteForm.get('nombre')?.hasError('minlength')">
-        El nombre debe tener al menos 5 letras.
-      </mat-error>
-      <mat-error *ngIf="clienteForm.get('nombre')?.hasError('maxlength')">
-        El nombre no puede exceder las 25 letras.
-      </mat-error>
-      <mat-error *ngIf="clienteForm.get('nombre')?.hasError('pattern')">
-        El nombre solo puede contener letras y espacios.
-      </mat-error>
-    </mat-form-field>
+    <mat-dialog-content [formGroup]="clienteForm">
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>DNI (Documento)</mat-label>
-      <input matInput 
-             formControlName="dni" 
-             type="text" 
-             placeholder="Ej. 35383229"
-             (keypress)="filtrarTeclas($event)">
-      <mat-icon matSuffix style="color: #94a3b8;">badge</mat-icon>
-      
-      <!-- Corregido el anidamiento estructural de los errores -->
-      <mat-error *ngIf="clienteForm.get('dni')?.hasError('required')">
-        El DNI es un campo obligatorio.
-      </mat-error>
-      <mat-error *ngIf="clienteForm.get('dni')?.hasError('pattern')">
-        El DNI debe contener solo números.
-      </mat-error>
-      <mat-error *ngIf="clienteForm.get('dni')?.hasError('minlength') || clienteForm.get('dni')?.hasError('maxlength')">
-        El DNI debe tener entre 6 y 9 dígitos.
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre completo</mat-label>
+        <input matInput formControlName="nombre" placeholder="Ej. Juan Pérez">
+        <mat-icon matSuffix style="color: #94a3b8;">person</mat-icon>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Teléfono de contacto</mat-label>
-      <!-- Cambiado a type="text" e interceptado con filtrarTeclas para bloquear letras en vivo -->
-      <input matInput 
-             formControlName="telefono" 
-             type="text" 
-             placeholder="Ej. 3462201816"
-             (keypress)="filtrarTeclas($event)">
-      <mat-icon matSuffix style="color: #94a3b8;">phone</mat-icon>
-      
-      <!-- MENSAJES DE ERROR DINÁMICOS PARA TELÉFONO -->
-      <mat-error *ngIf="clienteForm.get('telefono')?.hasError('required')">
-        El teléfono es un campo obligatorio.
-      </mat-error>
-      <mat-error *ngIf="clienteForm.get('telefono')?.hasError('pattern')">
-        El teléfono debe contener solo números.
-      </mat-error>
-      <mat-error *ngIf="clienteForm.get('telefono')?.hasError('minlength') || clienteForm.get('telefono')?.hasError('maxlength')">
-        El teléfono debe tener entre 6 y 10 dígitos.
-      </mat-error>
-    </mat-form-field>
+        <!-- MENSAJES DE ERROR PARA NOMBRE -->
+        <mat-error *ngIf="clienteForm.get('nombre')?.hasError('required')">
+          El nombre completo es obligatorio.
+        </mat-error>
+        <mat-error *ngIf="clienteForm.get('nombre')?.hasError('minlength')">
+          El nombre debe tener al menos 5 letras.
+        </mat-error>
+        <mat-error *ngIf="clienteForm.get('nombre')?.hasError('maxlength')">
+          El nombre no puede exceder las 25 letras.
+        </mat-error>
+        <mat-error *ngIf="clienteForm.get('nombre')?.hasError('pattern')">
+          El nombre solo puede contener letras y espacios.
+        </mat-error>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Correo electrónico</mat-label>
-      <input matInput formControlName="email" type="email" placeholder="Ej. juan@gmail.com">
-      <mat-icon matSuffix style="color: #94a3b8;">mail</mat-icon>
-      
-      <!-- MENSAJES DE ERROR PARA EMAIL -->
-      <mat-error *ngIf="clienteForm.get('email')?.hasError('required')">
-        El correo electrónico es obligatorio.
-      </mat-error>
-      <mat-error *ngIf="clienteForm.get('email')?.hasError('email')">
-        Por favor, ingresa un formato de correo válido (ejemplo@correo.com).
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>DNI (Documento)</mat-label>
+        <input matInput formControlName="dni" type="text" placeholder="Ej. 35383229" (keypress)="filtrarTeclas($event)">
+        <mat-icon matSuffix style="color: #94a3b8;">badge</mat-icon>
 
-  </mat-dialog-content>
+        <!-- Corregido el anidamiento estructural de los errores -->
+        <mat-error *ngIf="clienteForm.get('dni')?.hasError('required')">
+          El DNI es un campo obligatorio.
+        </mat-error>
+        <mat-error *ngIf="clienteForm.get('dni')?.hasError('pattern')">
+          El DNI debe contener solo números.
+        </mat-error>
+        <mat-error
+          *ngIf="clienteForm.get('dni')?.hasError('minlength') || clienteForm.get('dni')?.hasError('maxlength')">
+          El DNI debe tener entre 6 y 9 dígitos.
+        </mat-error>
+      </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close (click)="cancelarEdicion()">Cancelar</button>
-    <button mat-raised-button 
-            color="primary" 
-            [disabled]="clienteForm.invalid" 
-            (click)="guardarCliente()">
-      <mat-icon>{{ modoEdicion ? 'sync' : 'save' }}</mat-icon>
-      {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
-    </button>
-  </mat-dialog-actions>
-</ng-template>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Teléfono de contacto</mat-label>
+        <!-- Cambiado a type="text" e interceptado con filtrarTeclas para bloquear letras en vivo -->
+        <input matInput formControlName="telefono" type="text" placeholder="Ej. 3462201816"
+          (keypress)="filtrarTeclas($event)">
+        <mat-icon matSuffix style="color: #94a3b8;">phone</mat-icon>
+
+        <!-- MENSAJES DE ERROR DINÁMICOS PARA TELÉFONO -->
+        <mat-error *ngIf="clienteForm.get('telefono')?.hasError('required')">
+          El teléfono es un campo obligatorio.
+        </mat-error>
+        <mat-error *ngIf="clienteForm.get('telefono')?.hasError('pattern')">
+          El teléfono debe contener solo números.
+        </mat-error>
+        <mat-error
+          *ngIf="clienteForm.get('telefono')?.hasError('minlength') || clienteForm.get('telefono')?.hasError('maxlength')">
+          El teléfono debe tener entre 6 y 10 dígitos.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Correo electrónico</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="Ej. juan@gmail.com">
+        <mat-icon matSuffix style="color: #94a3b8;">mail</mat-icon>
+
+        <!-- MENSAJES DE ERROR PARA EMAIL -->
+        <mat-error *ngIf="clienteForm.get('email')?.hasError('required')">
+          El correo electrónico es obligatorio.
+        </mat-error>
+        <mat-error *ngIf="clienteForm.get('email')?.hasError('email')">
+          Por favor, ingresa un formato de correo válido (ejemplo@correo.com).
+        </mat-error>
+      </mat-form-field>
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close (click)="cancelarEdicion()">Cancelar</button>
+      <button mat-raised-button color="primary" [disabled]="clienteForm.invalid" (click)="guardarCliente()">
+        <mat-icon>{{ modoEdicion ? 'sync' : 'save' }}</mat-icon>
+        {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+      </button>
+    </mat-dialog-actions>
+  </ng-template>
 
 </div>

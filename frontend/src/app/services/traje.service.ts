@@ -23,6 +23,9 @@ interface RespuestaDisponibilidadTraje {
         fechaRetiro: string;
         fechaDevolucion: string;
         cantidad: number;
+        cliente?: {
+            nombre: string;
+        };
     }>;
 }
 

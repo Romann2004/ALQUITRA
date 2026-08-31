@@ -96,26 +96,7 @@ export class GestionClientes implements OnInit {
     });
   }
 
-  guardarCambio(cliente: any, campo: string) {
-    const fieldName = 'edit' + campo.charAt(0).toUpperCase() + campo.slice(1);
 
-    if (cliente[fieldName] === true) {
-      cliente[fieldName] = false;
-      const body = { [campo]: cliente[campo] };
-
-      this._cliente.patchCliente(cliente.id, body).subscribe({
-        next: () => {
-          this.mostrarMensaje('¡Cambio Guardado!', false);
-          this.obtenerClientes(); // Recargamos para actualizar la lista en memoria
-        },
-        error: (err) => {
-          const msg = err.error?.msg || 'Error al guardar el cambio';
-          this.mostrarMensaje(msg, true);
-          this.obtenerClientes();
-        }
-      });
-    }
-  }
 
   aplicarFiltro(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -232,19 +213,5 @@ export class GestionClientes implements OnInit {
     this.alertService.mostrarExito(mensaje);
   }
 
-  cancelarEdicionDobleClick(element: any, campo: string) {
-    if (campo === 'dni') {
-      element.dni = element.originalDni; 
-      element.editDni = false; 
-    } else if (campo === 'telefono') {
-      element.telefono = element.originalTelefono; 
-      element.editTelefono = false; 
-    } else if (campo === 'nombre') {
-      element.nombre = element.originalNombre; 
-      element.editNombre = false; 
-    } else if (campo === 'email') {
-      element.email = element.originalEmail; 
-      element.editEmail = false; 
-    }
-  }
+
 }

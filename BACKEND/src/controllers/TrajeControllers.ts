@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Traje } from '../models/Traje';
 import Reserva from '../models/Reserva';
+import Cliente from '../models/Cliente';
 import { Log } from '../models/Log';
 import { EstadoTraje, EstadoReserva } from '../models/Enums';
 import { Op } from 'sequelize';
@@ -132,6 +133,12 @@ export const obtenerDisponibilidadTraje = async (req: Request, res: Response) =>
           [Op.in]: [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO],
         },
       },
+      include: [
+        {
+          model: Cliente,
+          attributes: ['nombre']
+        }
+      ],
       attributes: ['fechaRetiro', 'fechaDevolucion', 'cantidad'],
       order: [['fechaRetiro', 'ASC']],
     });

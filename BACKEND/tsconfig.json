@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "resolveJsonModule": true, // Permite importar archivos JSON
     "experimentalDecorators": true, // Útil para consistencia con Angular
     "emitDecoratorMetadata": true

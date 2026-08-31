@@ -90,6 +90,7 @@ export class FormReserva implements OnInit {
       this.form.patchValue({
         clienteId: this.data.clienteId,
         trajeId: this.data.trajeId,
+        cantidad: this.data.cantidad,
         fechaRetiro: corregirFecha(this.data.fechaRetiro),
         fechaDevolucion: corregirFecha(this.data.fechaDevolucion),
         senia: this.data.senia,

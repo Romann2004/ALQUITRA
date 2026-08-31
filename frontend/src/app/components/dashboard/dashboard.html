@@ -1,3 +1,5 @@
+<!-- components/dashboard/dashboard.html -->
+
 <div class="dashboard-container">
   <header class="dashboard-header">
     <h1>Resumen del Negocio</h1>
@@ -43,20 +45,18 @@
   </section>
 
   <div class="dashboard-split-layout">
-    
+
     <section class="chart-section">
       <mat-card class="dashboard-card main-chart">
+
+        <div class="sidebar-header">
+          <h3>Timeline Histórico de Alquileres</h3>
+          <span class="badge-success">Evolución</span>
+        </div>
+
         <mat-card-content>
-          <apx-chart
-            [series]="chartSeries"
-            [chart]="chartDetails"
-            [xaxis]="chartXAxis"
-            [yaxis]="chartYAxis"
-            [title]="chartTitle"
-            [colors]="chartColors"
-            [plotOptions]="chartPlotOptions"
-            [dataLabels]="chartDataLabels"
-            [grid]="chartGrid"
+          <apx-chart [series]="chartSeries" [chart]="chartDetails" [xaxis]="chartXAxis" [yaxis]="chartYAxis"
+            [colors]="chartColors" [plotOptions]="chartPlotOptions" [dataLabels]="chartDataLabels" [grid]="chartGrid"
             [states]="chartStates">
           </apx-chart>
         </mat-card-content>
@@ -64,18 +64,18 @@
     </section>
 
     <aside class="sidebar-intelligence">
-      
+
       <mat-card class="dashboard-card space-bottom">
         <div class="sidebar-header">
           <h3>Últimos Alquileres</h3>
-          <span class="badge-info">Actividad</span>
+          <span class="badge-success">Actividad</span>
         </div>
-        
+
         <div class="sidebar-content">
           <div *ngIf="recentReservations.length === 0" class="no-data">
             No se registran alquileres recientes.
           </div>
-          
+
           <div class="reservation-list" *ngIf="recentReservations.length > 0">
             <div class="reservation-item" *ngFor="let item of recentReservations">
               <div class="item-avatar">
@@ -84,7 +84,7 @@
               <div class="item-details">
                 <p class="client-name">{{ item.Cliente?.nombre || 'Cliente no especificado' }}</p>
                 <p class="suit-info">
-                  {{ item.Traje?.categoria }} ({{ item.Traje?.color }}) • 
+                  {{ item.Traje?.categoria }} ({{ item.Traje?.color }}) •
                   <span class="size-badge">Talle {{ item.Traje?.talle }}</span>
                 </p>
               </div>
@@ -102,12 +102,12 @@
           <h3>Clientes más Fieles</h3>
           <span class="badge-success">Top Rentas</span>
         </div>
-        
+
         <div class="sidebar-content">
           <div *ngIf="topClients.length === 0" class="no-data">
             Aún no hay historial de recurrencia.
           </div>
-          
+
           <div class="top-clients-list" *ngIf="topClients.length > 0">
             <div class="top-client-item" *ngFor="let client of topClients; let i = index">
               <div class="rank-badge" [ngClass]="'rank-' + (i + 1)">
@@ -133,7 +133,7 @@
 
 <ng-template #monthDialog>
   <div class="modal-wrapper">
-    
+
     <div class="modal-header">
       <div>
         <h3 class="modal-title">Alquileres de {{ selectedMonthName }}</h3>

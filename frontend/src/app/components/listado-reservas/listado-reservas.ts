@@ -14,7 +14,7 @@ import { AlertService } from '../../services/alert.service';
   styleUrl: './listado-reservas.css',
 })
 export class ListadoReservas implements OnInit {
-  displayedColumns: string[] = ['id', 'cliente', 'traje', 'fechaRetiro', 'estado', 'fechaDevolucion', 'senia', 'acciones'];
+  displayedColumns: string[] = ['id', 'cliente', 'traje', 'cantidad', 'fechaRetiro', 'estado', 'fechaDevolucion', 'senia', 'acciones'];
   
   dataSource!: MatTableDataSource<Reserva>;
   @ViewChild('miTabla') table!: MatTable<any>;

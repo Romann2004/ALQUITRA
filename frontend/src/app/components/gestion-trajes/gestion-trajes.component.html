@@ -16,9 +16,10 @@
     </button>
   </div>
 
-  <mat-card class="premium-card filter-card">
-    <mat-card-content>
-      <mat-form-field appearance="outline" class="filter-field">
+  <!-- Buscador -->
+  <mat-card class="premium-card">
+    <mat-card-content style="padding: 16px 24px 0 24px !important;">
+      <mat-form-field appearance="outline" style="width: 100%;">
         <mat-label>Buscar traje</mat-label>
         <input matInput (keyup)="aplicarFiltro($event)" placeholder="Ej. smoking, negro, XL, alquilado o cantidad">
         <mat-icon matSuffix style="color: #94a3b8;">search</mat-icon>
@@ -113,18 +114,28 @@
           </mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Categoría</mat-label>
-          <input type="text" matInput formControlName="categoria" [matAutocomplete]="autoCat" placeholder="Ej. Smoking">
-          <mat-autocomplete #autoCat="matAutocomplete">
-            <mat-option *ngFor="let categoria of filteredCategorias | async" [value]="categoria">
-              {{ categoria }}
-            </mat-option>
-          </mat-autocomplete>
-          <mat-error *ngIf="trajeForm.get('categoria')?.hasError('required')">
-            La categoría es obligatoria.
-          </mat-error>
-        </mat-form-field>
+        <div class="combo-row" style="display: flex; gap: 8px; align-items: start;">
+          <mat-form-field appearance="outline" style="flex: 1;">
+            <mat-label>Categoría</mat-label>
+            <input type="text" matInput formControlName="categoria" [matAutocomplete]="autoCat"
+              placeholder="Ej. Smoking">
+            <mat-autocomplete #autoCat="matAutocomplete">
+              <mat-option *ngFor="let categoria of filteredCategorias | async" [value]="categoria">
+                {{ categoria }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="trajeForm.get('categoria')?.hasError('required')">
+              La categoría es obligatoria.
+            </mat-error>
+            <mat-error *ngIf="trajeForm.get('categoria')?.hasError('pattern')">
+              Solo se permiten letras y espacios.
+            </mat-error>
+          </mat-form-field>
+          <button mat-icon-button color="accent" type="button" (click)="abrirModalNuevaCategoria()"
+            title="Añadir nueva categoría" style="margin-top: 4px;">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
 
         <div class="combo-row" style="display: flex; gap: 8px; align-items: start;">
           <mat-form-field appearance="outline" style="flex: 1;">
@@ -144,18 +155,29 @@
           </button>
         </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Color</mat-label>
-          <input type="text" matInput formControlName="color" [matAutocomplete]="autoCol" placeholder="Ej. Negro">
-          <mat-autocomplete #autoCol="matAutocomplete">
-            <mat-option *ngFor="let color of filteredColores | async" [value]="color">
-              {{ color }}
-            </mat-option>
-          </mat-autocomplete>
-          <mat-error *ngIf="trajeForm.get('color')?.hasError('required')">
-            El color es obligatorio.
-          </mat-error>
-        </mat-form-field>
+        <div class="combo-row" style="display: flex; gap: 8px; align-items: start;">
+          <mat-form-field appearance="outline" style="flex: 1;">
+            <mat-label>Color</mat-label>
+            <input type="text" matInput formControlName="color" [matAutocomplete]="autoCol" placeholder="Ej. Negro">
+            <mat-autocomplete #autoCol="matAutocomplete">
+              <mat-option *ngFor="let color of filteredColores | async" [value]="color.nombre">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div [style.backgroundColor]="color.hex"
+                    style="width: 20px; height: 20px; border-radius: 4px; border: 1px solid #cbd5e1; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                  </div>
+                  <span>{{ color.nombre }}</span>
+                </div>
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="trajeForm.get('color')?.hasError('required')">
+              El color es obligatorio.
+            </mat-error>
+          </mat-form-field>
+          <button mat-icon-button color="accent" type="button" (click)="abrirModalNuevoColor()"
+            title="Añadir nuevo color" style="margin-top: 4px;">
+            <mat-icon>palette</mat-icon>
+          </button>
+        </div>
 
         <mat-form-field appearance="outline">
           <mat-label>Cantidad</mat-label>
@@ -211,7 +233,7 @@
 
         <div class="legend-wrapper" *ngIf="calendar">
           <h3 class="legend-title">Alquileres del mes</h3>
-          
+
           <ng-container *ngIf="getReservasDelMes(calendar.activeDate || fechaActual) as reservasMes">
             <div class="legend-list" *ngIf="reservasMes.length > 0; else sinReservas">
               <div class="legend-item" *ngFor="let r of reservasMes">
@@ -221,11 +243,12 @@
                 </div>
                 <div class="legend-details">
                   <span class="legend-qty"><strong>{{ r.cantidad }}</strong> uni.</span>
-                  <span class="legend-dates">{{ r.fechaRetiro | date:'dd/MM' }} al {{ r.fechaDevolucion | date:'dd/MM' }}</span>
+                  <span class="legend-dates">{{ r.fechaRetiro | date:'dd/MM' }} al {{ r.fechaDevolucion | date:'dd/MM'
+                    }}</span>
                 </div>
               </div>
             </div>
-            
+
             <ng-template #sinReservas>
               <p class="no-reservations">No hay alquileres registrados en este mes.</p>
             </ng-template>
@@ -271,7 +294,46 @@
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close type="button">Cerrar</button>
+      <button mat-button mat-dialog-close>Cerrar</button>
+    </mat-dialog-actions>
+  </ng-template>
+
+  <!-- DIALOG NUEVA CATEGORÍA -->
+  <ng-template #nuevaCategoriaDialog>
+    <h2 mat-dialog-title>Nueva Categoría</h2>
+    <mat-dialog-content>
+      <mat-form-field appearance="outline" class="w-100" style="margin-top: 10px;">
+        <mat-label>Nombre de la categoría</mat-label>
+        <input matInput #catInput placeholder="Ej. Frac Premium">
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close>Cancelar</button>
+      <button mat-flat-button color="accent" (click)="guardarNuevaCategoria(catInput.value)">Añadir</button>
+    </mat-dialog-actions>
+  </ng-template>
+
+  <!-- DIALOG NUEVO COLOR -->
+  <ng-template #nuevoColorDialog>
+    <h2 mat-dialog-title>Nuevo Color</h2>
+    <mat-dialog-content>
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 10px;">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Nombre del color</mat-label>
+          <input matInput #colNameInput placeholder="Ej. Turquesa oscuro" [value]="nombreColorInput" (input)="onNombreColorChange($event)">
+        </mat-form-field>
+        <div>
+          <label style="font-weight: 500; font-size: 0.9rem; color: #475569;">Elegí el tono exacto</label>
+          <div style="display: flex; gap: 12px; align-items: center; margin-top: 8px;">
+            <input type="color" #colHexInput [value]="hexColorSeleccionado" (input)="onColorChange($event)" style="width: 50px; height: 50px; padding: 0; border: none; cursor: pointer; border-radius: 8px;">
+            <span style="font-size: 0.9rem; color: #64748b;">{{ nombreColorAproximado }}</span>
+          </div>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close>Cancelar</button>
+      <button mat-flat-button color="accent" (click)="guardarNuevoColor(colNameInput.value, colHexInput.value)">Añadir Color</button>
     </mat-dialog-actions>
   </ng-template>
 

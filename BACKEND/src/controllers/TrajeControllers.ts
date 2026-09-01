@@ -45,7 +45,7 @@ export const crearTraje = async (req: Request, res: Response) => {
         await Log.create({
             accion: 'CREAR_TRAJE',
             descripcion: `Se registró un nuevo traje: ${codigoEtiqueta}`,
-            metadata: {trajeId: nuevoTraje.id},
+            metadata: { trajeId: nuevoTraje.id },
         })
 
         res.status(201).json({
@@ -91,10 +91,10 @@ export const obtenerTrajes = async (req: Request, res: Response) => {
         }
 
         // 3. Ejecutamos la búsqueda con el objeto 'where' dinámico
-        const trajes = await Traje.findAll({ 
+        const trajes = await Traje.findAll({
             where: whereConditions,
-            order: [['id', 'ASC']] 
-        }); 
+            order: [['id', 'ASC']]
+        });
 
         // MSJ DE TOMI: Log opcional en MongoDB para trackear qué está buscando la gente, es decir, para futuros análisis de "más buscados"
         /* if (Object.keys(req.query).length > 0) {
@@ -108,46 +108,47 @@ export const obtenerTrajes = async (req: Request, res: Response) => {
         res.json({ ok: true, trajes });
     } catch (error: any) {
         console.error(error);
-        res.status(500).json({ 
-            ok: false, 
+        res.status(500).json({
+            ok: false,
             msg: 'Error al obtener trajes con filtros',
-            error: error.message 
+            error: error.message
         });
     }
 };
 
 export const obtenerDisponibilidadTraje = async (req: Request, res: Response) => {
-  const rawId = req.params.id;
-  const id = Array.isArray(rawId) ? rawId[0] : rawId;
+    const rawId = req.params.id;
+    const id = Array.isArray(rawId) ? rawId[0] : rawId;
 
-  try {
-    const traje = await Traje.findByPk(Number(id));
-    if (!traje) {
-      return res.status(404).json({ ok: false, msg: 'Traje no encontrado' });
-    }
-
-    const reservas = await Reserva.findAll({
-      where: {
-        trajeId: Number(id),
-        estado: {
-          [Op.in]: [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO],
-        },
-      },
-      include: [
-        {
-          model: Cliente,
-          attributes: ['nombre']
+    try {
+        const traje = await Traje.findByPk(Number(id));
+        if (!traje) {
+            return res.status(404).json({ ok: false, msg: 'Traje no encontrado' });
         }
-      ],
-      attributes: ['fechaRetiro', 'fechaDevolucion', 'cantidad'],
-      order: [['fechaRetiro', 'ASC']],
-    });
 
-    res.json({ ok: true, traje, reservas });
-  } catch (error) {
-    console.error('Error al obtener disponibilidad:', error);
-    res.status(500).json({ ok: false, msg: 'Error al obtener la disponibilidad del traje' });
-  }
+        const reservas = await Reserva.findAll({
+            where: {
+                trajeId: Number(id),
+                activo: true,
+                estado: {
+                    [Op.in]: [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO],
+                },
+            },
+            include: [
+                {
+                    model: Cliente,
+                    attributes: ['nombre']
+                }
+            ],
+            attributes: ['fechaRetiro', 'fechaDevolucion', 'cantidad'],
+            order: [['fechaRetiro', 'ASC']],
+        });
+
+        res.json({ ok: true, traje, reservas });
+    } catch (error) {
+        console.error('Error al obtener disponibilidad:', error);
+        res.status(500).json({ ok: false, msg: 'Error al obtener la disponibilidad del traje' });
+    }
 };
 
 export const actualizarTraje = async (req: Request, res: Response) => {
@@ -156,7 +157,7 @@ export const actualizarTraje = async (req: Request, res: Response) => {
         const { codigoEtiqueta, talle, color, categoria, cantidad, precioAlquilerBase } = req.body;
 
         const trajeDuplicado: any = await Traje.findOne({
-            where: { 
+            where: {
                 codigoEtiqueta: codigoEtiqueta,
                 id: { [Op.ne]: Number(id) } // Excluimos el traje actual
             }
@@ -179,7 +180,7 @@ export const actualizarTraje = async (req: Request, res: Response) => {
         if (!traje) return res.status(404).json({ mensaje: 'Traje no encontrado' });
 
         // Actualizamos en Postgre
-        await traje.update ({ codigoEtiqueta, talle, color, categoria, cantidad: cantidadNormalizada, precioAlquilerBase });
+        await traje.update({ codigoEtiqueta, talle, color, categoria, cantidad: cantidadNormalizada, precioAlquilerBase });
 
         //Registramos el Log en Mongo
         await Log.create({
@@ -195,11 +196,11 @@ export const actualizarTraje = async (req: Request, res: Response) => {
 };
 
 export const actualizarParcialTraje = async (req: Request, res: Response) => {
-    try{
+    try {
         const id = Number(req.params.id);
         const traje = await Traje.findByPk(id);
 
-        if(!traje) return res.status(404).json({ ok: false, mensaje: 'No existe el traje' });
+        if (!traje) return res.status(404).json({ ok: false, mensaje: 'No existe el traje' });
 
         // Solo actualizamos los campos que vienen en el body
         await traje.update(req.body);
@@ -211,14 +212,14 @@ export const actualizarParcialTraje = async (req: Request, res: Response) => {
         });
 
         res.json({ ok: true, mensaje: 'Traje actualizado (parcial)', traje });
-    }   catch (error) {
-        res.status(500).json({ ok: false, error: 'Error al actualizar parcialmente' })       
+    } catch (error) {
+        res.status(500).json({ ok: false, error: 'Error al actualizar parcialmente' })
     }
 
 }
 
 export const eliminarTraje = async (req: Request, res: Response) => {
-    try{
+    try {
         const id = Number(req.params.id);
         const traje = await Traje.findByPk(id);
 
@@ -236,9 +237,9 @@ export const eliminarTraje = async (req: Request, res: Response) => {
 
         // Si hay reservas pendientes, impedimos el borrado
         if (reservasActivas > 0) {
-            return res.status(400).json({ 
-                ok: false, 
-                mensaje: 'No se puede eliminar: El traje tiene reservas pendientes o está alquilado.' 
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'No se puede eliminar: El traje tiene reservas pendientes o está alquilado.'
             });
         }
 

@@ -1,20 +1,23 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    ESTILOS GENERALES Y CONFIGURACIÓN DE ANGULAR MATERIAL (ALQUITRA)
    ========================================================================== */
 
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden !important; /* Elimina la barra externa fantasma */
+  overflow: hidden !important;
+  /* Elimina la barra externa fantasma */
 }
 
 body {
   font-family: 'Plus Jakarta Sans', sans-serif !important;
-  background-color: #f8fafc; /* Fondo gris súper claro */
+  background-color: #f8fafc;
+  /* Fondo gris súper claro */
 }
 
 /* frontend/src/styles.css */
@@ -28,11 +31,20 @@ body {
 }
 
 /* Forzar tipografía en componentes de Material Design */
-.mat-mdc-button, .mat-mdc-unelevated-button, .mat-mdc-raised-button, 
-.mat-mdc-outlined-button, .mat-mdc-form-field, input, .mat-mdc-select, 
-.mat-mdc-cell, .mat-mdc-header-cell, mat-card-title, .mat-mdc-menu-item {
+.mat-mdc-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-form-field,
+input,
+.mat-mdc-select,
+.mat-mdc-cell,
+.mat-mdc-header-cell,
+mat-card-title,
+.mat-mdc-menu-item {
   font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
+
 /* Contenedor principal de cada pantalla */
 .premium-container {
   padding: 32px;
@@ -46,11 +58,13 @@ body {
   align-items: center;
   justify-content: space-between;
 }
+
 .premium-header-left {
   display: flex;
   align-items: center;
   gap: 16px;
 }
+
 .premium-icon-box {
   display: flex;
   align-items: center;
@@ -59,10 +73,27 @@ body {
   height: 56px;
   border-radius: 12px;
 }
-.premium-icon-box.clientes { background-color: #eef2ff; color: #4f46e5; }
-.premium-icon-box.trajes { background-color: #f0fdf4; color: #16a34a; }
-.premium-icon-box.reservas { background-color: #fef3c7; color: #d97706; }
-.premium-icon-box mat-icon { font-size: 28px; width: 28px; height: 28px; }
+
+.premium-icon-box.clientes {
+  background-color: #eef2ff;
+  color: #4f46e5;
+}
+
+.premium-icon-box.trajes {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+.premium-icon-box.reservas {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.premium-icon-box mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
 
 .premium-title h1 {
   font-size: 2.25rem;
@@ -71,6 +102,7 @@ body {
   margin: 0 0 4px 0;
   letter-spacing: -0.025em;
 }
+
 .premium-title p {
   font-size: 1rem;
   color: #64748b;
@@ -83,7 +115,7 @@ body {
   border: 1px solid #e2e8f0 !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
   background-color: #ffffff !important;
-  padding: 10px; 
+  padding: 10px;
   margin-bottom: 24px !important;
 }
 
@@ -93,13 +125,17 @@ body {
   border: 1px solid #e2e8f0;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
   background-color: #ffffff;
-  overflow-x: auto;     /* Permite deslizar a los costados si la pantalla es muy chica */
+  overflow-x: auto;
+  /* Permite deslizar a los costados si la pantalla es muy chica */
   overflow-y: hidden;
 }
+
 .premium-table-wrapper table {
   width: 100%;
-  box-shadow: none !important; /* Anula sombra original de mat-elevation */
+  box-shadow: none !important;
+  /* Anula sombra original de mat-elevation */
 }
+
 th.mat-mdc-header-cell {
   font-weight: 700 !important;
   color: #475569 !important;
@@ -109,6 +145,7 @@ th.mat-mdc-header-cell {
   letter-spacing: 0.05em;
   border-bottom: 1px solid #e2e8f0 !important;
 }
+
 td.mat-mdc-cell {
   font-size: 0.95rem !important;
   color: #1e293b !important;
@@ -116,10 +153,24 @@ td.mat-mdc-cell {
 }
 
 /* Compatibilidad extra con el Modo Oscuro existente */
-html.dark-theme .premium-title h1 { color: #ffffff !important; }
-html.dark-theme .premium-title p { color: #94a3b8 !important; }
-html.dark-theme .premium-icon-box { background-color: #0f172a !important; border: 1px solid #334155; }
-html.dark-theme .premium-card, html.dark-theme .premium-table-wrapper { border-color: #334155 !important; background-color: #1e293b !important; }
+html.dark-theme .premium-title h1 {
+  color: #ffffff !important;
+}
+
+html.dark-theme .premium-title p {
+  color: #94a3b8 !important;
+}
+
+html.dark-theme .premium-icon-box {
+  background-color: #0f172a !important;
+  border: 1px solid #334155;
+}
+
+html.dark-theme .premium-card,
+html.dark-theme .premium-table-wrapper {
+  border-color: #334155 !important;
+  background-color: #1e293b !important;
+}
 
 mat-form-field {
   margin-top: 8px;
@@ -159,26 +210,26 @@ mat-form-field {
    SISTEMA DE TRANSICIONES FLUIDAS PARA INTERCAMBIO DE TEMAS
    ========================================================================== */
 
-body, 
-.wrapper-sistema, 
-.main-content, 
+body,
+.wrapper-sistema,
+.main-content,
 .dashboard-container,
-.sidenav, 
-mat-card, 
-.mat-mdc-card, 
-table, 
+.sidenav,
+mat-card,
+.mat-mdc-card,
+table,
 .mat-mdc-table,
-th.mat-mdc-header-cell, 
-td.mat-mdc-cell, 
+th.mat-mdc-header-cell,
+td.mat-mdc-cell,
 .edit-input,
 .mat-mdc-form-field,
 .mat-mdc-dialog-container,
 .mat-mdc-select-value,
 .mat-mdc-select-arrow {
-  transition: background-color 0.4s ease-in-out, 
-              color 0.4s ease-in-out, 
-              border-color 0.4s ease-in-out, 
-              box-shadow 0.4s ease-in-out !important;
+  transition: background-color 0.4s ease-in-out,
+    color 0.4s ease-in-out,
+    border-color 0.4s ease-in-out,
+    box-shadow 0.4s ease-in-out !important;
 }
 
 
@@ -192,13 +243,16 @@ html.dark-theme body,
 html.dark-theme .wrapper-sistema,
 html.dark-theme .main-content,
 html.dark-theme .dashboard-container {
-  background-color: #0f172a !important; /* Slate ultra oscuro */
-  color: #f8fafc !important;            /* Blanco nieve */
+  background-color: #0f172a !important;
+  /* Slate ultra oscuro */
+  color: #f8fafc !important;
+  /* Blanco nieve */
 }
 
 /* 2. CONTROL TOTAL DE LA BARRA LATERAL (SIDENAV) */
 html.dark-theme .sidenav {
-  background-color: #1e293b !important; /* Gris slate intermedio */
+  background-color: #1e293b !important;
+  /* Gris slate intermedio */
   border-right: 1px solid #334155 !important;
 }
 
@@ -285,10 +339,10 @@ html.dark-theme .mat-mdc-form-field {
   --mdc-outlined-text-field-input-text-color: #ffffff !important;
   --mdc-outlined-text-field-label-text-color: #94a3b8 !important;
   --mdc-outlined-text-field-outline-color: #334155 !important;
-  
+
   --mdc-outlined-text-field-focus-label-text-color: #6366f1 !important;
   --mdc-outlined-text-field-focus-outline-color: #6366f1 !important;
-  
+
   --mat-form-field-state-hint-text-color: #94a3b8 !important;
 }
 
@@ -369,7 +423,8 @@ html.dark-theme .mat-mdc-option.mat-mdc-option-active {
   padding-bottom: 16px !important;
   display: flex !important;
   flex-direction: column !important;
-  overflow-y: hidden !important; /* Desactiva la barra vertical innecesaria */
+  overflow-y: hidden !important;
+  /* Desactiva la barra vertical innecesaria */
 }
 
 /* Fix para el texto invisible al dejar presionada una pestaña en modo oscuro */
@@ -379,20 +434,23 @@ html.dark-theme .premium-sidenav mat-nav-list a:active .menu-text,
 html.dark-theme .premium-sidenav mat-nav-list button:active,
 html.dark-theme .premium-sidenav mat-nav-list button:active mat-icon,
 html.dark-theme .premium-sidenav mat-nav-list button:active .menu-text {
-  color: #818cf8 !important; /* Mantenemos el color índigo claro brillante al presionar */
+  color: #818cf8 !important;
+  /* Mantenemos el color índigo claro brillante al presionar */
   background-color: rgba(99, 102, 241, 0.15) !important;
 }
 
 /* Fix para la pestaña seleccionada (Activa) en modo oscuro */
 html.dark-theme .active-menu-item {
-  background-color: rgba(99, 102, 241, 0.15) !important; /* Fondo índigo oscuro y sutil */
+  background-color: rgba(99, 102, 241, 0.15) !important;
+  /* Fondo índigo oscuro y sutil */
 }
 
 html.dark-theme .active-menu-item,
 html.dark-theme .active-menu-item mat-icon,
 html.dark-theme .active-menu-item .menu-text,
 html.dark-theme .active-menu-item span {
-  color: #818cf8 !important; /* Texto e ícono en índigo brillante para que resalte */
+  color: #818cf8 !important;
+  /* Texto e ícono en índigo brillante para que resalte */
 }
 
 /* ==========================================================================
@@ -402,7 +460,8 @@ html.dark-theme .active-menu-item span {
 /* 1. Hover para las pestañas de navegación y el botón de Modo Oscuro */
 html.dark-theme .premium-sidenav mat-nav-list a:hover:not(.active-menu-item),
 html.dark-theme .action-btn:hover:not(.logout-btn) {
-  background-color: rgba(255, 255, 255, 0.08) !important; /* Fondo gris súper sutil y oscuro */
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  /* Fondo gris súper sutil y oscuro */
 }
 
 /* Forzar que el texto y el ícono sean blancos puros al pasar el mouse */
@@ -412,29 +471,35 @@ html.dark-theme .premium-sidenav mat-nav-list a:hover:not(.active-menu-item) spa
 html.dark-theme .action-btn:hover:not(.logout-btn),
 html.dark-theme .action-btn:hover:not(.logout-btn) mat-icon,
 html.dark-theme .action-btn:hover:not(.logout-btn) span {
-  color: #ffffff !important; 
+  color: #ffffff !important;
 }
 
 
 /* 2. Hover específico para el botón de Cerrar Sesión */
 html.dark-theme .logout-btn:hover {
-  background-color: rgba(239, 68, 68, 0.15) !important; /* Fondo rojizo oscuro/transparente */
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  /* Fondo rojizo oscuro/transparente */
 }
 
 /* Forzar que el texto y el ícono resalten en rojo */
 html.dark-theme .logout-btn:hover,
 html.dark-theme .logout-btn:hover mat-icon,
 html.dark-theme .logout-btn:hover span {
-  color: #ef4444 !important; 
+  color: #ef4444 !important;
 }
 
-/* ==========================================================================
-   FIX: ALERTAS SWEETALERT2 EN MODO OSCURO
-   ========================================================================== */
 
 /* Fondo general de la alerta (Toast o Modal grande) */
+.swal2-container {
+  z-index: 10000 !important;
+}
+.swal-on-top {
+  z-index: 99999 !important;
+}
+
 html.dark-theme .swal2-popup {
-  background-color: #1e293b !important; /* Mismo fondo que las tarjetas del dashboard */
+  background-color: #1e293b !important;
+  /* Mismo fondo que las tarjetas del dashboard */
   border: 1px solid #334155 !important;
   color: #f8fafc !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2) !important;
@@ -456,27 +521,35 @@ html.dark-theme body:not(.swal2-toast-shown) .swal2-backdrop-show {
    CONTADOR DE REGISTROS EN TABLAS
    ========================================================================== */
 .total-registros {
-  font-size: 0.875rem; /* Tamaño de letra sutil */
-  color: #64748b; /* Gris texto estándar */
-  text-align: right; /* Alineado a la derecha */
-  margin-top: -8px; /* Lo acerca un poco a la barra de búsqueda */
-  margin-bottom: 12px; /* Lo separa de la tabla */
+  font-size: 0.875rem;
+  /* Tamaño de letra sutil */
+  color: #64748b;
+  /* Gris texto estándar */
+  text-align: right;
+  /* Alineado a la derecha */
+  margin-top: -8px;
+  /* Lo acerca un poco a la barra de búsqueda */
+  margin-bottom: 12px;
+  /* Lo separa de la tabla */
   font-weight: 500;
   padding-right: 4px;
 }
 
 .total-registros strong {
-  color: #0f172a; /* Número más oscuro para que resalte */
+  color: #0f172a;
+  /* Número más oscuro para que resalte */
   font-weight: 700;
 }
 
 /* Adaptación para el Modo Oscuro */
 html.dark-theme .total-registros {
-  color: #94a3b8; /* Gris claro */
+  color: #94a3b8;
+  /* Gris claro */
 }
 
 html.dark-theme .total-registros strong {
-  color: #f8fafc; /* Número en blanco brillante */
+  color: #f8fafc;
+  /* Número en blanco brillante */
 }
 
 /* FIX: Ocultar la sombra/recuadro gris indeseado del toggle de modo oscuro */

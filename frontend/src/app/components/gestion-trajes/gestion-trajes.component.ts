@@ -2,7 +2,6 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { MatCalendarCellCssClasses } from '@angular/material/datepicker';
 import { Observable } from 'rxjs';
@@ -10,9 +9,44 @@ import { startWith, map } from 'rxjs/operators';
 import { TalleTraje, Traje } from '../../models/traje.model';
 import { TrajeService } from '../../services/traje.service';
 import { AlertService } from '../../services/alert.service';
+import Swal from 'sweetalert2';
 
+interface ColorOption {
+  nombre: string;
+  hex: string;
+}
 
-interface MedidaTalle {
+const COLORES_BASE: ColorOption[] = [
+  { nombre: 'Negro', hex: '#000000' },
+  { nombre: 'Blanco', hex: '#FFFFFF' },
+  { nombre: 'Gris', hex: '#808080' },
+  { nombre: 'Gris Oscuro', hex: '#404040' },
+  { nombre: 'Gris Claro', hex: '#D3D3D3' },
+  { nombre: 'Azul', hex: '#0000FF' },
+  { nombre: 'Azul Marino', hex: '#000080' },
+  { nombre: 'Celeste', hex: '#87CEEB' },
+  { nombre: 'Rojo', hex: '#FF0000' },
+  { nombre: 'Bordeaux', hex: '#800000' },
+  { nombre: 'Vino', hex: '#880000' },
+  { nombre: 'Chocolate', hex: '#d2b48c' },
+  { nombre: 'Caqui', hex: '#c3b091' },
+  { nombre: 'Beige', hex: '#f5f5dc' },
+  { nombre: 'Crema', hex: '#fffdd0' },
+  { nombre: 'Verde', hex: '#008000' },
+  { nombre: 'Verde Oliva', hex: '#808000' },
+  { nombre: 'Amarillo', hex: '#FFFF00' },
+  { nombre: 'Naranja', hex: '#FFA500' },
+  { nombre: 'Marrón', hex: '#8B4513' },
+  { nombre: 'Beige', hex: '#F5F5DC' },
+  { nombre: 'Rosa', hex: '#FFC0CB' },
+  { nombre: 'Violeta', hex: '#EE82EE' },
+  { nombre: 'Turquesa', hex: '#40E0D0' },
+  { nombre: 'Fucsia', hex: '#FF00FF' },
+  { nombre: 'Damasco', hex: '#FFD8B1' },
+  { nombre: "Dorado", hex: "#FFD700" },
+  { nombre: "Plateado", hex: "#C0C0C0" },
+  { nombre: "Bronce", hex: "#CD7F32" },
+]; interface MedidaTalle {
   talle: TalleTraje | string;
   pecho: string;
   cintura: string;
@@ -30,12 +64,14 @@ export class GestionTrajesComponent implements OnInit {
   @ViewChild('trajeDialog') trajeDialog!: TemplateRef<any>;
   @ViewChild('disponibilidadDialog') disponibilidadDialog!: TemplateRef<any>;
   @ViewChild('medidasDialog') medidasDialog!: TemplateRef<any>;
+  @ViewChild('nuevaCategoriaDialog') nuevaCategoriaDialog!: TemplateRef<any>;
+  @ViewChild('nuevoColorDialog') nuevoColorDialog!: TemplateRef<any>;
   @ViewChild(MatSort) sort!: MatSort;
 
   trajes: Traje[] = [];
   trajeForm: FormGroup;
   dataSource = new MatTableDataSource<Traje>([]);
-  
+
   columnasVisibles: string[] = [
     'codigo',
     'categoria',
@@ -46,22 +82,22 @@ export class GestionTrajesComponent implements OnInit {
     'disponibilidad',
     'acciones',
   ];
-  
+
   modoEdicion = false;
   trajeIdEnEdicion: number | null = null;
-  
+
   // Variables para inputs dinámicos
   nuevaCategoria = '';
   nuevoColor = '';
-  
+
   // Arreglos de selección
   categoriasDisponibles: string[] = [];
-  coloresDisponibles: string[] = [];
+  coloresDisponibles: ColorOption[] = [...COLORES_BASE];
   tallesDisponibles = Object.values(TalleTraje);
-  
+
   filteredCategorias!: Observable<string[]>;
-  filteredColores!: Observable<string[]>;
-  
+  filteredColores!: Observable<ColorOption[]>;
+
   tablaMedidas: MedidaTalle[] = [
     { talle: 'XS', pecho: '84-88', cintura: '68-72', cadera: '84-88', largo: '68-70' },
     { talle: 'S', pecho: '88-92', cintura: '72-76', cadera: '88-92', largo: '70-72' },
@@ -70,16 +106,16 @@ export class GestionTrajesComponent implements OnInit {
     { talle: 'XL', pecho: '104-110', cintura: '88-96', cadera: '104-110', largo: '76-78' },
     { talle: 'XXL', pecho: '110-118', cintura: '96-104', cadera: '110-118', largo: '78-80' },
   ];
-  
+
   trajeSeleccionado: Traje | null = null;
-  reservasDisponibilidad: Array<{ 
-    fechaRetiro: string; 
-    fechaDevolucion: string; 
+  reservasDisponibilidad: Array<{
+    fechaRetiro: string;
+    fechaDevolucion: string;
     cantidad: number;
     cliente?: { nombre: string };
     Cliente?: { nombre: string };
   }> = [];
-  
+
   fechaActual = new Date();
 
   constructor(
@@ -90,7 +126,8 @@ export class GestionTrajesComponent implements OnInit {
   ) {
     this.trajeForm = this.fb.group({
       codigoEtiqueta: ['', Validators.required],
-      categoria: ['', Validators.required],
+      categoria: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
+      genero: ['Masculino', Validators.required],
       talle: ['', Validators.required],
       color: ['', Validators.required],
       cantidad: [1, [Validators.required, Validators.min(1)]],
@@ -109,9 +146,16 @@ export class GestionTrajesComponent implements OnInit {
   inicializarListas() {
     const catGuardadas = JSON.parse(localStorage.getItem('categoriasTrajes') || '[]');
     const colGuardados = JSON.parse(localStorage.getItem('coloresTrajes') || '[]');
-    
-    this.categoriasDisponibles = [...new Set(['Smokings', 'Gala', 'Casual', ...catGuardadas])];
-    this.coloresDisponibles = [...new Set(['Negro', 'Azul', 'Azul Marino', 'Gris', 'Blanco', 'Bordeaux', ...colGuardados])];
+
+    this.categoriasDisponibles = [...new Set(['De competencia', 'De entrenamiento', 'Gala', ...catGuardadas])];
+
+    const mergedColors = [...COLORES_BASE];
+    for (const c of colGuardados) {
+      if (!mergedColors.some(mc => mc.nombre.toLowerCase() === c.toLowerCase())) {
+        mergedColors.push({ nombre: c, hex: '#cccccc' });
+      }
+    }
+    this.coloresDisponibles = mergedColors;
   }
 
   configurarAutocompletado() {
@@ -121,13 +165,21 @@ export class GestionTrajesComponent implements OnInit {
     );
     this.filteredColores = this.trajeForm.get('color')!.valueChanges.pipe(
       startWith(''),
-      map(value => this._filter(value, this.coloresDisponibles))
+      map(value => {
+        const nombre = typeof value === 'string' ? value : '';
+        return nombre ? this._filterColors(nombre) : this.coloresDisponibles.slice();
+      })
     );
   }
 
   private _filter(value: string, list: string[]): string[] {
     const filterValue = value ? value.toLowerCase() : '';
     return list.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+  private _filterColors(value: string): ColorOption[] {
+    const filterValue = value ? value.toLowerCase() : '';
+    return this.coloresDisponibles.filter(option => option.nombre.toLowerCase().includes(filterValue));
   }
 
   configurarGeneracionCodigo() {
@@ -151,7 +203,7 @@ export class GestionTrajesComponent implements OnInit {
         const nextNum = (maxNum + 1).toString().padStart(3, '0');
         const currentCode = this.trajeForm.get('codigoEtiqueta')?.value;
         if (!currentCode || currentCode.startsWith(prefijo)) {
-            this.trajeForm.patchValue({ codigoEtiqueta: `${prefijo}-${nextNum}` }, { emitEvent: false });
+          this.trajeForm.patchValue({ codigoEtiqueta: `${prefijo}-${nextNum}` }, { emitEvent: false });
         }
       }
     });
@@ -213,7 +265,7 @@ export class GestionTrajesComponent implements OnInit {
     if (traje) {
       this.modoEdicion = true;
       this.trajeIdEnEdicion = traje.id ?? null;
-      
+
       this.trajeForm.patchValue({
         codigoEtiqueta: traje.codigoEtiqueta,
         categoria: traje.categoria,
@@ -272,7 +324,7 @@ export class GestionTrajesComponent implements OnInit {
 
   eliminarTraje(id: number) {
     this.alertService.confirmarAccion(
-      '¿Eliminar traje?', 
+      '¿Eliminar traje?',
       'Esta acción no se puede deshacer.'
     ).then((confirmado) => {
       if (confirmado) {
@@ -284,7 +336,7 @@ export class GestionTrajesComponent implements OnInit {
           error: (err) => {
             this.mostrarMensaje(err.error?.mensaje || err.error?.msg || 'Ocurrió un error al eliminar', true);
           }
-       });
+        });
       }
     });
   }
@@ -319,7 +371,7 @@ export class GestionTrajesComponent implements OnInit {
   // ==========================================
   // CALENDARIO DATECLASS Y MEDIDAS
   // ==========================================
-  
+
   dateClass() {
     return (date: Date): MatCalendarCellCssClasses => {
       const d = new Date(date);
@@ -337,18 +389,152 @@ export class GestionTrajesComponent implements OnInit {
       return isReserved ? 'reserved-date' : '';
     };
   }
-  
+
   guardarValoresDinamicos() {
     const cat = this.trajeForm.get('categoria')?.value;
     const col = this.trajeForm.get('color')?.value;
-    
+
     if (cat && !this.categoriasDisponibles.some(c => c.toLowerCase() === cat.toLowerCase())) {
       this.categoriasDisponibles.push(cat);
       localStorage.setItem('categoriasTrajes', JSON.stringify(this.categoriasDisponibles.filter(c => !['Smokings', 'Gala', 'Casual'].includes(c))));
     }
-    if (col && !this.coloresDisponibles.some(c => c.toLowerCase() === col.toLowerCase())) {
-      this.coloresDisponibles.push(col);
-      localStorage.setItem('coloresTrajes', JSON.stringify(this.coloresDisponibles.filter(c => !['Negro', 'Azul', 'Azul Marino', 'Gris', 'Blanco', 'Bordeaux'].includes(c))));
+
+    if (col && !this.coloresDisponibles.some(c => c.nombre.toLowerCase() === col.toLowerCase())) {
+      const nuevoColor = { nombre: col, hex: '#cccccc' };
+      this.coloresDisponibles.push(nuevoColor);
+      const colsToSave = this.coloresDisponibles.filter(c => !COLORES_BASE.some(cb => cb.nombre === c.nombre));
+      localStorage.setItem('coloresTrajesFull', JSON.stringify(colsToSave));
+    }
+  }
+
+  dialogRefNuevaCat: any;
+  dialogRefNuevoColor: any;
+
+  nombreColorAproximado: string = '(Haz clic en el cuadro de color)';
+  hexColorSeleccionado: string = '#0ea5e9';
+  nombreColorInput: string = '';
+
+  hexToRgb(hex: string) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : { r: 0, g: 0, b: 0 };
+  }
+
+  calcularDistanciaColor(rgb1: any, rgb2: any) {
+    return Math.sqrt(
+      Math.pow(rgb1.r - rgb2.r, 2) +
+      Math.pow(rgb1.g - rgb2.g, 2) +
+      Math.pow(rgb1.b - rgb2.b, 2)
+    );
+  }
+
+  onColorChange(event: any) {
+    const hex = event.target.value;
+    this.hexColorSeleccionado = hex;
+    const rgbSeleccionado = this.hexToRgb(hex);
+
+    let colorMasCercano = COLORES_BASE[0].nombre;
+    let distanciaMinima = Infinity;
+
+    for (const color of COLORES_BASE) {
+      const rgbBase = this.hexToRgb(color.hex);
+      const distancia = this.calcularDistanciaColor(rgbSeleccionado, rgbBase);
+
+      if (distancia < distanciaMinima) {
+        distanciaMinima = distancia;
+        colorMasCercano = color.nombre;
+      }
+    }
+
+    this.nombreColorAproximado = `Tono aproximado: ${colorMasCercano}`;
+
+    if (!this.nombreColorInput) {
+      this.nombreColorInput = colorMasCercano;
+    }
+  }
+
+  onNombreColorChange(event: any) {
+    this.nombreColorInput = event.target.value;
+  }
+
+  abrirModalNuevaCategoria() {
+    this.dialogRefNuevaCat = this.dialog.open(this.nuevaCategoriaDialog, {
+      width: '400px',
+      backdropClass: 'blur-backdrop',
+      autoFocus: false
+    });
+  }
+
+  guardarNuevaCategoria(value: string) {
+    const cat = value.trim();
+    if (!cat) {
+      this.mostrarMensaje('Debes escribir una categoría', true);
+      return;
+    }
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(cat)) {
+      this.mostrarMensaje('Solo se permiten letras y espacios', true);
+      return;
+    }
+    if (this.categoriasDisponibles.some(c => c.toLowerCase() === cat.toLowerCase())) {
+      this.mostrarMensaje('Esa categoría ya existe', true);
+      return;
+    }
+
+    this.categoriasDisponibles.push(cat);
+
+    const catBase = ['Smokings', 'Gala', 'Casual'];
+    const catsToSave = this.categoriasDisponibles.filter(c => !catBase.includes(c));
+    localStorage.setItem('categoriasTrajes', JSON.stringify(catsToSave));
+
+    this.trajeForm.patchValue({ categoria: cat });
+    this.alertService.mostrarExito('Categoría añadida');
+    this.trajeForm.get('categoria')?.updateValueAndValidity();
+
+    if (this.dialogRefNuevaCat) {
+      this.dialogRefNuevaCat.close();
+    }
+  }
+
+  abrirModalNuevoColor() {
+    this.nombreColorAproximado = '(Haz clic en el cuadro de color)';
+    this.hexColorSeleccionado = '#0ea5e9';
+    this.nombreColorInput = '';
+
+    this.dialogRefNuevoColor = this.dialog.open(this.nuevoColorDialog, {
+      width: '400px',
+      backdropClass: 'blur-backdrop',
+      autoFocus: false
+    });
+  }
+
+  guardarNuevoColor(nombre: string, hex: string) {
+    const nombreColor = nombre.trim();
+
+    if (!nombreColor) {
+      this.mostrarMensaje('Tenés que ingresar un nombre para el color', true);
+      return;
+    }
+
+    if (this.coloresDisponibles.some(c => c.nombre.toLowerCase() === nombreColor.toLowerCase())) {
+      this.mostrarMensaje('Ya existe un color con ese nombre', true);
+      return;
+    }
+
+    const nuevoColor = { nombre: nombreColor, hex: hex };
+    this.coloresDisponibles.push(nuevoColor);
+
+    const colsToSave = this.coloresDisponibles.filter(c => !COLORES_BASE.some(cb => cb.nombre === c.nombre));
+    localStorage.setItem('coloresTrajesFull', JSON.stringify(colsToSave));
+
+    this.trajeForm.patchValue({ color: nuevoColor.nombre });
+    this.alertService.mostrarExito('Color añadido exitosamente');
+    this.trajeForm.get('color')?.updateValueAndValidity();
+
+    if (this.dialogRefNuevoColor) {
+      this.dialogRefNuevoColor.close();
     }
   }
 
@@ -388,20 +574,20 @@ export class GestionTrajesComponent implements OnInit {
 
   getReservasDelMes(activeDate: Date | null) {
     if (!activeDate || !this.reservasDisponibilidad) return [];
-    
+
     const year = activeDate.getFullYear();
     const month = activeDate.getMonth();
-    
+
     return this.reservasDisponibilidad.filter(r => {
       const fInicio = new Date(r.fechaRetiro + 'T00:00:00');
       const fFin = new Date(r.fechaDevolucion + 'T00:00:00');
-      
+
       // Chequear si la reserva toca el mes activo
       const inicioEnMes = fInicio.getFullYear() === year && fInicio.getMonth() === month;
       const finEnMes = fFin.getFullYear() === year && fFin.getMonth() === month;
-      const cruzaMes = fInicio.getFullYear() <= year && fInicio.getMonth() < month && 
-                       fFin.getFullYear() >= year && fFin.getMonth() > month;
-      
+      const cruzaMes = fInicio.getFullYear() <= year && fInicio.getMonth() < month &&
+        fFin.getFullYear() >= year && fFin.getMonth() > month;
+
       return inicioEnMes || finEnMes || cruzaMes;
     });
   }
@@ -410,7 +596,7 @@ export class GestionTrajesComponent implements OnInit {
     if (esError) {
       this.alertService.mostrarError(mensaje);
     } else {
-    this.alertService.mostrarExito(mensaje);
+      this.alertService.mostrarExito(mensaje);
     }
   }
 }

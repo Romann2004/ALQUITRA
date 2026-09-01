@@ -52,8 +52,8 @@ describe('GestionTrajesComponent', () => {
 
     component.modoEdicion = false;
     component.trajeForm.setValue({
-      codigoEtiqueta: 'SMK-1234',
-      categoria: 'SMOKING',
+      codigoEtiqueta: 'CMP-1234',
+      categoria: 'De competencia',
       talle: 'L',
       color: 'NEGRO',
       cantidad: 2,
@@ -63,8 +63,8 @@ describe('GestionTrajesComponent', () => {
     component.guardarTraje();
 
     expect(trajeServiceSpy.crearTraje).toHaveBeenCalledWith({
-      codigoEtiqueta: 'SMK-1234',
-      categoria: 'SMOKING',
+      codigoEtiqueta: 'CMP-1234',
+      categoria: 'De competencia',
       talle: 'L',
       estado: 'Disponible',
       color: 'NEGRO',

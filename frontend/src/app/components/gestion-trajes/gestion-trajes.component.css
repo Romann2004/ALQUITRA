@@ -27,6 +27,7 @@ table {
 
 .calendar-wrapper {
   flex: 0 0 320px;
+  height: 380px;
 }
 
 .disponibilidad-layout {
@@ -34,6 +35,7 @@ table {
   gap: 24px;
   align-items: flex-start;
   margin-top: 12px;
+  padding-bottom: 24px;
 }
 
 .legend-wrapper {
@@ -43,23 +45,31 @@ table {
   padding: 16px;
   border: 1px solid #e2e8f0;
   min-width: 300px;
+  height: 380px;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .legend-title {
   margin-top: 0;
-  margin-bottom: 16px;
   font-size: 1.1rem;
   font-weight: 600;
   color: #334155;
   border-bottom: 2px solid #e2e8f0;
   padding-bottom: 8px;
+  height: 30px;
+  box-sizing: border-box;
 }
 
 .legend-list {
+  position: absolute;
+  top: 60px;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 350px;
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -68,7 +78,7 @@ table {
   background: white;
   border-radius: 8px;
   padding: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
 }
 
@@ -118,6 +128,7 @@ table {
 .table-medidas {
   margin-top: 10px;
 }
+
 .table-medidas th {
   background-color: #f1f5f9;
 }
@@ -135,10 +146,9 @@ table {
   gap: 8px 12px;
 }
 
-/* --- Modificaciones de alineación --- */
 .combo-row {
   display: flex;
-  align-items: flex-start; /* Alinea los elementos en la parte superior */
+  align-items: flex-start;
   gap: 12px;
 }
 
@@ -147,11 +157,10 @@ table {
 }
 
 .combo-action-button {
-  margin-top: 4px; /* Empuja el botón ligeramente para alinear con el borde del input */
-  height: 50px; /* Misma altura que un input outline por defecto */
+  margin-top: 4px;
+  height: 50px;
   white-space: nowrap;
 }
-/* ------------------------------------ */
 
 .price-prefix {
   margin-left: 8px;
@@ -203,6 +212,7 @@ table {
 }
 
 @media (max-width: 900px) {
+
   .traje-form-grid,
   .availability-summary {
     grid-template-columns: 1fr;
@@ -218,11 +228,11 @@ table {
     margin-top: 0;
     min-height: 44px;
   }
-  
+
   .disponibilidad-layout {
     flex-direction: column;
   }
-  
+
   .calendar-wrapper {
     flex: auto;
     width: 100%;

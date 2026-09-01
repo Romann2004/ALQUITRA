@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { DataTypes } from 'sequelize';
-import { sequelize,connectMongo } from './config/db';
+import { sequelize, connectMongo } from './config/db';
 import TrajeRoutes from './routes/TrajeRoutes';
 import authRoutes from './routes/AuthRoutes';
 import dashboardRoutes from './routes/DashboardRoutes';
@@ -19,13 +19,13 @@ app.use('/api/trajes', TrajeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/clientes', routerClientes);
-app.use('/api/reservas', ReservaRoutes );
+app.use('/api/reservas', ReservaRoutes);
 
 // Ruta de prueba
 app.get('/api/status', (req, res) => {
-    res.json({ 
-        status: 'ok', 
-        message: 'Servidor de Alquiler de Trajes funcionando' 
+    res.json({
+        status: 'ok',
+        message: 'Servidor de Alquiler de Trajes funcionando'
     });
 });
 
@@ -39,8 +39,6 @@ async function bootstrap() {
         // Conectar a MongoDB
         await connectMongo();
 
-        await asegurarColumnasEsquema();
-
         //Sincronizar tablas sin perder datos para aplicar cambios de modelo
         await sequelize.sync({ alter: true });
         console.log("Tablas sincronizadas con la DB.");
@@ -53,25 +51,6 @@ async function bootstrap() {
     } catch (error) {
         console.log('Error al iniciar el servidor:', error);
         process.exit(1);
-    }
-}
-
-async function asegurarColumnasEsquema() {
-    const queryInterface = sequelize.getQueryInterface();
-
-    await asegurarColumnaCantidad(queryInterface, 'reservas');
-    await asegurarColumnaCantidad(queryInterface, 'trajes');
-}
-
-async function asegurarColumnaCantidad(queryInterface: any, tableName: string) {
-    const table = await queryInterface.describeTable(tableName);
-
-    if (!table.cantidad) {
-        await queryInterface.addColumn(tableName, 'cantidad', {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 1,
-        });
     }
 }
 

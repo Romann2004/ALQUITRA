@@ -18,8 +18,11 @@ export const postReserva = async (req: Request, res: Response) => {
     const errorFechas = validarFechas(fechaRetiro, fechaDevolucion, true);
     if (errorFechas) return res.status(400).json({ msg: errorFechas });
 
-    const errorSuperposicion = await validarSuperposicionGrupal(trajeId, fechaRetiro, fechaDevolucion, cantidadReservada);
+    const { error: errorSuperposicion, traje } = await validarSuperposicionGrupal(trajeId, fechaRetiro, fechaDevolucion, cantidadReservada);
     if (errorSuperposicion) return res.status(400).json({ msg: errorSuperposicion });
+
+    const errorSeniaPrecio = validarSeniaContraPrecio(senia, traje.precioAlquilerBase);
+    if (errorSeniaPrecio) return res.status(400).json({ msg: errorSeniaPrecio });
 
     const clienteExiste = await Cliente.findByPk(clienteId);
     if (!clienteExiste || !clienteExiste.get('activo')) {
@@ -86,14 +89,23 @@ export const updateReserva = async (req: Request, res: Response) => {
       const errorFechas = validarFechas(fechaRetiro, fechaDevolucion, false);
       if (errorFechas) return res.status(400).json({ msg: errorFechas });
 
-      const errorSuperposicion = await validarSuperposicionGrupal(
-        trajeId || oldTrajeId, 
-        fechaRetiro, 
+      const { error: errorSuperposicion, traje } = await validarSuperposicionGrupal(
+        trajeId || oldTrajeId,
+        fechaRetiro,
         fechaDevolucion,
         cantidadFinal,
         id
       );
       if (errorSuperposicion) return res.status(400).json({ msg: errorSuperposicion });
+
+      const errorSeniaPrecio = validarSeniaContraPrecio(senia, traje.precioAlquilerBase);
+      if (errorSeniaPrecio) return res.status(400).json({ msg: errorSeniaPrecio });
+    } else if (senia !== undefined) {
+      const traje: any = await Traje.findByPk(trajeId || oldTrajeId);
+      if (!traje) return res.status(400).json({ msg: "El traje no existe." });
+
+      const errorSeniaPrecio = validarSeniaContraPrecio(senia, traje.precioAlquilerBase);
+      if (errorSeniaPrecio) return res.status(400).json({ msg: errorSeniaPrecio });
     }
 
     // 2. Actualización de la Reserva en la BD
@@ -167,9 +179,16 @@ export const deleteReserva = async (req: Request, res: Response) => {
 //      FUNCIONES AUXILIARES (Validaciones, Logs, etc)
 // =========================================================
 
-const validarSenia = (senia?: number): string | null => {
+export const validarSenia = (senia?: number): string | null => {
   if (senia !== undefined && senia < 0) {
     return "La seña no puede ser negativa.";
+  }
+  return null;
+};
+
+const validarSeniaContraPrecio = (senia: number | undefined, precioTraje: number): string | null => {
+  if (senia !== undefined && Number(senia) > Number(precioTraje)) {
+    return "La seña no puede ser mayor al precio del traje.";
   }
   return null;
 };
@@ -195,13 +214,13 @@ const validarSuperposicionGrupal = async (
   fechaDevolucion: string,
   cantidadDeseada: number,
   reservaIdExcluida?: string | number
-): Promise<string | null> => {
+): Promise<{ error: string | null; traje?: any }> => {
 
   // Obtenemos el stock total real del grupo de trajes
   const traje: any = await Traje.findByPk(trajeId);
-  if (!traje) return "El traje no existe.";
+  if (!traje) return { error: "El traje no existe." };
   if (traje.estado === EstadoTraje.BAJA) {
-    return "El traje está dado de baja.";
+    return { error: "El traje está dado de baja." };
   }
   const stockTotal = traje.cantidad;
 
@@ -225,7 +244,7 @@ const validarSuperposicionGrupal = async (
   
   // Validación rápida: Si ni siquiera hay stock base, no podemos reservar
   if (cantidadDeseada > stockTotal) {
-    return `Stock insuficiente. El inventario total es de ${stockTotal} unidades.`;
+    return { error: `Stock insuficiente. El inventario total es de ${stockTotal} unidades.` };
   }
 
   // Verificamos día por día la ocupación
@@ -251,11 +270,11 @@ const validarSuperposicionGrupal = async (
       // Formateamos la fecha al estilo DD/MM/YYYY para que el error sea legible
       const fechaColapso = d.toISOString().split('T')[0];
       const disponibles = stockTotal - ocupadosHoy;
-      return `Stock insuficiente para la fecha ${fechaColapso}. Solo quedan ${disponibles} unidades disponibles.`;
+      return { error: `Stock insuficiente para la fecha ${fechaColapso}. Solo quedan ${disponibles} unidades disponibles.` };
     }
   }
 
-  return null; // Todo bien, no hay superposición
+  return { error: null, traje }; // Todo bien, no hay superposición
 };
 
 const normalizarFechaSoloDia = (fecha: string | Date): Date => {

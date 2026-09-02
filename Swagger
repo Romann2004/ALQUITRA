@@ -1,28 +1,171 @@
 openapi: 3.0.0
 info:
   title: API Sistema de Gestión de Alquiler de Trajes
-  description: API para la gestión de reservas, entregas y devoluciones de trajes.
+  description: API completa para la gestión de clientes, inventario de trajes, reservas y panel de control.
   version: 1.0.0
 
 servers:
   - url: http://localhost:3000/api
     description: Servidor de desarrollo local
 
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  schemas:
+    Cliente:
+      type: object
+      properties:
+        id:
+          type: integer
+        nombre:
+          type: string
+        dni:
+          type: string
+        telefono:
+          type: string
+        email:
+          type: string
+    
+    Traje:
+      type: object
+      properties:
+        id:
+          type: integer
+        codigoEtiqueta:
+          type: string
+        categoria:
+          type: string
+        talle:
+          type: string
+        color:
+          type: string
+        cantidad:
+          type: integer
+        precioAlquilerBase:
+          type: number
+        estado:
+          type: string
+          enum: [Disponible, Baja]
+    
+    Reserva:
+      type: object
+      properties:
+        id:
+          type: integer
+        clienteId:
+          type: integer
+        trajeId:
+          type: integer
+        fechaRetiro:
+          type: string
+          format: date-time
+        fechaDevolucion:
+          type: string
+          format: date-time
+        estado:
+          type: string
+          enum: [PENDIENTE, RETIRADO, COMPLETADO, CANCELADO]
+        montoTotal:
+          type: number
+        cantidad:
+          type: integer
+
+security:
+  - bearerAuth: []
+
 paths:
-  /reservas:
+  # ==========================================
+  # AUTH ROUTES
+  # ==========================================
+  /auth/login:
     post:
-      summary: Registrar una nueva reserva (RF-01)
-      [cite_start]description: Permite al empleado cargar una reserva validando disponibilidad de stock[cite: 305, 1166].
+      summary: Iniciar sesión
+      tags: [Auth]
+      security: [] # No requiere token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login exitoso, devuelve JWT.
+        '401':
+          description: Credenciales inválidas.
+
+  /auth/register:
+    post:
+      summary: Registrar nuevo usuario
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
       responses:
         '201':
-          description: Reserva creada con éxito.
-        '400':
-          description: Error en la solicitud o falta de stock.
+          description: Usuario registrado exitosamente.
 
-  /alquileres/{id}/devolucion:
+  # ==========================================
+  # CLIENTES ROUTES
+  # ==========================================
+  /clientes:
+    get:
+      summary: Obtener lista de clientes
+      tags: [Clientes]
+      responses:
+        '200':
+          description: Retorna array de clientes.
+    post:
+      summary: Crear un nuevo cliente
+      tags: [Clientes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cliente'
+      responses:
+        '201':
+          description: Cliente creado exitosamente.
+
+  /clientes/{id}:
+    get:
+      summary: Obtener un cliente por ID
+      tags: [Clientes]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Datos del cliente.
+        '404':
+          description: Cliente no encontrado.
     put:
-      summary: Registrar devolución de traje (RF-03)
-      [cite_start]description: Calcula automáticamente recargos por mora o daños y libera el stock[cite: 308, 1172].
+      summary: Actualizar cliente completo
+      tags: [Clientes]
       parameters:
         - name: id
           in: path
@@ -34,32 +177,244 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Devolucion'
+              $ref: '#/components/schemas/Cliente'
       responses:
         '200':
-          description: Devolución procesada exitosamente.
+          description: Cliente actualizado.
+    patch:
+      summary: Actualizar cliente parcialmente
+      tags: [Clientes]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cliente'
+      responses:
+        '200':
+          description: Cliente actualizado parcialmente.
+    delete:
+      summary: Eliminar cliente
+      tags: [Clientes]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cliente eliminado.
 
-components:
-  schemas:
-    Reserva:
-      type: object
-      properties:
-        clienteId:
-          type: integer
-        trajeId:
-          type: integer
-        fechaPactadaRetiro:
-          type: string
-          format: date-time
-        fechaPactadaDevolucion:
-          type: string
-          format: date-time
-          
-    Devolucion:
-      type: object
-      properties:
-        estadoFisico:
-          type: string
-          enum: [Óptimo, Daño Menor, Daño Crítico]
-        observaciones:
-          type: string
+  # ==========================================
+  # TRAJES ROUTES
+  # ==========================================
+  /trajes:
+    get:
+      summary: Obtener lista de trajes (con filtros opcionales)
+      tags: [Trajes]
+      security: []
+      parameters:
+        - name: codigo
+          in: query
+          schema:
+            type: string
+        - name: talle
+          in: query
+          schema:
+            type: string
+        - name: color
+          in: query
+          schema:
+            type: string
+        - name: categoria
+          in: query
+          schema:
+            type: string
+        - name: estado
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Retorna array de trajes.
+    post:
+      summary: Crear un nuevo traje
+      tags: [Trajes]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Traje'
+      responses:
+        '201':
+          description: Traje creado exitosamente.
+
+  /trajes/{id}:
+    put:
+      summary: Actualizar traje completo
+      tags: [Trajes]
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Traje'
+      responses:
+        '200':
+          description: Traje actualizado.
+    patch:
+      summary: Actualizar traje parcialmente
+      tags: [Trajes]
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Traje'
+      responses:
+        '200':
+          description: Traje actualizado parcialmente.
+    delete:
+      summary: Dar de baja un traje (borrado lógico)
+      tags: [Trajes]
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Traje dado de baja.
+
+  /trajes/{id}/disponibilidad:
+    get:
+      summary: Obtener disponibilidad de un traje (reservas asociadas)
+      tags: [Trajes]
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Retorna datos del traje y sus reservas activas.
+
+  # ==========================================
+  # RESERVAS ROUTES
+  # ==========================================
+  /reservas:
+    get:
+      summary: Obtener lista de reservas
+      tags: [Reservas]
+      responses:
+        '200':
+          description: Retorna array de reservas.
+    post:
+      summary: Crear nueva reserva
+      tags: [Reservas]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reserva'
+      responses:
+        '201':
+          description: Reserva creada.
+        '400':
+          description: Conflicto de disponibilidad de stock.
+
+  /reservas/{id}:
+    put:
+      summary: Actualizar reserva completa
+      tags: [Reservas]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reserva'
+      responses:
+        '200':
+          description: Reserva actualizada.
+    delete:
+      summary: Eliminar (o cancelar) reserva
+      tags: [Reservas]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Reserva eliminada.
+
+  /reservas/{id}/estado:
+    patch:
+      summary: Cambiar estado de una reserva
+      tags: [Reservas]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                estado:
+                  type: string
+                  enum: [PENDIENTE, RETIRADO, COMPLETADO, CANCELADO]
+      responses:
+        '200':
+          description: Estado actualizado exitosamente.
+
+  # ==========================================
+  # DASHBOARD ROUTES
+  # ==========================================
+  /dashboard/stats:
+    get:
+      summary: Obtener estadísticas para el Dashboard
+      tags: [Dashboard]
+      security: []
+      responses:
+        '200':
+          description: Retorna métricas generales del sistema.

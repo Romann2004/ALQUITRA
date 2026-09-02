@@ -1,12 +1,14 @@
 import express from 'express';
 import cors from 'cors';
-import { DataTypes } from 'sequelize';
 import { sequelize, connectMongo } from './config/db';
 import TrajeRoutes from './routes/TrajeRoutes';
 import authRoutes from './routes/AuthRoutes';
 import dashboardRoutes from './routes/DashboardRoutes';
 import routerClientes from './routes/ClienteRoutes';
 import ReservaRoutes from './routes/ReservaRoutes';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+import path from 'path';
 
 // Configuración inicial
 const app = express();
@@ -20,6 +22,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/clientes', routerClientes);
 app.use('/api/reservas', ReservaRoutes);
+
+// Documentación Swagger
+const swaggerDocument = YAML.load(path.join(__dirname, '../../Swagger'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Ruta de prueba
 app.get('/api/status', (req, res) => {

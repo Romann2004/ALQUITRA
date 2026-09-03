@@ -21,7 +21,7 @@ export const postReserva = async (req: Request, res: Response) => {
     const { error: errorSuperposicion, traje } = await validarSuperposicionGrupal(trajeId, fechaRetiro, fechaDevolucion, cantidadReservada);
     if (errorSuperposicion) return res.status(400).json({ msg: errorSuperposicion });
 
-    const errorSeniaPrecio = validarSeniaContraPrecio(senia, traje.precioAlquilerBase);
+    const errorSeniaPrecio = validarSeniaContraPrecio(senia, traje.precioAlquilerBase, cantidadReservada);
     if (errorSeniaPrecio) return res.status(400).json({ msg: errorSeniaPrecio });
 
     const clienteExiste = await Cliente.findByPk(clienteId);
@@ -98,13 +98,13 @@ export const updateReserva = async (req: Request, res: Response) => {
       );
       if (errorSuperposicion) return res.status(400).json({ msg: errorSuperposicion });
 
-      const errorSeniaPrecio = validarSeniaContraPrecio(senia, traje.precioAlquilerBase);
+      const errorSeniaPrecio = validarSeniaContraPrecio(senia, traje.precioAlquilerBase, cantidadFinal);
       if (errorSeniaPrecio) return res.status(400).json({ msg: errorSeniaPrecio });
     } else if (senia !== undefined) {
       const traje: any = await Traje.findByPk(trajeId || oldTrajeId);
       if (!traje) return res.status(400).json({ msg: "El traje no existe." });
 
-      const errorSeniaPrecio = validarSeniaContraPrecio(senia, traje.precioAlquilerBase);
+      const errorSeniaPrecio = validarSeniaContraPrecio(senia, traje.precioAlquilerBase, cantidadFinal);
       if (errorSeniaPrecio) return res.status(400).json({ msg: errorSeniaPrecio });
     }
 
@@ -186,9 +186,10 @@ export const validarSenia = (senia?: number): string | null => {
   return null;
 };
 
-const validarSeniaContraPrecio = (senia: number | undefined, precioTraje: number): string | null => {
-  if (senia !== undefined && Number(senia) > Number(precioTraje)) {
-    return "La seña no puede ser mayor al precio del traje.";
+const validarSeniaContraPrecio = (senia: number | undefined, precioTraje: number, cantidad: number): string | null => {
+  const montoTotalReserva = Number(precioTraje) * Number(cantidad);
+  if (senia !== undefined && Number(senia) > montoTotalReserva / 2) {
+    return "La seña no puede ser mayor a la mitad del monto total de la reserva.";
   }
   return null;
 };

@@ -65,7 +65,7 @@ export class GestionTrajesComponent implements OnInit {
   @ViewChild('disponibilidadDialog') disponibilidadDialog!: TemplateRef<any>;
   @ViewChild('medidasDialog') medidasDialog!: TemplateRef<any>;
   @ViewChild('nuevaCategoriaDialog') nuevaCategoriaDialog!: TemplateRef<any>;
-  @ViewChild('nuevoColorDialog') nuevoColorDialog!: TemplateRef<any>;
+  @ViewChild('eliminarCategoriaDialog') eliminarCategoriaDialog!: TemplateRef<any>;
   @ViewChild(MatSort) sort!: MatSort;
 
   trajes: Traje[] = [];
@@ -127,7 +127,6 @@ export class GestionTrajesComponent implements OnInit {
     this.trajeForm = this.fb.group({
       codigoEtiqueta: ['', Validators.required],
       categoria: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
-      genero: ['Masculino', Validators.required],
       talle: ['', Validators.required],
       color: ['', Validators.required],
       cantidad: [1, [Validators.required, Validators.min(1)]],
@@ -144,18 +143,13 @@ export class GestionTrajesComponent implements OnInit {
   }
 
   inicializarListas() {
-    const catGuardadas = JSON.parse(localStorage.getItem('categoriasTrajes') || '[]');
-    const colGuardados = JSON.parse(localStorage.getItem('coloresTrajes') || '[]');
+    const catGuardadas = localStorage.getItem('categoriasTrajes');
 
-    this.categoriasDisponibles = [...new Set(['De competencia', 'De entrenamiento', 'Gala', ...catGuardadas])];
+    this.categoriasDisponibles = catGuardadas
+      ? JSON.parse(catGuardadas)
+      : ['De competencia', 'De entrenamiento', 'Gala'];
 
-    const mergedColors = [...COLORES_BASE];
-    for (const c of colGuardados) {
-      if (!mergedColors.some(mc => mc.nombre.toLowerCase() === c.toLowerCase())) {
-        mergedColors.push({ nombre: c, hex: '#cccccc' });
-      }
-    }
-    this.coloresDisponibles = mergedColors;
+    this.coloresDisponibles = [...COLORES_BASE];
   }
 
   configurarAutocompletado() {
@@ -174,11 +168,15 @@ export class GestionTrajesComponent implements OnInit {
 
   private _filter(value: string, list: string[]): string[] {
     const filterValue = value ? value.toLowerCase() : '';
+    const esSeleccionValida = list.some(option => option.toLowerCase() === filterValue);
+    if (esSeleccionValida) return list;
     return list.filter(option => option.toLowerCase().includes(filterValue));
   }
 
   private _filterColors(value: string): ColorOption[] {
     const filterValue = value ? value.toLowerCase() : '';
+    const esSeleccionValida = this.coloresDisponibles.some(option => option.nombre.toLowerCase() === filterValue);
+    if (esSeleccionValida) return this.coloresDisponibles;
     return this.coloresDisponibles.filter(option => option.nombre.toLowerCase().includes(filterValue));
   }
 
@@ -408,57 +406,7 @@ export class GestionTrajesComponent implements OnInit {
   }
 
   dialogRefNuevaCat: any;
-  dialogRefNuevoColor: any;
-
-  nombreColorAproximado: string = '(Haz clic en el cuadro de color)';
-  hexColorSeleccionado: string = '#0ea5e9';
-  nombreColorInput: string = '';
-
-  hexToRgb(hex: string) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : { r: 0, g: 0, b: 0 };
-  }
-
-  calcularDistanciaColor(rgb1: any, rgb2: any) {
-    return Math.sqrt(
-      Math.pow(rgb1.r - rgb2.r, 2) +
-      Math.pow(rgb1.g - rgb2.g, 2) +
-      Math.pow(rgb1.b - rgb2.b, 2)
-    );
-  }
-
-  onColorChange(event: any) {
-    const hex = event.target.value;
-    this.hexColorSeleccionado = hex;
-    const rgbSeleccionado = this.hexToRgb(hex);
-
-    let colorMasCercano = COLORES_BASE[0].nombre;
-    let distanciaMinima = Infinity;
-
-    for (const color of COLORES_BASE) {
-      const rgbBase = this.hexToRgb(color.hex);
-      const distancia = this.calcularDistanciaColor(rgbSeleccionado, rgbBase);
-
-      if (distancia < distanciaMinima) {
-        distanciaMinima = distancia;
-        colorMasCercano = color.nombre;
-      }
-    }
-
-    this.nombreColorAproximado = `Tono aproximado: ${colorMasCercano}`;
-
-    if (!this.nombreColorInput) {
-      this.nombreColorInput = colorMasCercano;
-    }
-  }
-
-  onNombreColorChange(event: any) {
-    this.nombreColorInput = event.target.value;
-  }
+  dialogRefEliminarCat: any;
 
   abrirModalNuevaCategoria() {
     this.dialogRefNuevaCat = this.dialog.open(this.nuevaCategoriaDialog, {
@@ -484,10 +432,7 @@ export class GestionTrajesComponent implements OnInit {
     }
 
     this.categoriasDisponibles.push(cat);
-
-    const catBase = ['Smokings', 'Gala', 'Casual'];
-    const catsToSave = this.categoriasDisponibles.filter(c => !catBase.includes(c));
-    localStorage.setItem('categoriasTrajes', JSON.stringify(catsToSave));
+    localStorage.setItem('categoriasTrajes', JSON.stringify(this.categoriasDisponibles));
 
     this.trajeForm.patchValue({ categoria: cat });
     this.alertService.mostrarExito('Categoría añadida');
@@ -498,44 +443,24 @@ export class GestionTrajesComponent implements OnInit {
     }
   }
 
-  abrirModalNuevoColor() {
-    this.nombreColorAproximado = '(Haz clic en el cuadro de color)';
-    this.hexColorSeleccionado = '#0ea5e9';
-    this.nombreColorInput = '';
-
-    this.dialogRefNuevoColor = this.dialog.open(this.nuevoColorDialog, {
+  abrirModalEliminarCategoria() {
+    this.dialogRefEliminarCat = this.dialog.open(this.eliminarCategoriaDialog, {
       width: '400px',
       backdropClass: 'blur-backdrop',
       autoFocus: false
     });
   }
 
-  guardarNuevoColor(nombre: string, hex: string) {
-    const nombreColor = nombre.trim();
+  eliminarCategoria(cat: string) {
+    this.categoriasDisponibles = this.categoriasDisponibles.filter(c => c !== cat);
+    localStorage.setItem('categoriasTrajes', JSON.stringify(this.categoriasDisponibles));
 
-    if (!nombreColor) {
-      this.mostrarMensaje('Tenés que ingresar un nombre para el color', true);
-      return;
+    if (this.trajeForm.get('categoria')?.value === cat) {
+      this.trajeForm.patchValue({ categoria: '' });
     }
 
-    if (this.coloresDisponibles.some(c => c.nombre.toLowerCase() === nombreColor.toLowerCase())) {
-      this.mostrarMensaje('Ya existe un color con ese nombre', true);
-      return;
-    }
-
-    const nuevoColor = { nombre: nombreColor, hex: hex };
-    this.coloresDisponibles.push(nuevoColor);
-
-    const colsToSave = this.coloresDisponibles.filter(c => !COLORES_BASE.some(cb => cb.nombre === c.nombre));
-    localStorage.setItem('coloresTrajesFull', JSON.stringify(colsToSave));
-
-    this.trajeForm.patchValue({ color: nuevoColor.nombre });
-    this.alertService.mostrarExito('Color añadido exitosamente');
-    this.trajeForm.get('color')?.updateValueAndValidity();
-
-    if (this.dialogRefNuevoColor) {
-      this.dialogRefNuevoColor.close();
-    }
+    this.trajeForm.get('categoria')?.updateValueAndValidity();
+    this.alertService.mostrarExito('Categoría eliminada');
   }
 
   abrirTablaMedidas() {

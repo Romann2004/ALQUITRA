@@ -229,6 +229,7 @@ export const eliminarTraje = async (req: Request, res: Response) => {
         const reservasActivas = await Reserva.count({
             where: {
                 trajeId: id,
+                activo: true, // Que no estén borradas lógicamente
                 estado: {
                     [Op.in]: [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO]
                 }

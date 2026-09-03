@@ -135,6 +135,10 @@
             title="Añadir nueva categoría" style="margin-top: 4px;">
             <mat-icon>add</mat-icon>
           </button>
+          <button mat-icon-button color="warn" type="button" (click)="abrirModalEliminarCategoria()"
+            title="Eliminar categoría" style="margin-top: 4px;">
+            <mat-icon>delete</mat-icon>
+          </button>
         </div>
 
         <div class="combo-row" style="display: flex; gap: 8px; align-items: start;">
@@ -173,10 +177,6 @@
               El color es obligatorio.
             </mat-error>
           </mat-form-field>
-          <button mat-icon-button color="accent" type="button" (click)="abrirModalNuevoColor()"
-            title="Añadir nuevo color" style="margin-top: 4px;">
-            <mat-icon>palette</mat-icon>
-          </button>
         </div>
 
         <mat-form-field appearance="outline">
@@ -313,27 +313,23 @@
     </mat-dialog-actions>
   </ng-template>
 
-  <!-- DIALOG NUEVO COLOR -->
-  <ng-template #nuevoColorDialog>
-    <h2 mat-dialog-title>Nuevo Color</h2>
+  <!-- DIALOG ELIMINAR CATEGORÍA -->
+  <ng-template #eliminarCategoriaDialog>
+    <h2 mat-dialog-title>Eliminar Categoría</h2>
     <mat-dialog-content>
-      <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 10px;">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Nombre del color</mat-label>
-          <input matInput #colNameInput placeholder="Ej. Turquesa oscuro" [value]="nombreColorInput" (input)="onNombreColorChange($event)">
-        </mat-form-field>
-        <div>
-          <label style="font-weight: 500; font-size: 0.9rem; color: #475569;">Elegí el tono exacto</label>
-          <div style="display: flex; gap: 12px; align-items: center; margin-top: 8px;">
-            <input type="color" #colHexInput [value]="hexColorSeleccionado" (input)="onColorChange($event)" style="width: 50px; height: 50px; padding: 0; border: none; cursor: pointer; border-radius: 8px;">
-            <span style="font-size: 0.9rem; color: #64748b;">{{ nombreColorAproximado }}</span>
-          </div>
-        </div>
+      <div *ngIf="categoriasDisponibles.length === 0" style="color: #64748b; padding: 8px 0;">
+        No hay categorías cargadas.
+      </div>
+      <div *ngFor="let cat of categoriasDisponibles"
+        style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e2e8f0;">
+        <span>{{ cat }}</span>
+        <button mat-icon-button color="warn" type="button" title="Eliminar" (click)="eliminarCategoria(cat)">
+          <mat-icon>delete</mat-icon>
+        </button>
       </div>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancelar</button>
-      <button mat-flat-button color="accent" (click)="guardarNuevoColor(colNameInput.value, colHexInput.value)">Añadir Color</button>
+      <button mat-button mat-dialog-close>Cerrar</button>
     </mat-dialog-actions>
   </ng-template>
 

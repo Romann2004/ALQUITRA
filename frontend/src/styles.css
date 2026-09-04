@@ -205,6 +205,56 @@ mat-form-field {
   margin-top: 32vh !important;
 }
 
+/* ==========================================================================
+   ALERTA INLINE PARA FORMULARIOS DENTRO DE MODALES
+   Reutilizable en cualquier diálogo (Reservas, Clientes, Trajes, etc.) para
+   mostrar errores/éxitos sin depender de un aviso flotante aparte, evitando
+   que el modal de Angular Material lo tape.
+   ========================================================================== */
+.inline-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.inline-alert mat-icon {
+  flex-shrink: 0;
+}
+
+.inline-alert-close {
+  margin-left: auto;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.inline-alert--error {
+  background-color: #fdecea;
+  color: #d32f2f;
+  border: 1px solid #f5c6c2;
+}
+
+.inline-alert--success {
+  background-color: #eaf6ec;
+  color: #2e7d32;
+  border: 1px solid #c3e6cb;
+}
+
+html.dark-theme .inline-alert--error {
+  background-color: #1e293b;
+  color: #f87171;
+  border-color: #7f1d1d;
+}
+
+html.dark-theme .inline-alert--success {
+  background-color: #1e293b;
+  color: #4ade80;
+  border-color: #14532d;
+}
+
 
 /* ==========================================================================
    SISTEMA DE TRANSICIONES FLUIDAS PARA INTERCAMBIO DE TEMAS

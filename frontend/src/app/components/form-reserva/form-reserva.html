@@ -1,6 +1,12 @@
 <h2 mat-dialog-title>{{ data ? 'Editar Reserva' : 'Nueva Reserva' }}</h2>
 
-<mat-dialog-content [formGroup]="form" class="reservation-dialog-content">
+<mat-dialog-content [formGroup]="form" class="reservation-dialog-content" #dialogContent>
+  <div class="inline-alert inline-alert--error" *ngIf="errorMensaje">
+    <mat-icon>error</mat-icon>
+    <span>{{ errorMensaje }}</span>
+    <mat-icon class="inline-alert-close" (click)="cerrarError()">close</mat-icon>
+  </div>
+
   <div class="reservation-form-grid">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Cliente</mat-label>

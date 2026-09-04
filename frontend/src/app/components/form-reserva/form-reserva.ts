@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReservaService } from '../../services/reserva.service';
@@ -14,11 +14,14 @@ import { AlertService } from '../../services/alert.service';
 })
 
 export class FormReserva implements OnInit {
+  @ViewChild('dialogContent') dialogContent!: ElementRef<HTMLElement>;
+
   form!: FormGroup;
   fechaMinima!: Date;
   listClientes: any[] = [];
   listTrajes: any[] = [];
-  
+  errorMensaje: string | null = null;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -102,10 +105,11 @@ export class FormReserva implements OnInit {
   }
 
   guardar() {
+    this.errorMensaje = null;
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.alertService.mostrarError('Revisá los campos, hay errores de validación.');
+      this.mostrarMensaje('Revisá los campos, hay errores de validación.', true);
       return;
     }
 
@@ -144,11 +148,17 @@ export class FormReserva implements OnInit {
   // Función auxiliar para no repetir código del SnackBar
   mostrarMensaje(mensaje: string, esError: boolean = false) {
     if (esError) {
-      this.alertService.mostrarError(mensaje);
+      this.errorMensaje = mensaje;
+      this.cdr.detectChanges();
+      this.dialogContent?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
     this.alertService.mostrarExito(mensaje);
+  }
+
+  cerrarError() {
+    this.errorMensaje = null;
   }
 
   compararObjetos(o1: any, o2: any): boolean {

@@ -1,10 +1,13 @@
 import { Component, Inject, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { forkJoin, Observable } from 'rxjs';
 import { ReservaService } from '../../services/reserva.service';
 import { TrajeService } from '../../services/traje.service';
 import { Cliente } from '../../services/cliente';
 import { AlertService } from '../../services/alert.service';
+import { EstadoReserva } from '../../models/reserva.model';
+import { ESTADOS_TERMINALES, obtenerEstadosDisponibles, normalizarFechaSoloDia, sumarDias } from '../../models/estados-reserva.util';
 
 @Component({
   selector: 'app-form-reserva',
@@ -21,6 +24,14 @@ export class FormReserva implements OnInit {
   listClientes: any[] = [];
   listTrajes: any[] = [];
   errorMensaje: string | null = null;
+
+  // Ciclo de vida de la reserva (solo aplica cuando se está editando, this.data existe)
+  soloLectura = false; // true si ya no se pueden tocar fecha/cantidad/cliente/traje (estado RETIRADO)
+  esTerminal = false; // true si la reserva quedó totalmente congelada (estado final)
+  estadosDisponibles: EstadoReserva[] = [];
+  estadoSeleccionado: EstadoReserva | null = null;
+  fechaRetiroBloqueada = false; // true si ya llegó/pasó el día de retiro pactado (solo aplica en PENDIENTE)
+  fechaDevolucionMaxima: Date | null = null; // techo de +7 días, solo aplica en RETIRADO
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -39,7 +50,6 @@ export class FormReserva implements OnInit {
       fechaRetiro: ['', Validators.required],
       fechaDevolucion: ['', Validators.required],
       senia: [0, [Validators.required, Validators.min(0)]],
-      estado: [{value: 'PENDIENTE', disabled: true}, Validators.required]
     }, { validators: this.fechasValidas }); // Es un validador de grupo
   }
 
@@ -60,12 +70,34 @@ export class FormReserva implements OnInit {
       this.cdr.detectChanges();
     });
 
-    if (!this.data) {
-      this.form.get('estado')?.setValue('PENDIENTE');
-      this.form.get('estado')?.disable();
-    } else {
-      this.form.get('estado')?.enable();
-      this.form.patchValue({ estado: this.data.estado });
+    if (this.data) {
+      this.esTerminal = ESTADOS_TERMINALES.includes(this.data.estado);
+      this.soloLectura = this.esTerminal || this.data.estado !== EstadoReserva.PENDIENTE;
+      this.estadosDisponibles = this.esTerminal
+        ? []
+        : obtenerEstadosDisponibles(this.data.estado, this.data.fechaRetiro, this.data.fechaDevolucion);
+      this.estadoSeleccionado = this.data.estado;
+
+      if (this.soloLectura) {
+        this.form.disable();
+
+        if (this.data.estado === EstadoReserva.RETIRADO) {
+          // Única excepción a la congelación: se puede extender la fecha de devolución,
+          // con techo fijo de 7 días desde lo pactado en el momento del retiro.
+          this.form.get('fechaDevolucion')?.enable();
+          const fechaPactada = this.data.fechaDevolucionPactada || this.data.fechaDevolucion;
+          this.fechaDevolucionMaxima = sumarDias(normalizarFechaSoloDia(fechaPactada), 7);
+        }
+      } else {
+        // PENDIENTE: la fecha de retiro se congela apenas llega (o pasa) el día pactado.
+        // El resto de los campos sigue editable con las reglas de siempre.
+        const hoy = normalizarFechaSoloDia(new Date());
+        const retiro = normalizarFechaSoloDia(this.data.fechaRetiro);
+        if (hoy >= retiro) {
+          this.fechaRetiroBloqueada = true;
+          this.form.get('fechaRetiro')?.disable();
+        }
+      }
     }
   }
 
@@ -97,7 +129,6 @@ export class FormReserva implements OnInit {
         fechaRetiro: corregirFecha(this.data.fechaRetiro),
         fechaDevolucion: corregirFecha(this.data.fechaDevolucion),
         senia: this.data.senia,
-        estado: this.data.estado
       });
 
       this.cdr.detectChanges();
@@ -107,42 +138,67 @@ export class FormReserva implements OnInit {
   guardar() {
     this.errorMensaje = null;
 
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      this.mostrarMensaje('Revisá los campos, hay errores de validación.', true);
+    if (!this.data) {
+      // CREAR: sin cambios, el estado siempre arranca en PENDIENTE
+      if (this.form.invalid) {
+        this.form.markAllAsTouched();
+        this.mostrarMensaje('Revisá los campos, hay errores de validación.', true);
+        return;
+      }
+
+      this._reservaService.addReserva(this.form.getRawValue()).subscribe({
+        next: () => {
+          this.mostrarMensaje('Reserva creada con éxito');
+          this.dialogRef.close(true);
+        },
+        error: (err) => {
+          const mensajeError = err.error?.msg || 'Error al crear la reserva';
+          this.mostrarMensaje(mensajeError, true);
+        }
+      });
       return;
     }
 
-    // USAMOS getRawValue para incluir el estado deshabilitado
-    const reservaData = this.form.getRawValue();
-    
-    if (this.data) {
-      // EDITAR: enviamos reservaData en lugar de this.form.value
-      this._reservaService.updateReserva(this.data.id, reservaData).subscribe({
-        next: (res) => {
-          this.mostrarMensaje('Reserva actualizada con éxito');
-          this.dialogRef.close(reservaData); // Devolvemos el objeto actualizado para la tabla
-        },
-        error: (err) => {
-          // Capturamos el error del back
-          const mensajeError = err.error?.msg || 'Error al actualizar la reserva';
-          this.mostrarMensaje(mensajeError, true);
-        }
-      });
-    } else {
-      // CREAR: enviamos reservaData
-      this._reservaService.addReserva(reservaData).subscribe({
-        next: (res) => {
-          this.mostrarMensaje('Reserva creada con éxito');
-          this.dialogRef.close(true)
-        },
-        error: (err) => {
-          // Si el traje está ocupado, acá va a llegar el mensaje del backend
-          const mensajeError = err.error.msg || 'Error al crear la reserva';
-          this.mostrarMensaje(mensajeError, true);
-        }
-      });
+    // EDITAR: puede implicar hasta dos operaciones independientes:
+    // 1) actualizar los datos (solo si la reserva sigue PENDIENTE)
+    // 2) cambiar el estado (si se eligió uno distinto al actual)
+    if (this.esTerminal) return; // no debería poder llegar acá, el botón queda oculto
+
+    const operaciones: Observable<any>[] = [];
+    const cambiaEstado = !!this.estadoSeleccionado && this.estadoSeleccionado !== this.data.estado;
+    // PENDIENTE: se puede editar todo (con la fecha de retiro ya bloqueada si corresponde).
+    // RETIRADO: solo se manda la extensión de fecha de devolución (el resto viaja
+    // deshabilitado en el formulario, y el backend lo ignora de todos modos).
+    const puedeEditarDatos = this.data.estado === EstadoReserva.PENDIENTE || this.data.estado === EstadoReserva.RETIRADO;
+
+    if (puedeEditarDatos) {
+      if (this.form.invalid) {
+        this.form.markAllAsTouched();
+        this.mostrarMensaje('Revisá los campos, hay errores de validación.', true);
+        return;
+      }
+      operaciones.push(this._reservaService.updateReserva(this.data.id, this.form.getRawValue()));
     }
+
+    if (cambiaEstado) {
+      operaciones.push(this._reservaService.cambiarEstadoReserva(this.data.id, this.estadoSeleccionado as string));
+    }
+
+    if (operaciones.length === 0) {
+      this.dialogRef.close(); // no había nada para guardar
+      return;
+    }
+
+    forkJoin(operaciones).subscribe({
+      next: () => {
+        this.mostrarMensaje('Reserva actualizada con éxito');
+        this.dialogRef.close(true);
+      },
+      error: (err) => {
+        const mensajeError = err.error?.msg || 'Error al actualizar la reserva';
+        this.mostrarMensaje(mensajeError, true);
+      }
+    });
   }
 
   // Función auxiliar para no repetir código del SnackBar

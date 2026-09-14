@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cron from 'node-cron';
 import { sequelize, connectMongo } from './config/db';
 import TrajeRoutes from './routes/TrajeRoutes';
 import authRoutes from './routes/AuthRoutes';
@@ -9,6 +10,7 @@ import ReservaRoutes from './routes/ReservaRoutes';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
+import { revisarTransicionesAutomaticas } from './jobs/revisionAutomaticaReservas';
 
 // Configuración inicial
 const app = express();
@@ -49,6 +51,18 @@ async function bootstrap() {
         await sequelize.sync({ alter: true });
         console.log("Tablas sincronizadas con la DB.");
         console.log('Modelos sincronizados con la DB')
+
+        // Revisión de transiciones automáticas de estado de reservas:
+        // una vez al arrancar (para ponerse al día si el server estuvo apagado)...
+        await revisarTransicionesAutomaticas();
+        console.log('Revisión automática de estados de reservas completada.');
+
+        // ...y luego todos los días a las 00:05.
+        cron.schedule('5 0 * * *', () => {
+            revisarTransicionesAutomaticas().catch((error) => {
+                console.error('Error en la revisión automática de estados de reservas:', error);
+            });
+        });
 
         //Abrir el puerto
         app.listen(PORT, () => {

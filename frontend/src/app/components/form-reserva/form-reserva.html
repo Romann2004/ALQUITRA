@@ -40,21 +40,24 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
+    <mat-form-field appearance="outline" class="full-width" *ngIf="data && !esTerminal">
       <mat-label>Estado</mat-label>
-      <mat-select formControlName="estado">
-        <mat-option value="PENDIENTE">PENDIENTE</mat-option>
-        <mat-option value="RETIRADO">RETIRADO</mat-option>
-        <mat-option value="COMPLETADO">COMPLETADO</mat-option>
-        <mat-option value="CANCELADO">CANCELADO</mat-option>
+      <mat-select [(ngModel)]="estadoSeleccionado" [ngModelOptions]="{standalone: true}">
+        <mat-option [value]="data.estado">{{ data.estado }} (actual)</mat-option>
+        <mat-option *ngFor="let e of estadosDisponibles" [value]="e">{{ e }}</mat-option>
       </mat-select>
     </mat-form-field>
+
+    <div class="full-width" *ngIf="data && esTerminal" style="color:#64748b; font-size:0.9rem; padding: 8px 0;">
+      <strong>Estado:</strong> {{ data.estado }} (definitivo, ya no puede modificarse)
+    </div>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Fecha de Retiro</mat-label>
       <input matInput [matDatepicker]="pickerRetiro" formControlName="fechaRetiro" [min]="fechaMinima">
       <mat-datepicker-toggle matSuffix [for]="pickerRetiro"></mat-datepicker-toggle>
       <mat-datepicker #pickerRetiro></mat-datepicker>
+      <mat-hint *ngIf="fechaRetiroBloqueada">Ya llegó la fecha pactada: no se puede modificar.</mat-hint>
       <mat-error *ngIf="form.get('fechaRetiro')?.hasError('required')">
         Seleccioná la fecha de retiro.
       </mat-error>
@@ -62,9 +65,10 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Fecha de Devolución</mat-label>
-      <input matInput [matDatepicker]="pickerDev" formControlName="fechaDevolucion" [min]="form.get('fechaRetiro')?.value || fechaMinima">
+      <input matInput [matDatepicker]="pickerDev" formControlName="fechaDevolucion" [min]="form.get('fechaRetiro')?.value || fechaMinima" [max]="fechaDevolucionMaxima">
       <mat-datepicker-toggle matSuffix [for]="pickerDev"></mat-datepicker-toggle>
       <mat-datepicker #pickerDev></mat-datepicker>
+      <mat-hint *ngIf="fechaDevolucionMaxima">Se puede extender como máximo hasta el {{ fechaDevolucionMaxima | date:'dd/MM/yyyy' }}.</mat-hint>
       <mat-error *ngIf="form.get('fechaDevolucion')?.hasError('required')">
         Seleccioná la fecha de devolución.
       </mat-error>
@@ -83,6 +87,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancelar</button>
-  <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="guardar()">Guardar</button>
+  <button mat-button mat-dialog-close>{{ esTerminal ? 'Cerrar' : 'Cancelar' }}</button>
+  <button mat-raised-button color="primary" *ngIf="!esTerminal" [disabled]="soloLectura ? false : form.invalid" (click)="guardar()">Guardar</button>
 </mat-dialog-actions>

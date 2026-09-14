@@ -3,6 +3,21 @@
     padding: 20px;
 }
 
+/* El estilo global de .total-registros trae un margen negativo pensado para pegarlo
+   al buscador (así se usa en Clientes y Trajes). Acá va debajo de las pestañas, no
+   del buscador, así que ese margen negativo lo hacía pisar la barra de pestañas. */
+.total-registros {
+    margin-top: 12px;
+}
+
+/* Misma clase que ya usan Clientes y Trajes: pone los botones de acción uno al
+   lado del otro (en vez de uno arriba del otro) para mantener el mismo diseño. */
+.action-buttons-cell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
 table {
     width: 100%;
 }
@@ -23,5 +38,8 @@ table {
 
 .pendiente { background-color: #ff9800; } /* Naranja */
 .retirado { background-color: #2196f3; }  /* Azul */
-.completado { background-color: #4caf50; } /* Verde */
-.cancelado { background-color: #f44336; }  /* Rojo */
+.completado_a_tiempo { background-color: #4caf50; } /* Verde */
+.completado_fuera_de_tiempo { background-color: #8bc34a; } /* Verde lima */
+.cancelado_a_tiempo { background-color: #f44336; }  /* Rojo */
+.cancelado_fuera_de_tiempo { background-color: #b71c1c; } /* Rojo oscuro */
+.trajes_perdidos { background-color: #212121; } /* Negro/gris muy oscuro */

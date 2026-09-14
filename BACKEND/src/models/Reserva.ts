@@ -23,6 +23,14 @@ const Reserva = sequelize.define('reserva', {
         type: DataTypes.DATEONLY,
         allowNull: false
     },
+    // Se completa una sola vez, al momento en que la reserva pasa a RETIRADO: es la fecha
+    // de devolución que estaba pactada justo en ese instante. Sirve como techo fijo para
+    // saber hasta cuándo se puede extender fechaDevolucion (como máximo 7 días desde acá),
+    // sin que ese límite se corra si se extiende más de una vez.
+    fechaDevolucionPactada: {
+        type: DataTypes.DATEONLY,
+        allowNull: true
+    },
     estado: {
         type: DataTypes.ENUM(...Object.values(EstadoReserva)),
         defaultValue: EstadoReserva.PENDIENTE,
@@ -44,7 +52,16 @@ const Reserva = sequelize.define('reserva', {
     }
 }, {
     tableName: 'reservas',
-    timestamps: true
+    timestamps: true,
+    // Índices para que filtrar/ordenar/paginar siga siendo rápido con muchas filas.
+    indexes: [
+        { fields: ['estado'] },
+        { fields: ['activo'] },
+        { fields: ['fechaRetiro'] },
+        { fields: ['fechaDevolucion'] },
+        { fields: ['clienteId'] },
+        { fields: ['trajeId'] },
+    ]
 });
 
 //Definimos las relaciones acá

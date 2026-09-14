@@ -5,6 +5,8 @@ import { Log } from "../models/Log";
 import Reserva from "../models/Reserva";
 import Cliente from "../models/Cliente";
 import { EstadoReserva, EstadoTraje } from "../models/Enums";
+import { normalizarFechaSoloDia, sumarDias } from "../utils/fechas";
+import { ESTADOS_TERMINALES, esTransicionValida } from "../utils/estadosReserva";
 
 export const postReserva = async (req: Request, res: Response) => {
   const { fechaRetiro, fechaDevolucion, senia, clienteId, trajeId, cantidad } = req.body;
@@ -40,8 +42,6 @@ export const postReserva = async (req: Request, res: Response) => {
       estado: EstadoReserva.PENDIENTE,
     });
 
-    await sincronizarEstadoTraje(Number(trajeId));
-
     await registrarLog(
       "CREAR_RESERVA",
       nuevaReserva.id,
@@ -55,28 +55,132 @@ export const postReserva = async (req: Request, res: Response) => {
   }
 };
 
+// Estados que agrupan la reserva como "en proceso" (todavía no llegó a un final).
+const ESTADOS_EN_PROCESO: EstadoReserva[] = [EstadoReserva.PENDIENTE, EstadoReserva.RETIRADO];
+
+// Columnas por las que se puede ordenar desde el frontend, y cómo traducirlas a SQL.
+const construirOrden = (sortField: string, sortDirection: string): any[] => {
+  const direccion = sortDirection === "desc" ? "DESC" : "ASC";
+  switch (sortField) {
+    case "cliente":
+      return [[Cliente, "nombre", direccion]];
+    case "traje":
+      // Igual que antes: primero por categoría, y el talle en orden real de tamaño (no alfabético).
+      return [
+        [Traje, "categoria", direccion],
+        [
+          Reserva.sequelize!.literal(
+            `CASE "Traje"."talle" WHEN 'XS' THEN 1 WHEN 'S' THEN 2 WHEN 'M' THEN 3 WHEN 'L' THEN 4 WHEN 'XL' THEN 5 WHEN 'XXL' THEN 6 ELSE 99 END`
+          ),
+          direccion,
+        ],
+      ];
+    case "id":
+    case "cantidad":
+    case "fechaRetiro":
+    case "fechaDevolucion":
+    case "estado":
+    case "senia":
+      return [[sortField, direccion]];
+    default:
+      return [["fechaRetiro", "ASC"]];
+  }
+};
+
 export const getReservas = async (req: Request, res: Response) => {
   try {
-    const reservas = await Reserva.findAll({
-      where: { activo: true }, // Solo traemos las reservas activas
+    const {
+      categoria, // 'en_proceso' | 'finalizadas'
+      page = "1",
+      pageSize = "25",
+      search = "",
+      sortField = "fechaRetiro",
+      sortDirection = "asc",
+    } = req.query as Record<string, string>;
+
+    const where: any = { activo: true };
+
+    if (categoria === "en_proceso") {
+      where.estado = { [Op.in]: ESTADOS_EN_PROCESO };
+    } else if (categoria === "finalizadas") {
+      where.estado = { [Op.in]: ESTADOS_TERMINALES };
+    }
+
+    const busqueda = search.trim();
+    if (busqueda) {
+      const like = `%${busqueda}%`;
+      where[Op.or as any] = [
+        { "$Cliente.nombre$": { [Op.iLike]: like } },
+        { "$Traje.categoria$": { [Op.iLike]: like } },
+        { "$Traje.talle$": { [Op.iLike]: like } },
+        { "$Traje.color$": { [Op.iLike]: like } },
+        Reserva.sequelize!.where(Reserva.sequelize!.cast(Reserva.sequelize!.col("reserva.estado"), "text"), { [Op.iLike]: like }),
+        Reserva.sequelize!.where(Reserva.sequelize!.cast(Reserva.sequelize!.col("reserva.id"), "text"), { [Op.iLike]: like }),
+        Reserva.sequelize!.where(Reserva.sequelize!.cast(Reserva.sequelize!.col("reserva.cantidad"), "text"), { [Op.iLike]: like }),
+        Reserva.sequelize!.where(Reserva.sequelize!.cast(Reserva.sequelize!.col("reserva.senia"), "text"), { [Op.iLike]: like }),
+        Reserva.sequelize!.where(
+          Reserva.sequelize!.fn("TO_CHAR", Reserva.sequelize!.col("reserva.fechaRetiro"), "DD/MM/YYYY"),
+          { [Op.iLike]: like }
+        ),
+        Reserva.sequelize!.where(
+          Reserva.sequelize!.fn("TO_CHAR", Reserva.sequelize!.col("reserva.fechaDevolucion"), "DD/MM/YYYY"),
+          { [Op.iLike]: like }
+        ),
+      ];
+    }
+
+    const pageNum = Math.max(1, Number(page) || 1);
+    const pageSizeNum = Math.max(1, Number(pageSize) || 25);
+
+    const { count, rows } = await Reserva.findAndCountAll({
+      where,
       include: [
-        { model: Cliente, attributes: ["nombre", "dni"] },
-        { model: Traje, attributes: ["categoria", "talle", "color"] },
+        { model: Cliente, attributes: ["nombre", "dni"], required: false },
+        { model: Traje, attributes: ["categoria", "talle", "color"], required: false },
       ],
+      order: construirOrden(sortField, sortDirection),
+      limit: pageSizeNum,
+      offset: (pageNum - 1) * pageSizeNum,
+      subQuery: false, // necesario para que limit/offset funcionen bien junto al filtro por columnas incluidas ($Cliente.nombre$, etc.)
     });
-    res.json(reservas);
+
+    res.json({ data: rows, total: count });
   } catch (error) {
+    console.error("Error al obtener reservas:", error);
     res.status(500).json({ msg: "Error al obtener reservas", error });
   }
 };
 
 export const updateReserva = async (req: Request, res: Response) => {
   const id = req.params.id as string;
-  const { fechaRetiro, fechaDevolucion, senia, trajeId, estado, cantidad } = req.body;
 
   try {
     const reserva = (await Reserva.findByPk(id)) as any;
     if (!reserva) return res.status(404).json({ msg: "No existe esa reserva" });
+
+    const estadoActual = reserva.get('estado') as EstadoReserva;
+
+    // Una reserva RETIRADA está congelada, salvo una excepción puntual: se puede
+    // extender la fecha de devolución (con un techo fijo), para darle más tiempo al cliente.
+    if (estadoActual === EstadoReserva.RETIRADO) {
+      return await extenderFechaDevolucion(req, res, reserva);
+    }
+
+    if (estadoActual !== EstadoReserva.PENDIENTE) {
+      return res.status(400).json({ msg: "La reserva ya fue retirada o finalizada, y no puede editarse. Solo se puede cambiar su estado." });
+    }
+
+    const { fechaRetiro, fechaDevolucion, senia, trajeId, cantidad } = req.body;
+
+    // La fecha de retiro solo se puede tocar hasta el día antes del retiro pactado.
+    // Una vez llegado (o pasado) ese día, queda congelada — el resto de los campos sigue editable.
+    const fechaRetiroActual = reserva.get('fechaRetiro') as string;
+    if (fechaRetiro !== undefined && normalizarFechaSoloDia(fechaRetiro).getTime() !== normalizarFechaSoloDia(fechaRetiroActual).getTime()) {
+      const hoy = normalizarFechaSoloDia(new Date());
+      if (hoy >= normalizarFechaSoloDia(fechaRetiroActual)) {
+        return res.status(400).json({ msg: `No se puede modificar la fecha de retiro: la fecha pactada (${formatearFecha(fechaRetiroActual)}) ya llegó o pasó.` });
+      }
+    }
 
     const oldTrajeId = reserva.get('trajeId') as number;
     const cantidadFinal = cantidad ? Number(cantidad) : reserva.get('cantidad');
@@ -108,14 +212,8 @@ export const updateReserva = async (req: Request, res: Response) => {
       if (errorSeniaPrecio) return res.status(400).json({ msg: errorSeniaPrecio });
     }
 
-    // 2. Actualización de la Reserva en la BD
-    await reserva.update({ ...req.body, cantidad: cantidadFinal });
-
-    if (trajeId && Number(trajeId) !== Number(oldTrajeId)) {
-      await sincronizarEstadoTraje(Number(oldTrajeId));
-    }
-
-    await sincronizarEstadoTraje(Number(trajeId || oldTrajeId));
+    // 2. Actualización de la Reserva en la BD (el estado NO se toca acá, ver updateEstadoReserva)
+    await reserva.update({ fechaRetiro, fechaDevolucion, senia, trajeId, cantidad: cantidadFinal });
 
     await registrarLog("ACTUALIZAR_RESERVA", Number(id), "Se actualizó la reserva");
 
@@ -126,29 +224,93 @@ export const updateReserva = async (req: Request, res: Response) => {
   }
 };
 
+// Única modificación permitida sobre una reserva RETIRADA: estirar la fecha de
+// devolución, con un techo fijo de 7 días desde lo que estaba pactado en el
+// momento exacto del retiro (fechaDevolucionPactada), sin importar cuántas veces se edite.
+const extenderFechaDevolucion = async (req: Request, res: Response, reserva: any) => {
+  const { fechaDevolucion } = req.body;
+
+  if (!fechaDevolucion) {
+    return res.status(400).json({ msg: "Falta la nueva fecha de devolución." });
+  }
+
+  const fechaPactada = reserva.get('fechaDevolucionPactada') || reserva.get('fechaDevolucion');
+  const limiteMaximo = sumarDias(normalizarFechaSoloDia(fechaPactada), 7);
+  const nuevaFecha = normalizarFechaSoloDia(fechaDevolucion);
+  const fechaRetiro = normalizarFechaSoloDia(reserva.get('fechaRetiro'));
+
+  if (nuevaFecha <= fechaRetiro) {
+    return res.status(400).json({ msg: "La fecha de devolución debe ser posterior al retiro." });
+  }
+
+  if (nuevaFecha > limiteMaximo) {
+    return res.status(400).json({
+      msg: `No se puede extender la devolución más allá del ${formatearFecha(limiteMaximo)} (máximo 7 días desde la fecha pactada).`,
+    });
+  }
+
+  const { error: errorSuperposicion } = await validarSuperposicionGrupal(
+    reserva.get('trajeId'),
+    reserva.get('fechaRetiro'),
+    fechaDevolucion,
+    reserva.get('cantidad'),
+    reserva.id
+  );
+  if (errorSuperposicion) return res.status(400).json({ msg: errorSuperposicion });
+
+  await reserva.update({ fechaDevolucion });
+
+  await registrarLog("ACTUALIZAR_RESERVA", reserva.id, `Se extendió la fecha de devolución a ${formatearFecha(fechaDevolucion)}`);
+
+  res.json({ msg: "Fecha de devolución actualizada", reserva });
+};
+
+const formatearFecha = (fecha: string | Date): string => {
+  const d = normalizarFechaSoloDia(fecha);
+  const dia = String(d.getDate()).padStart(2, '0');
+  const mes = String(d.getMonth() + 1).padStart(2, '0');
+  return `${dia}/${mes}/${d.getFullYear()}`;
+};
+
 export const updateEstadoReserva = async (req: Request, res: Response) => {
   const id = req.params.id as string;
-  const { estado } = req.body;
+  const { estado: estadoNuevo } = req.body;
 
-  const errorEstado = validarEstadoEnum(estado);
-  if (errorEstado) return res.status(400).json({ msg: errorEstado });
+  if (!Object.values(EstadoReserva).includes(estadoNuevo)) {
+    return res.status(400).json({ msg: "Estado no válido" });
+  }
 
   try {
-    const reserva = await Reserva.findByPk(id);
+    const reserva = await Reserva.findByPk(id) as any;
     if (!reserva) return res.status(404).json({ msg: "No existe esa reserva" });
+    if (!reserva.activo) return res.status(400).json({ msg: "La reserva no existe o fue eliminada." });
 
-    // Actualizamos la reserva
-    await reserva.update({ estado });
+    const estadoActual = reserva.estado as EstadoReserva;
 
-    await sincronizarEstadoTraje(reserva.get('trajeId') as number);
+    if (ESTADOS_TERMINALES.includes(estadoActual)) {
+      return res.status(400).json({ msg: "La reserva ya está en un estado final y no puede modificarse." });
+    }
+
+    if (!esTransicionValida(estadoActual, estadoNuevo, reserva.fechaRetiro, reserva.fechaDevolucion)) {
+      return res.status(400).json({ msg: `No se puede cambiar el estado a "${estadoNuevo}" en este momento.` });
+    }
+
+    const cambios: any = { estado: estadoNuevo };
+    if (estadoNuevo === EstadoReserva.RETIRADO) {
+      // Congelamos acá la fecha de devolución pactada, para poder calcular
+      // después el techo de +7 días sin importar cuántas veces se extienda.
+      cambios.fechaDevolucionPactada = reserva.fechaDevolucion;
+    }
+    await reserva.update(cambios);
 
     await registrarLog(
       "ACTUALIZAR_ESTADO_RESERVA",
       Number(id),
-      `Se actualizó el estado a ${estado}`
+      `Se actualizó el estado de ${estadoActual} a ${estadoNuevo}`
     );
-    res.json({ msg: "Estado actualizado y stock sincronizado" });
+    res.json({ msg: "Estado actualizado", estado: estadoNuevo });
   } catch (error) {
+    console.error("Error técnico:", error);
     res.status(500).json({ msg: "Error al cambiar el estado de la reserva" });
   }
 };
@@ -159,14 +321,13 @@ export const deleteReserva = async (req: Request, res: Response) => {
     const reserva = await Reserva.findByPk(id);
     if (!reserva) return res.status(404).json({ msg: "No existe una reserva con ese id" });
 
-    const estadoReserva = reserva.get('estado') as string;
-    const trajeId = reserva.get('trajeId') as number;
+    const estadoReserva = reserva.get('estado') as EstadoReserva;
+
+    if (estadoReserva !== EstadoReserva.PENDIENTE) {
+      return res.status(400).json({ msg: "No se puede eliminar una reserva que ya fue retirada o finalizada." });
+    }
 
     await reserva.update({ activo: false });
-
-    if (estadoReserva === "RETIRADO" || estadoReserva === "PENDIENTE") {
-      await sincronizarEstadoTraje(trajeId);
-    }
 
     await registrarLog("ELIMINAR_RESERVA_LOGICA", Number(id), "Se eliminó la reserva (Borrado Lógico)");
     res.json({ msg: "Reserva eliminada con éxito" });
@@ -229,7 +390,7 @@ const validarSuperposicionGrupal = async (
   const whereClause: any = {
     trajeId,
     estado: {
-      [Op.notIn]: [EstadoReserva.CANCELADO, EstadoReserva.COMPLETADO],
+      [Op.notIn]: ESTADOS_TERMINALES,
     },
     activo: true, // Respetamos el borrado lógico
     fechaRetiro: { [Op.lt]: fechaDevolucion },
@@ -278,23 +439,6 @@ const validarSuperposicionGrupal = async (
   return { error: null, traje }; // Todo bien, no hay superposición
 };
 
-const normalizarFechaSoloDia = (fecha: string | Date): Date => {
-  if (fecha instanceof Date) {
-    return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
-  }
-
-  const [anio, mes, dia] = fecha.slice(0, 10).split('-').map(Number);
-  return new Date(anio, mes - 1, dia);
-};
-
-const validarEstadoEnum = (estado: string): string | null => {
-  const estadosValidos = ["PENDIENTE", "RETIRADO", "COMPLETADO", "CANCELADO"];
-  if (!estadosValidos.includes(estado)) {
-    return "Estado no válido";
-  }
-  return null;
-};
-
 const registrarLog = async (accion: string, id: number, detalle: string) => {
   await Log.create({
     accion,
@@ -302,22 +446,3 @@ const registrarLog = async (accion: string, id: number, detalle: string) => {
     metadata: { reservaId: id },
   });
 };
-
-const sincronizarEstadoTraje = async (trajeId: number) => {
-  // Ya no se cambia el estado del traje en base a reservas. 
-  // Ahora la disponibilidad se maneja dinámicamente calculando 
-  // el stock total vs las reservas activas.
-};
-
-// const sincronizarEstadoTraje = async (trajeId: number, estadoReserva: string) => {
-//   const traje = await Traje.findByPk(trajeId);
-//   if (!traje) return;
-
-//   if (estadoReserva === "RETIRADO") {
-//     await traje.update({ estado: EstadoTraje.ALQUILADO });
-//   } else if (estadoReserva === "COMPLETADO" || estadoReserva === "CANCELADO") {
-//     await traje.update({ estado: EstadoTraje.DISPONIBLE });
-//   } else if (estadoReserva === "PENDIENTE") {
-//     await traje.update({ estado: EstadoTraje.ALQUILADO });
-//   }
-// };

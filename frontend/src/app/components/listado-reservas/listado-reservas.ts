@@ -1,11 +1,23 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Reserva } from '../../models/reserva.model';
 import { ReservaService } from '../../services/reserva.service';
-import { MatTableDataSource, MatTable } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
+import { Sort } from '@angular/material/sort';
 import { FormReserva } from '../form-reserva/form-reserva';
 import { AlertService } from '../../services/alert.service';
+
+type Categoria = 'en_proceso' | 'finalizadas';
+
+interface EstadoTabla {
+  data: Reserva[];
+  total: number;
+  pageIndex: number;
+  sortField: string;
+  sortDirection: 'asc' | 'desc';
+}
 
 @Component({
   selector: 'app-listado-reservas',
@@ -14,157 +26,120 @@ import { AlertService } from '../../services/alert.service';
   styleUrl: './listado-reservas.css',
 })
 export class ListadoReservas implements OnInit {
-  displayedColumns: string[] = ['id', 'cliente', 'traje', 'cantidad', 'fechaRetiro', 'estado', 'fechaDevolucion', 'senia', 'acciones'];
-  
-  dataSource!: MatTableDataSource<Reserva>;
-  @ViewChild('miTabla') table!: MatTable<any>;
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('buscadorInput') buscadorInput?: ElementRef<HTMLInputElement>;
 
-  constructor(private _reservaService: ReservaService, public dialog: MatDialog, private cdr: ChangeDetectorRef, private alertService: AlertService) {
-    this.dataSource = new MatTableDataSource<Reserva>();
-  }
+  displayedColumnsEnProceso: string[] = ['id', 'cliente', 'traje', 'cantidad', 'fechaRetiro', 'estado', 'fechaDevolucion', 'senia', 'acciones'];
+  displayedColumnsFinalizadas: string[] = ['id', 'cliente', 'traje', 'cantidad', 'fechaRetiro', 'estado', 'fechaDevolucion', 'senia', 'acciones'];
+
+  pageSizeOptions = [10, 25, 50, 100];
+  pageSize = 25;
+  searchTerm = '';
+  pestañaActiva: Categoria = 'en_proceso';
+
+  tablas: Record<Categoria, EstadoTabla> = {
+    en_proceso: { data: [], total: 0, pageIndex: 0, sortField: 'fechaRetiro', sortDirection: 'asc' },
+    finalizadas: { data: [], total: 0, pageIndex: 0, sortField: 'fechaRetiro', sortDirection: 'desc' },
+  };
+
+  private busqueda$ = new Subject<string>();
+
+  constructor(private _reservaService: ReservaService, public dialog: MatDialog, private alertService: AlertService) {}
 
   ngOnInit(): void {
-    this.obtenerReservas();
+    this.busqueda$.pipe(debounceTime(350), distinctUntilChanged()).subscribe((valor) => {
+      this.searchTerm = valor;
+      this.tablas[this.pestañaActiva].pageIndex = 0;
+      this.cargarReservas(this.pestañaActiva);
+    });
+
+    this.cargarReservas('en_proceso');
+    this.cargarReservas('finalizadas');
   }
 
-  ngAfterContentChecked() {
-    this.cdr.detectChanges();
-  }
-
-  obtenerReservas() {
-    this._reservaService.getReservas().subscribe({
-      next: (data: any) => {
-        this.dataSource.data = data;
-
-        // 1. Asignamos el sort
-        this.dataSource.sort = this.sort;
-
-        // Personalización del ordenamiento para objetos relacionales
-        this.dataSource.sortingDataAccessor = (item: any, property: string) => {
-          switch (property) {
-            case 'cliente': return item.Cliente?.nombre?.toLowerCase() || '';
-            case 'traje':
-              // Ordenamos por categoría y por talle usando el orden real de talles
-              const categoria = item.Traje?.categoria?.toLowerCase() || '';
-              const talleOrden: Record<string, number> = {
-                XS: 1,
-                S: 2,
-                M: 3,
-                L: 4,
-                XL: 5,
-                XXL: 6,
-              };
-              const talleKey = String(item.Traje?.talle || '').toUpperCase();
-              const talleStr = String(talleOrden[talleKey] || 0).padStart(3, '0');
-
-              // Retornamos la combinación. Ej: "smoking-048" o "smoking-052"
-              return `${categoria}-${talleStr}`;
-            case 'id': return Number(item.id);
-            case 'senia': return Number(item.senia);
-            case 'estado': return item.estado?.toLowerCase() || '';
-            default: return item[property]; 
-          }
-        };
-
-        // 2. CREAMOS EL PREDICADO DE FILTRADO PERSONALIZADO
-        this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
-          const transformFilter = filter.trim().toLowerCase();
-
-          // Campos básicos planos
-          const id = data.id?.toString() || '';
-          const estado = data.estado?.toLowerCase() || '';
-          const senia = data.senia?.toString() || '';
-
-          // Datos del Cliente
-          const clienteNombre = data.Cliente?.nombre?.toLowerCase() || '';
-          const clienteApellido = data.Cliente?.apellido?.toLowerCase() || '';
-
-          // Datos del Traje
-          const trajeTalle = data.Traje?.talle?.toString() || ''; // Filtra por ej: "XS", "M", "XL"
-          const trajeCategoria = data.Traje?.categoria?.toLowerCase() || ''; // Filtra por ej: "Saco", "Pantalon", "Smoking"
-
-          // Procesamiento de Fechas (Convertimos las fechas a texto legible tipo "DD/MM/YYYY")
-          const formatearFecha = (fechaInput: any): string => {
-            if (!fechaInput) return '';
-            const d = new Date(fechaInput);
-            // Sumamos el desfasaje de zona horaria para que no se corra un día al formatear
-            d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
-            const dia = String(d.getDate()).padStart(2, '0');
-            const mes = String(d.getMonth() + 1).padStart(2, '0');
-            const anio = d.getFullYear();
-            return `${dia}/${mes}/${anio}`; // Devuelve "25/05/2026"
-          };
-
-          const fechaRetiroStr = formatearFecha(data.fechaRetiro);
-          const fechaDevolucionStr = formatearFecha(data.fechaDevolucion);
-
-          // Si el buscador coincide con CUALQUIERA de estas cosas, la fila se muestra
-          return id.includes(transformFilter) ||
-                 estado.includes(transformFilter) ||
-                 senia.includes(transformFilter) ||
-                 clienteNombre.includes(transformFilter) ||
-                 clienteApellido.includes(transformFilter)  ||
-                 trajeTalle.includes(transformFilter) ||
-                 trajeCategoria.includes(transformFilter) ||
-                 fechaRetiroStr.includes(transformFilter) ||
-                 fechaDevolucionStr.includes(transformFilter);
-        };
+  cargarReservas(categoria: Categoria): void {
+    const t = this.tablas[categoria];
+    this._reservaService.getReservas({
+      categoria,
+      page: t.pageIndex + 1,
+      pageSize: this.pageSize,
+      search: this.searchTerm,
+      sortField: t.sortField,
+      sortDirection: t.sortDirection,
+    }).subscribe({
+      next: (res) => {
+        // Si borraste el único registro de una página que no sea la primera,
+        // esa página queda vacía: retrocedemos una y volvemos a pedir.
+        if (res.data.length === 0 && t.pageIndex > 0 && res.total > 0) {
+          t.pageIndex -= 1;
+          this.cargarReservas(categoria);
+          return;
+        }
+        t.data = res.data;
+        t.total = res.total;
       },
-      error: (err) => {
-        console.log(err);
-      }      
+      error: (err) => console.log(err),
     });
   }
 
-  agregarReserva() {
-    this.dialog.open(FormReserva, { 
-      width: '880px',
-      maxWidth: '96vw', 
-      backdropClass: 'blur-backdrop',
-      data: null // Esto le dice al formulario que NO estamos editando
-    }).afterClosed().subscribe(() => this.obtenerReservas());
+  private recargarTodo(): void {
+    this.cargarReservas('en_proceso');
+    this.cargarReservas('finalizadas');
   }
 
-  editarReserva(reserva: any) {
-    const dialogRef = this.dialog.open(FormReserva, {
+  cambiarPestana(index: number): void {
+    this.pestañaActiva = index === 0 ? 'en_proceso' : 'finalizadas';
+    // La búsqueda se reinicia al cambiar de pestaña para no arrastrar un filtro de la otra tabla.
+    this.searchTerm = '';
+    if (this.buscadorInput) this.buscadorInput.nativeElement.value = '';
+    this.tablas[this.pestañaActiva].pageIndex = 0;
+    this.cargarReservas(this.pestañaActiva);
+  }
+
+  aplicarFiltro(event: Event): void {
+    const valor = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.busqueda$.next(valor);
+  }
+
+  cambiarPagina(categoria: Categoria, event: PageEvent): void {
+    const t = this.tablas[categoria];
+    t.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.cargarReservas(categoria);
+  }
+
+  ordenar(categoria: Categoria, sort: Sort): void {
+    const t = this.tablas[categoria];
+    t.sortField = sort.direction ? sort.active : 'fechaRetiro';
+    t.sortDirection = sort.direction ? (sort.direction as 'asc' | 'desc') : 'asc';
+    t.pageIndex = 0;
+    this.cargarReservas(categoria);
+  }
+
+  agregarReserva(): void {
+    this.dialog.open(FormReserva, {
       width: '880px',
       maxWidth: '96vw',
       backdropClass: 'blur-backdrop',
-      data: reserva
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result)  {
-        // Accedemos al array real dentro del datasource
-        const dataActual = [...this.dataSource.data];
-
-        // Buscamos el índice
-        const index = dataActual.findIndex(r => Number(r.id) === Number(reserva.id));
-        console.log("Índice real encontrado:", index);
-
-        if (index !== -1) {
-          // Actualizamos el array local
-          dataActual[index] = {
-            ...reserva,
-            ... result
-          };
-
-          // Asignamos el nuevo array al datasource para que la tabla se entere
-          this.dataSource.data = dataActual;
-
-          if (this.table) {
-            this.table.renderRows(); // Esto fuerza a la tabla a refrescar su vista
-          }
-
-          console.log("Tabla actualizada localmente. No debería haberse movido.");
-        } 
-
-      }
+      data: null,
+    }).afterClosed().subscribe((result) => {
+      if (result) this.recargarTodo();
     });
   }
 
-  eliminarReserva(id: number) {
+  editarReserva(reserva: any): void {
+    this.dialog.open(FormReserva, {
+      width: '880px',
+      maxWidth: '96vw',
+      backdropClass: 'blur-backdrop',
+      data: reserva,
+    }).afterClosed().subscribe((result) => {
+      // Puede haber cambiado de categoría (ej. de "en proceso" a "finalizada"),
+      // así que siempre refrescamos las dos tablas, no solo la que se editó.
+      if (result) this.recargarTodo();
+    });
+  }
+
+  eliminarReserva(id: number): void {
     this.alertService.confirmarAccion(
       'Eliminar reserva',
       '¿Estás seguro que queres eliminar esta reserva?'
@@ -172,18 +147,12 @@ export class ListadoReservas implements OnInit {
       if (!confirmado) return;
 
       this._reservaService.deleteReserva(id).subscribe(() => {
-        // Si todo sale bien, recargamos la lista
         this.alertService.mostrarExito('Reserva eliminada exitosamente');
-        this.obtenerReservas();
+        this.recargarTodo();
       }, error => {
         console.log('Error al eliminar:', error);
         this.alertService.mostrarError(error?.error?.msg || 'Error al eliminar la reserva');
       });
     });
-  }
-
-  aplicarFiltro(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 }

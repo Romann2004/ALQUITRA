@@ -23,95 +23,192 @@
     <mat-card-content style="padding: 16px 24px 0 24px !important;">
       <mat-form-field appearance="outline" style="width: 100%;">
         <mat-label>Buscar reserva</mat-label>
-        <input matInput (keyup)="aplicarFiltro($event)" placeholder="Ej. Juan Pérez o Traje Azul">
+        <input #buscadorInput matInput (keyup)="aplicarFiltro($event)" placeholder="Ej. Juan Pérez o Traje Azul">
         <mat-icon matSuffix style="color: #94a3b8;">search</mat-icon>
       </mat-form-field>
     </mat-card-content>
   </mat-card>
 
-  <div class="total-registros">
-    Total de reservas: <strong>{{ dataSource.data.length }}</strong>
-  </div>
+  <mat-tab-group (selectedIndexChange)="cambiarPestana($event)" animationDuration="0ms">
 
-  <div class="premium-table-wrapper">
-    <table mat-table [dataSource]="dataSource" matSort #miTabla>
+    <!-- TABLA 1: EN PROCESO (PENDIENTE / RETIRADO) -->
+    <mat-tab label="En proceso">
+      <div class="total-registros">
+        Total en proceso: <strong>{{ tablas.en_proceso.total }}</strong>
+      </div>
 
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="id"> Nro. </th>
-        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-      </ng-container>
+      <div class="premium-table-wrapper">
+        <table mat-table [dataSource]="tablas.en_proceso.data" matSort (matSortChange)="ordenar('en_proceso', $event)">
 
-      <ng-container matColumnDef="cliente">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="cliente"> Cliente </th>
-        <td mat-cell *matCellDef="let element">
-          {{element.Cliente?.nombre}}
-        </td>
-      </ng-container>
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="id"> Nro. </th>
+            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+          </ng-container>
 
-      <ng-container matColumnDef="traje">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="traje"> Traje </th>
-        <td mat-cell *matCellDef="let element">
-          {{element.Traje?.categoria}} (Talle {{element.Traje?.talle}})
-        </td>
-      </ng-container>
+          <ng-container matColumnDef="cliente">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="cliente"> Cliente </th>
+            <td mat-cell *matCellDef="let element"> {{element.Cliente?.nombre}} </td>
+          </ng-container>
 
-      <ng-container matColumnDef="cantidad">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="cantidad" style="text-align: center; justify-content: center;"> Unidades </th>
-        <td mat-cell *matCellDef="let element" style="text-align: center;">
-          {{element.cantidad || 1}}
-        </td>
-      </ng-container>
+          <ng-container matColumnDef="traje">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="traje"> Traje </th>
+            <td mat-cell *matCellDef="let element">
+              {{element.Traje?.categoria}} (Talle {{element.Traje?.talle}})
+            </td>
+          </ng-container>
 
-      <ng-container matColumnDef="fechaRetiro">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaRetiro"> Fecha Retiro </th>
-        <td mat-cell *matCellDef="let element">
-          {{element.fechaRetiro | date:'dd/MM/yyyy':'UTC'}}
-        </td>
-      </ng-container>
+          <ng-container matColumnDef="cantidad">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="cantidad" style="text-align: center; justify-content: center;"> Unidades </th>
+            <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.cantidad || 1}} </td>
+          </ng-container>
 
-      <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="estado"> Estado </th>
-        <td mat-cell *matCellDef="let element">
-          <span class="badge" [ngClass]="element.estado.toLowerCase()"
-            style="padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase;">
-            {{element.estado}}
-          </span>
-        </td>
-      </ng-container>
+          <ng-container matColumnDef="fechaRetiro">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaRetiro"> Fecha Retiro </th>
+            <td mat-cell *matCellDef="let element"> {{element.fechaRetiro | date:'dd/MM/yyyy':'UTC'}} </td>
+          </ng-container>
 
-      <ng-container matColumnDef="fechaDevolucion">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaDevolucion"> Fecha Devolución </th>
-        <td mat-cell *matCellDef="let element">
-          {{element.fechaDevolucion | date:'dd/MM/yyyy':'UTC'}}
-        </td>
-      </ng-container>
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="estado"> Estado </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="badge" [ngClass]="element.estado.toLowerCase()"
+                style="padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase;">
+                {{element.estado}}
+              </span>
+            </td>
+          </ng-container>
 
-      <ng-container matColumnDef="senia">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="senia"> Seña </th>
-        <td mat-cell *matCellDef="let element"> {{element.senia | currency:'ARS':'$'}} </td>
-      </ng-container>
+          <ng-container matColumnDef="fechaDevolucion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaDevolucion"> Fecha Devolución </th>
+            <td mat-cell *matCellDef="let element"> {{element.fechaDevolucion | date:'dd/MM/yyyy':'UTC'}} </td>
+          </ng-container>
 
-      <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef> Acciones </th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-icon-button color="primary" (click)="editarReserva(element)" title="Editar">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" (click)="eliminarReserva(element.id)" title="Eliminar">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+          <ng-container matColumnDef="senia">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="senia"> Seña </th>
+            <td mat-cell *matCellDef="let element"> {{element.senia | currency:'ARS':'$'}} </td>
+          </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="action-buttons-cell">
+                <button mat-icon-button color="primary" (click)="editarReserva(element)" title="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="eliminarReserva(element.id)" title="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
 
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="8" style="padding: 20px; text-align: center; color: #64748b;">
-          No se encontraron reservas.
-        </td>
-      </tr>
-    </table>
-  </div>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsEnProceso"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsEnProceso;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="8" style="padding: 20px; text-align: center; color: #64748b;">
+              No hay reservas en proceso.
+            </td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          [length]="tablas.en_proceso.total"
+          [pageIndex]="tablas.en_proceso.pageIndex"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="cambiarPagina('en_proceso', $event)">
+        </mat-paginator>
+      </div>
+    </mat-tab>
+
+    <!-- TABLA 2: FINALIZADAS (estados terminales) -->
+    <mat-tab label="Reservas finalizadas">
+      <div class="total-registros">
+        Total finalizadas: <strong>{{ tablas.finalizadas.total }}</strong>
+      </div>
+
+      <div class="premium-table-wrapper">
+        <table mat-table [dataSource]="tablas.finalizadas.data" matSort (matSortChange)="ordenar('finalizadas', $event)">
+
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="id"> Nro. </th>
+            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="cliente">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="cliente"> Cliente </th>
+            <td mat-cell *matCellDef="let element"> {{element.Cliente?.nombre}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="traje">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="traje"> Traje </th>
+            <td mat-cell *matCellDef="let element">
+              {{element.Traje?.categoria}} (Talle {{element.Traje?.talle}})
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="cantidad">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="cantidad" style="text-align: center; justify-content: center;"> Unidades </th>
+            <td mat-cell *matCellDef="let element" style="text-align: center;"> {{element.cantidad || 1}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="fechaRetiro">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaRetiro"> Fecha Retiro </th>
+            <td mat-cell *matCellDef="let element"> {{element.fechaRetiro | date:'dd/MM/yyyy':'UTC'}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="estado"> Estado </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="badge" [ngClass]="element.estado.toLowerCase()"
+                style="padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase;">
+                {{element.estado}}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="fechaDevolucion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="fechaDevolucion"> Fecha Devolución </th>
+            <td mat-cell *matCellDef="let element"> {{element.fechaDevolucion | date:'dd/MM/yyyy':'UTC'}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="senia">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="senia"> Seña </th>
+            <td mat-cell *matCellDef="let element"> {{element.senia | currency:'ARS':'$'}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+            <td mat-cell *matCellDef="let element">
+              <!-- Una reserva finalizada ya no se puede editar ni eliminar (queda congelada), así que acá solo se puede ver. -->
+              <div class="action-buttons-cell">
+                <button mat-icon-button color="primary" (click)="editarReserva(element)" title="Ver">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsFinalizadas"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsFinalizadas;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="8" style="padding: 20px; text-align: center; color: #64748b;">
+              No hay reservas finalizadas.
+            </td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          [length]="tablas.finalizadas.total"
+          [pageIndex]="tablas.finalizadas.pageIndex"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="cambiarPagina('finalizadas', $event)">
+        </mat-paginator>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
 
 </div>

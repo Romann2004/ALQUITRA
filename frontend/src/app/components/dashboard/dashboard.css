@@ -133,8 +133,11 @@ mat-icon { font-size: 28px; width: 28px; height: 28px; }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background-color: #cbd5e1; }
 .status-dot.pendiente { background-color: #eab308; }
 .status-dot.retirado { background-color: #3b82f6; }
-.status-dot.completado { background-color: #22c55e; }
-.status-dot.cancelado { background-color: #ef4444; }
+.status-dot.completado_a_tiempo { background-color: #22c55e; }
+.status-dot.completado_fuera_de_tiempo { background-color: #84cc16; }
+.status-dot.cancelado_a_tiempo { background-color: #ef4444; }
+.status-dot.cancelado_fuera_de_tiempo { background-color: #991b1b; }
+.status-dot.trajes_perdidos { background-color: #18181b; }
 .status-text { font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
 
 /* Bloque 2: Ranking de Clientes */
@@ -202,8 +205,11 @@ mat-icon { font-size: 28px; width: 28px; height: 28px; }
 .modal-badge-status { font-size: 0.65rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.025em; }
 .modal-badge-status.pendiente { background-color: #fef9c3; color: #713f12; }
 .modal-badge-status.retirado { background-color: #dbeafe; color: #1e40af; }
-.modal-badge-status.completado { background-color: #dcfce7; color: #166534; }
-.modal-badge-status.cancelado { background-color: #fee2e2; color: #991b1b; }
+.modal-badge-status.completado_a_tiempo { background-color: #dcfce7; color: #166534; }
+.modal-badge-status.completado_fuera_de_tiempo { background-color: #ecfccb; color: #3f6212; }
+.modal-badge-status.cancelado_a_tiempo { background-color: #fee2e2; color: #991b1b; }
+.modal-badge-status.cancelado_fuera_de_tiempo { background-color: #fecaca; color: #7f1d1d; }
+.modal-badge-status.trajes_perdidos { background-color: #e4e4e7; color: #18181b; }
 
 .modal-actions { margin-top: 24px; display: flex; justify-content: flex-end; }
 .action-confirm-btn { border-radius: 10px !important; font-weight: 600; padding: 0 20px !important; background-color: #4f46e5 !important; }

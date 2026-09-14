@@ -25,6 +25,8 @@ import { registerLocaleData } from '@angular/common';
 import localeEsAr from '@angular/common/locales/es-AR';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatPaginatorModule } from '@angular/material/paginator';
 registerLocaleData(localeEsAr, 'es-AR');
 import { App } from './app';
 import { GestionTrajesComponent } from './components/gestion-trajes/gestion-trajes.component';
@@ -69,6 +71,8 @@ import { FormReserva } from './components/form-reserva/form-reserva';
     MatDatepickerModule,
     MatNativeDateModule,
     MatSlideToggleModule,
+    MatTabsModule,
+    MatPaginatorModule,
     NgApexchartsModule
   ],
   providers: [
